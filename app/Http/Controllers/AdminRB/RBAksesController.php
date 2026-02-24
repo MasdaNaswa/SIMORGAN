@@ -1,9 +1,12 @@
 <?php
+// app/Http/Controllers/AdminRB/RBAksesController.php
 
 namespace App\Http\Controllers\AdminRB;
 
 use App\Http\Controllers\Controller;
+use App\Models\AksesRb; // Sesuai dengan nama model Anda
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RBAksesController extends Controller
 {
@@ -12,32 +15,47 @@ class RBAksesController extends Controller
      */
     public function index()
     {
-        // Dummy data dulu (nanti bisa diganti dari database)
-        $aksesRb = [
-            (object)[
-                'id' => 1,
+        // Ambil data dari database
+        $aksesRb = AksesRb::orderBy('id')->get();
+        
+        // Jika data masih kosong, buat default data
+        if ($aksesRb->isEmpty()) {
+            $this->createDefaultData();
+            $aksesRb = AksesRb::orderBy('id')->get();
+        }
+
+        return view('adminrb.aksesrb.index', compact('aksesRb'));
+    }
+
+    /**
+     * Create default data if not exists
+     */
+    private function createDefaultData()
+    {
+        $defaultData = [
+            [
                 'jenis_rb' => 'RB General',
-                'is_open' => true,
-                'start_date' => '2025-09-01',
-                'end_date' => '2025-09-30',
+                'status' => 'Dibuka', // Menggunakan status, bukan is_open
+                'start_date' => now()->startOfMonth()->toDateString(),
+                'end_date' => now()->endOfMonth()->toDateString(),
             ],
-            (object)[
-                'id' => 2,
+            [
                 'jenis_rb' => 'RB Tematik',
-                'is_open' => false,
-                'start_date' => '2025-09-05',
-                'end_date' => '2025-09-25',
+                'status' => 'Dibuka',
+                'start_date' => now()->startOfMonth()->toDateString(),
+                'end_date' => now()->endOfMonth()->toDateString(),
             ],
-            (object)[
-                'id' => 3,
+            [
                 'jenis_rb' => 'PK Bupati',
-                'is_open' => true,
-                'start_date' => '2025-09-10',
-                'end_date' => '2025-09-28',
+                'status' => 'Dibuka',
+                'start_date' => now()->startOfMonth()->toDateString(),
+                'end_date' => now()->endOfMonth()->toDateString(),
             ],
         ];
 
-        return view('adminrb.aksesrb.index', compact('aksesRb'));
+        foreach ($defaultData as $data) {
+            AksesRb::create($data);
+        }
     }
 
     /**
@@ -45,16 +63,33 @@ class RBAksesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validasi input
+        // Validasi input - menggunakan status enum, bukan is_open boolean
         $request->validate([
-            'is_open' => 'required|boolean',
+            'status' => 'required|in:Dibuka,Ditutup',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        // 🚨 Di sini nanti diganti dengan query update DB
-        // Sekarang dummy dulu:
-        return redirect()->route('adminrb.aksesrb.index')
-                         ->with('success', 'Akses RB berhasil diperbarui.');
+        try {
+            DB::beginTransaction();
+
+            $akses = AksesRb::findOrFail($id);
+            
+            $akses->update([
+                'status' => $request->status,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('adminrb.aksesrb.index')
+                             ->with('success', 'Akses RB berhasil diperbarui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                             ->with('error', 'Gagal memperbarui akses RB: ' . $e->getMessage());
+        }
     }
 }

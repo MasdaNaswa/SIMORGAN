@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+
+public function up()
+{
+    Schema::table('skm_reports', function (Blueprint $table) {
+        $table->string('nama_penandatangan')->nullable()->after('jabatan_penandatangan');
+        $table->string('nip_penandatangan')->nullable()->after('nama_penandatangan');
+    });
+}
+
+public function down()
+{
+    Schema::table('skm_reports', function (Blueprint $table) {
+        $table->dropColumn(['nama_penandatangan', 'nip_penandatangan']);
+    });
+}
+};

@@ -17,6 +17,13 @@
           </a>
         </li>
 
+        <!-- Hasil Survei  -->
+        <li class="nav-item">
+          <a href="{{ route('adminkelembagaan.kematangan-kelembagaan.index') }}">
+            <i class="material-icons">category</i> <span>Hasil Survei</span>
+          </a>
+        </li> 
+
         <!-- Kelola Akun OPD  -->
         <li class="nav-item">
           <a href="{{ route('adminkelembagaan.kelola-akun.index') }}">
@@ -28,13 +35,6 @@
         <li class="nav-item">
           <a href="{{ route('adminkelembagaan.dokumen.index') }}">
             <i class="material-icons">assignment</i> <span>Manajemen Laporan</span>
-          </a>
-        </li>
-
-        <!-- Google Form -->
-        <li class="nav-item">
-          <a href="{{ route('adminkelembagaan.kematangan-kelembagaan.index') }}">
-            <i class="material-icons">category</i> <span>Hasil Survei</span>
           </a>
         </li>
 

@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="flex flex-col min-h-screen">
-
         <!-- Header -->
         <header class="bg-white shadow sticky top-0 z-30">
             <div class="flex justify-between items-center py-4 px-6 md:px-8">
@@ -12,24 +11,6 @@
                     <i class="fas fa-file-alt text-blue-600"></i>
                     <span class="hidden sm:inline">RB Tematik</span>
                 </h1>
-                <div class="relative group">
-                    <button
-                        class="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 hover:bg-gray-200 transition-colors">
-                        <i class="fas fa-user-circle text-xl md:text-2xl text-blue-600"></i>
-                        <span class="text-sm md:text-base">Admin RB</span>
-                    </button>
-                    <div
-                        class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-opacity duration-200 z-50">
-                        <ul class="py-2 text-gray-700 text-sm">
-                            <li>
-                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-gray-100">
-                                    Profil Saya
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
             </div>
         </header>
 
@@ -38,42 +19,38 @@
             <div class="flex flex-col md:flex-row justify-between items-center px-4 md:px-6 py-4 gap-4 md:gap-0">
                 <div class="flex items-center gap-3">
                     <label class="font-semibold text-gray-700 text-sm md:text-base">Tahun:</label>
-                    <select id="yearFilter"
-                        class="py-2 px-3 rounded border border-gray-300 hover:border-blue-500 transition focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm md:text-base">
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                    </select>
+                    <form method="GET" action="{{ route('adminrb.rb-tematik.index') }}">
+                        <select name="year" id="yearFilter"
+                            class="py-2 px-3 rounded border border-gray-300 hover:border-blue-500 transition focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm md:text-base"
+                            onchange="this.form.submit()">
+                            @foreach($years as $year)
+                                <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
                 </div>
 
                 <div class="flex gap-2">
-
                     <button
                         class="flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300 text-sm md:text-base"
                         onclick="openModal('unduhModal')">
+                        <i class="fas fa-download"></i>
                         <span>Unduh</span>
                     </button>
-
                 </div>
             </div>
-
 
             <!-- Table Container -->
             <div class="bg-white shadow rounded-lg mt-6 overflow-hidden border border-gray-200">
                 <div
                     class="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <h2 class="text-lg md:text-xl font-semibold text-gray-800">Daftar RB Tematik</h2>
-                    <div class="relative w-full sm:w-auto">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input type="text" placeholder="Cari..."
-                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 w-full text-sm">
-                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full">
+                    <table class="w-full" id="rbTematikTable">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th
@@ -93,7 +70,7 @@
                                     Target</th>
                                 <th
                                     class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
-                                    Capaian</th>
+                                    Anggaran</th>
                                 <th
                                     class="py-3 px-4 text-center font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
                                     Aksi</th>
@@ -101,37 +78,44 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @forelse($rbTematik as $index => $item)
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="py-3 px-4 font-medium text-gray-900 text-sm">{{ $index + 1 }}</td>
+                                <tr class="hover:bg-blue-50 transition-colors" data-id="{{ $item->id }}">
+                                    <td class="py-3 px-4 font-medium text-gray-900 text-sm">{{ $loop->iteration }}</td>
                                     <td class="py-3 px-4 text-sm max-w-xs">
                                         <div class="truncate" title="{{ $item->permasalahan }}">{{ $item->permasalahan }}</div>
                                     </td>
                                     <td class="py-3 px-4 text-sm max-w-xs">
-                                        <div class="truncate" title="{{ $item->sasaran_tematik }}">{{ $item->sasaran_tematik }}
-                                        </div>
+                                        <div class="truncate" title="{{ $item->sasaran_tematik }}">
+                                            {{ $item->sasaran_tematik ?? '-' }}</div>
                                     </td>
-                                    <td class="py-3 px-4 text-sm">{{ $item->indikator }}</td>
-                                    <td class="py-3 px-4 text-sm"><span
-                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">{{ $item->target }}
-                                            ({{ $item->satuan }})</span></td>
-                                    <td class="py-3 px-4 text-sm"><span class="font-semibold">{{ $item->capaian }}</span></td>
+                                    <td class="py-3 px-4 text-sm">{{ $item->indikator ?? '-' }}</td>
+                                    <td class="py-3 px-4 text-sm">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                                            {{ $item->target ?? '0' }} ({{ $item->satuan ?? '-' }})
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm">
+                                        <span class="font-semibold text-green-600">
+                                            Rp
+                                            {{ $item->anggaran_tahun ? number_format((float) str_replace(['.', ','], '', $item->anggaran_tahun), 0, ',', '.') : '0' }}
+                                        </span>
+                                    </td>
                                     <td class="py-3 px-4">
                                         <div class="flex justify-center gap-1">
                                             <!-- Detail -->
                                             <button class="p-2 text-green-600 hover:bg-green-100 rounded-lg"
-                                                onclick="openModal('detailModal')">
+                                                onclick="showDetail({{ $item->id }})">
                                                 <i class="fas fa-eye text-sm"></i>
                                             </button>
 
                                             <!-- Edit -->
-                                            <button class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
-                                                onclick="openModal('editModal')">
+                                            <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+                                                onclick="showEdit({{ $item->id }})">
                                                 <i class="fas fa-edit text-sm"></i>
                                             </button>
 
                                             <!-- Hapus -->
                                             <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-                                                onclick="openModal('hapusModal')">
+                                                onclick="openHapusModal({{ $item->id }})">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </button>
                                         </div>
@@ -139,32 +123,374 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="py-4 text-center text-gray-500">Tidak ada data RB Tematik</td>
+                                    <td colspan="7" class="py-8 text-center text-gray-500">
+                                        <i class="fas fa-folder-open text-4xl mb-2 text-gray-400"></i>
+                                        <p>Tidak ada data RB Tematik untuk tahun {{ $selectedYear }}</p>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
-
                     </table>
                 </div>
+
+                <!-- Pagination -->
+                @if($rbTematik instanceof \Illuminate\Pagination\LengthAwarePaginator && $rbTematik->total() > 0)
+                    <div
+                        class="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="text-sm text-gray-700">
+                            Menampilkan
+                            <span class="font-medium">{{ $rbTematik->firstItem() }}</span>
+                            -
+                            <span class="font-medium">{{ $rbTematik->lastItem() }}</span>
+                            dari
+                            <span class="font-medium">{{ $rbTematik->total() }}</span>
+                            entri
+                        </div>
+                        <div class="flex gap-2">
+                            @if($rbTematik->onFirstPage())
+                                <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            @else
+                                <a href="{{ $rbTematik->previousPageUrl() }}"
+                                    class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                                    Sebelumnya
+                                </a>
+                            @endif
+
+                            @foreach($rbTematik->getUrlRange(max(1, $rbTematik->currentPage() - 2), min($rbTematik->lastPage(), $rbTematik->currentPage() + 2)) as $page => $url)
+                                @if($page == $rbTematik->currentPage())
+                                    <span class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">{{ $page }}</span>
+                                @else
+                                    <a href="{{ $url }}"
+                                        class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">{{ $page }}</a>
+                                @endif
+                            @endforeach
+
+                            @if($rbTematik->hasMorePages())
+                                <a href="{{ $rbTematik->nextPageUrl() }}"
+                                    class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                                    Selanjutnya
+                                </a>
+                            @else
+                                <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Modals -->
             @include('components.adminrb.detail-modal-rb-tematik')
             @include('components.adminrb.ubah-modal-rb-tematik')
-            @include('components.adminrb.hapus-modal')
-            @include('components.adminrb.unduh-modal')
+            @include('components.adminrb.hapus-modal-rb-tematik')
+            @include('components.adminrb.unduh-modal-rb-tematik')
         </main>
 
         <!-- Footer -->
         @include('components.footer')
     </div>
 
-    <script>
-        function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
-        function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); document.body.style.overflow = 'auto'; }
+    @push('scripts')
+        <script>
+            // ================ FUNGSI DASAR MODAL ================
+            function openModal(id) {
+                const modal = document.getElementById(id);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
 
-        document.getElementById('yearFilter')?.addEventListener('change', function () {
-            alert('Filter tahun: ' + this.value);
-        });
-    </script>
+            function closeModal(id) {
+                const modal = document.getElementById(id);
+                if (modal) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+
+                    // Reset form jika ada
+                    if (id === 'editModal') {
+                        const form = document.getElementById('editRenaksiRB');
+                        if (form) form.reset();
+                    }
+                }
+            }
+
+            // ================ FORMAT RUPIAH ================
+            function formatRupiah(angka) {
+                if (!angka || angka === '-' || angka === '0') return '0';
+                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            function cleanRupiah(value) {
+                if (!value) return '0';
+                return value.toString().replace(/\./g, '');
+            }
+
+            // ================ DETAIL DATA ================
+            async function showDetail(id) {
+                try {
+                    const response = await fetch(`/adminrb/rb-tematik/${id}`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const data = result.data;
+
+                        // Set data ke form detail
+                        document.getElementById('detailNo').value = data.id;
+                        document.getElementById('detailPermasalahan').value = data.permasalahan || '-';
+                        document.getElementById('detailSasaranTematik').value = data.sasaran_tematik || '-';
+                        document.getElementById('detailIndikator').value = data.indikator || '-';
+                        document.getElementById('detailTarget').value = data.target || '-';
+                        document.getElementById('detailSatuan').value = data.satuan || '-';
+                        document.getElementById('detailRencanaAksi').value = data.rencana_aksi || '-';
+                        document.getElementById('detailSatuanOutput').value = data.satuan_output || '-';
+                        document.getElementById('detailIndikatorOutput').value = data.indikator_output || '-';
+                        document.getElementById('detailKoordinator').value = data.koordinator || '-';
+                        document.getElementById('detailPelaksana').value = data.pelaksana || '-';
+                        document.getElementById('detailAnggaranTahun').value = data.anggaran_tahun ? 'Rp ' + formatRupiah(data.anggaran_tahun) : 'Rp 0';
+
+                        // Set TW
+                        const twElements = {
+                            'detailTw1Target': data.renaksi_tw1_target,
+                            'detailTw1Rp': data.renaksi_tw1_rp ? 'Rp ' + formatRupiah(data.renaksi_tw1_rp) : 'Rp 0',
+                            'detailTw2Target': data.renaksi_tw2_target,
+                            'detailTw2Rp': data.renaksi_tw2_rp ? 'Rp ' + formatRupiah(data.renaksi_tw2_rp) : 'Rp 0',
+                            'detailTw3Target': data.renaksi_tw3_target,
+                            'detailTw3Rp': data.renaksi_tw3_rp ? 'Rp ' + formatRupiah(data.renaksi_tw3_rp) : 'Rp 0',
+                            'detailTw4Target': data.renaksi_tw4_target,
+                            'detailTw4Rp': data.renaksi_tw4_rp ? 'Rp ' + formatRupiah(data.renaksi_tw4_rp) : 'Rp 0'
+                        };
+
+                        Object.keys(twElements).forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.value = twElements[id] || '-';
+                        });
+
+                        // Set tahun
+                        const tahun = data.tahun || '{{ $currentYear }}';
+                        const tahunHeader = document.getElementById('detailTahunHeader');
+                        if (tahunHeader) tahunHeader.textContent = tahun;
+
+                        openModal('detailModal');
+                    }
+                } catch (error) {
+                    console.error('Error detail:', error);
+                    alert('Gagal memuat data detail');
+                }
+            }
+
+            // ================ EDIT DATA ================
+            async function showEdit(id) {
+                try {
+                    const response = await fetch(`/adminrb/rb-tematik/${id}/edit`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const data = result.data;
+
+                        // Set form action
+                        const formEdit = document.getElementById('editRenaksiRB');
+                        if (formEdit) {
+                            formEdit.action = `/adminrb/rb-tematik/${id}`;
+                        }
+
+                        // Set values ke form edit
+                        document.getElementById('edit_id').value = data.id || '';
+                        document.getElementById('edit_no').value = data.id || '';
+                        document.getElementById('edit_permasalahan').value = data.permasalahan || '';
+                        document.getElementById('edit_sasaran_tematik').value = data.sasaran_tematik || '';
+                        document.getElementById('edit_indikator').value = data.indikator || '';
+                        document.getElementById('edit_target').value = data.target || '';
+                        document.getElementById('edit_satuan').value = data.satuan || '';
+                        document.getElementById('edit_rencana_aksi').value = data.rencana_aksi || '';
+                        document.getElementById('edit_satuan_output').value = data.satuan_output || '';
+                        document.getElementById('edit_indikator_output').value = data.indikator_output || '';
+                        document.getElementById('edit_anggaran_tahun').value = data.anggaran_tahun ? 'Rp ' + formatRupiah(data.anggaran_tahun) : '';
+                        document.getElementById('edit_koordinator').value = data.koordinator || '';
+                        document.getElementById('edit_pelaksana').value = data.pelaksana || '';
+
+                        // Set TW values
+                        document.getElementById('edit_tw1_target').value = data.renaksi_tw1_target || '';
+                        document.getElementById('edit_tw1_rp').value = data.renaksi_tw1_rp ? formatRupiah(data.renaksi_tw1_rp) : '';
+                        document.getElementById('edit_tw2_target').value = data.renaksi_tw2_target || '';
+                        document.getElementById('edit_tw2_rp').value = data.renaksi_tw2_rp ? formatRupiah(data.renaksi_tw2_rp) : '';
+                        document.getElementById('edit_tw3_target').value = data.renaksi_tw3_target || '';
+                        document.getElementById('edit_tw3_rp').value = data.renaksi_tw3_rp ? formatRupiah(data.renaksi_tw3_rp) : '';
+                        document.getElementById('edit_tw4_target').value = data.renaksi_tw4_target || '';
+                        document.getElementById('edit_tw4_rp').value = data.renaksi_tw4_rp ? formatRupiah(data.renaksi_tw4_rp) : '';
+
+                        // Set tahun
+                        const tahun = data.tahun || '{{ $currentYear }}';
+                        const editTahunHeader = document.getElementById('editTahunHeader');
+                        if (editTahunHeader) editTahunHeader.textContent = tahun;
+
+                        // Hitung total anggaran
+                        let totalAnggaran = 0;
+                        ['renaksi_tw1_rp', 'renaksi_tw2_rp', 'renaksi_tw3_rp', 'renaksi_tw4_rp'].forEach(field => {
+                            const value = data[field];
+                            if (value) totalAnggaran += parseInt(value);
+                        });
+
+                        const editAnggaranTotal = document.getElementById('editAnggaranTotal');
+                        if (editAnggaranTotal) {
+                            editAnggaranTotal.value = 'Rp ' + totalAnggaran.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        }
+
+                        // Buka modal
+                        openModal('editModal');
+                    }
+                } catch (error) {
+                    console.error('Error edit:', error);
+                    alert('Gagal memuat data untuk diedit');
+                }
+            }
+
+            // ================ HAPUS DATA ================
+            function openHapusModal(id) {
+                const form = document.getElementById("hapusForm");
+                if (form) {
+                    form.action = `/adminrb/rb-tematik/${id}`;
+                }
+                openModal("hapusModal");
+            }
+
+            // ================ HANDLE EDIT FORM SUBMIT ================
+            document.addEventListener('DOMContentLoaded', function () {
+                // Format Rupiah untuk input
+                document.addEventListener('keyup', function (e) {
+                    if (e.target.classList.contains('rupiah-input')) {
+                        let value = e.target.value.replace(/\./g, '');
+                        value = value.replace(/\D/g, '');
+
+                        if (value !== '') {
+                            value = parseInt(value).toString();
+                            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                            e.target.value = value;
+                        }
+                    }
+                });
+
+                // Handle form edit
+                const formEdit = document.getElementById('editRenaksiRB');
+                if (formEdit) {
+                    formEdit.addEventListener('submit', async function (e) {
+                        e.preventDefault();
+
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+                        submitBtn.disabled = true;
+
+                        try {
+                            const formData = new FormData(this);
+                            formData.append('_method', 'PUT');
+
+                            // Clean rupiah fields
+                            ['edit_tw1_rp', 'edit_tw2_rp', 'edit_tw3_rp', 'edit_tw4_rp', 'edit_anggaran_tahun'].forEach(field => {
+                                const value = formData.get(field);
+                                if (value) {
+                                    formData.set(field, cleanRupiah(value));
+                                }
+                            });
+
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+                            const url = this.action;
+
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: formData
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                closeModal('editModal');
+                                // Reload halaman atau update data
+                                window.location.reload();
+                            } else {
+                                alert('Gagal menyimpan data: ' + (result.message || 'Unknown error'));
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Terjadi kesalahan saat menyimpan data');
+                        } finally {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                }
+
+                // Handle form hapus
+                const hapusForm = document.getElementById('hapusForm');
+                if (hapusForm) {
+                    hapusForm.addEventListener('submit', async function (e) {
+                        e.preventDefault();
+
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+                        submitBtn.disabled = true;
+
+                        try {
+                            const formData = new FormData(this);
+                            formData.append('_method', 'DELETE');
+
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+                            const url = this.action;
+
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: formData
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                closeModal('hapusModal');
+                                window.location.reload();
+                            } else {
+                                alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Terjadi kesalahan saat menghapus data');
+                        } finally {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                }
+            });
+        </script>
+    @endpush
 @endsection

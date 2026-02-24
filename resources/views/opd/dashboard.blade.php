@@ -9,12 +9,13 @@
 
     <!-- Welcome Section -->
     <div class="welcome-container mb-8">
-    <div class="welcome-text">
+      <div class="welcome-text">
         <h2 class="text-2xl font-semibold text-gray-800">
-            Selamat Datang, {{ $nama_opd }} Kabupaten Karimun
+          Selamat Datang, {{ $nama_opd }} Kabupaten Karimun
         </h2>
+      </div>
     </div>
-</div>
+
     <!-- Statistik Cards -->
     <div class="stats-container grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -42,7 +43,7 @@
         </div>
       </div>
 
-      <!-- Card 2: Dokumen Pelayanan Publik (placeholder, sesuaikan nanti) -->
+      <!-- Card 2: Dokumen Pelayanan Publik -->
       <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-all duration-200 relative group">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-gray-700 font-semibold flex items-center gap-2">
@@ -68,7 +69,7 @@
         </div>
       </div>
 
-      <!-- Card 3: Status Akses RB (placeholder, sesuaikan nanti) -->
+      <!-- Card 3: Status Akses RB -->
       <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-400 hover:shadow-lg transition-all duration-200 relative group">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-gray-700 font-semibold flex items-center gap-2">
@@ -80,27 +81,55 @@
         <div class="text-4xl font-bold text-gray-800">{{ $statusUmum ?? 'Aktif' }}</div>
         <p class="text-gray-500 text-sm mt-1">Keterangan akses & deadline RB</p>
 
-        <!-- Tooltip -->
-        <div class="absolute right-0 top-10 translate-y-1 bg-slate-800 text-white text-xs rounded-lg shadow-lg px-4 py-3 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 invisible group-hover:visible transition-all duration-300 ease-out z-50 w-60">
+        <!-- Tooltip Detail -->
+        <div class="absolute right-0 top-10 translate-y-1 bg-slate-800 text-white text-xs rounded-lg shadow-lg px-4 py-3 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 invisible group-hover:visible transition-all duration-300 ease-out z-50 w-72">
           <div class="absolute -top-2 right-6 w-3 h-3 bg-slate-800 rotate-45"></div>
-          <p class="font-semibold mb-2 border-b border-slate-600 pb-1">Rincian Status:</p>
-          <ul class="space-y-1 text-[13px]">
-            <li class="flex justify-between"><span>RB General</span>
-              <span class="{{ ($statusGeneral ?? 'Dibuka') === 'Dibuka' ? 'text-green-400' : 'text-red-400' }}">
-                {{ $statusGeneral ?? 'Dibuka' }}
+          <p class="font-semibold mb-2 border-b border-slate-600 pb-1">Status Akses RB:</p>
+          
+          <!-- RB General -->
+          <div class="mb-2 pb-2 border-b border-slate-700">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-medium">RB General</span>
+              <span class="px-2 py-0.5 rounded-full text-xs
+                {{ $statusGeneral == 'Dibuka' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+                {{ $statusGeneral }}
               </span>
-            </li>
-            <li class="flex justify-between"><span>RB Tematik</span>
-              <span class="{{ ($statusTematik ?? 'Ditutup') === 'Dibuka' ? 'text-green-400' : 'text-red-400' }}">
-                {{ $statusTematik ?? 'Ditutup' }}
+            </div>
+            <div class="flex justify-between text-[11px] text-gray-300">
+              <span>Deadline:</span>
+              <span class="font-semibold">{{ $deadlineGeneral }}</span>
+            </div>
+          </div>
+
+          <!-- RB Tematik -->
+          <div class="mb-2 pb-2 border-b border-slate-700">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-medium">RB Tematik</span>
+              <span class="px-2 py-0.5 rounded-full text-xs
+                {{ $statusTematik == 'Dibuka' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+                {{ $statusTematik }}
               </span>
-            </li>
-            <li class="flex justify-between"><span>PK Bupati</span>
-              <span class="{{ ($statusPK ?? 'Dibuka') === 'Dibuka' ? 'text-green-400' : 'text-red-400' }}">
-                {{ $statusPK ?? 'Dibuka' }}
+            </div>
+            <div class="flex justify-between text-[11px] text-gray-300">
+              <span>Deadline:</span>
+              <span class="font-semibold">{{ $deadlineTematik }}</span>
+            </div>
+          </div>
+
+          <!-- PK Bupati -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-medium">PK Bupati</span>
+              <span class="px-2 py-0.5 rounded-full text-xs
+                {{ $statusPK == 'Dibuka' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+                {{ $statusPK }}
               </span>
-            </li>
-          </ul>
+            </div>
+            <div class="flex justify-between text-[11px] text-gray-300">
+              <span>Deadline:</span>
+              <span class="font-semibold">{{ $deadlinePK }}</span>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -300,12 +300,11 @@
                                 <div class="space-y-3">
                                     <div class="relative">
                                                     <input type="file" 
-                   name="{{ $varKey }}-files[]" 
-                   id="fileInput_{{ $varKey }}"
-                   multiple
-                   accept=".jpg,.jpeg,.pdf,image/jpeg,image/jpg,application/pdf"
-                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-
+       name="variabel_{{ strtolower(str_replace('VARIABEL ', '', $kode)) }}_files[]" 
+       id="fileInput_variabel_{{ strtolower(str_replace('VARIABEL ', '', $kode)) }}"
+       multiple
+       accept=".jpg,.jpeg,.pdf,image/jpeg,image/jpg,application/pdf"
+       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                         <ul id="fileList_{{  strtolower(str_replace('VARIABEL ', '', $kode)) }}"class="mt-2 text-sm text-gray-700"></ul>
 
                                     </div>
@@ -357,3 +356,211 @@
         </div>
     </form>
 </div>
+
+<script>
+// Simple file manager untuk setiap variabel
+class FileManager {
+    constructor(variable) {
+        this.variable = variable;
+        this.varKey = `variabel_${variable}`;
+        this.files = [];
+        this.init();
+    }
+    
+    init() {
+        const fileInput = document.getElementById(`fileInput_${this.varKey}`);
+        const fileListContainer = document.getElementById(`fileList_${this.variable}`);
+        
+        if (fileInput && fileListContainer) {
+            fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+            this.updatePreview();
+        }
+    }
+    
+    handleFileSelect(e) {
+        const newFiles = Array.from(e.target.files);
+        
+        // Validasi jumlah file
+        if (this.files.length + newFiles.length > 3) {
+            alert('Maksimal 3 file per variabel');
+            e.target.value = '';
+            return;
+        }
+        
+        // Validasi setiap file
+        newFiles.forEach(file => {
+            // Validasi ukuran (max 1 MB)
+            if (file.size > 10485760) {
+                alert(`File "${file.name}" melebihi 10 MB`);
+                return;
+            }
+            
+            // Validasi tipe file
+            const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg';
+            const isPDF = file.type === 'application/pdf';
+            const ext = file.name.toLowerCase().split('.').pop();
+            const validExt = ['jpg', 'jpeg', 'pdf'].includes(ext);
+            
+            if (!(isJPG || isPDF) || !validExt) {
+                alert(`File "${file.name}" harus JPG/JPEG atau PDF`);
+                return;
+            }
+            
+            // Tambahkan file
+            this.files.push(file);
+        });
+        
+        this.updatePreview();
+        e.target.value = '';
+    }
+    
+    removeFile(index) {
+        this.files.splice(index, 1);
+        this.updatePreview();
+    }
+    
+    updatePreview() {
+        const container = document.getElementById(`fileList_${this.variable}`);
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        if (this.files.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-sm italic">Belum ada file yang diupload</p>';
+            return;
+        }
+        
+        this.files.forEach((file, index) => {
+            const fileElement = document.createElement('div');
+            fileElement.className = 'flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg mb-2 hover:bg-gray-50 transition-colors';
+            
+            const fileName = file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name;
+            const fileSize = this.formatSize(file.size);
+            
+            // Tentukan icon
+            let icon = 'fa-file';
+            let iconColor = 'text-blue-600';
+            let bgColor = 'bg-blue-50';
+            let typeLabel = 'FILE';
+            
+            if (file.type.includes('image')) {
+                icon = 'fa-file-image';
+                iconColor = 'text-green-600';
+                bgColor = 'bg-green-50';
+                typeLabel = 'JPG';
+            } else if (file.type.includes('pdf')) {
+                icon = 'fa-file-pdf';
+                iconColor = 'text-red-600';
+                bgColor = 'bg-red-50';
+                typeLabel = 'PDF';
+            }
+            
+            fileElement.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center">
+                        <i class="fas ${icon} ${iconColor} text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-800">${fileName}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs text-gray-500">${fileSize}</span>
+                            <span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded">${typeLabel}</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" 
+                        onclick="window.fileManagers['${this.variable}'].removeFile(${index})"
+                        class="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(fileElement);
+        });
+        
+        // Tambahkan info
+        const info = document.createElement('div');
+        info.className = 'text-sm text-gray-600 mt-2 flex items-center gap-1';
+        info.innerHTML = `<i class="fas fa-info-circle text-blue-500"></i> ${this.files.length} dari 3 file`;
+        container.appendChild(info);
+    }
+    
+    formatSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    getFiles() {
+        return this.files;
+    }
+}
+
+// Inisialisasi semua file managers
+document.addEventListener('DOMContentLoaded', function() {
+    window.fileManagers = {};
+    const variables = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi'];
+    
+    variables.forEach(v => {
+        window.fileManagers[v] = new FileManager(v);
+    });
+    
+
+// Handle form submission
+const form = document.querySelector('form[enctype="multipart/form-data"]');
+if (form) {
+    form.addEventListener('submit', function(e) {
+        console.log('Form submission started...');
+        
+        // Hapus semua file input yang ada
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            console.log('Removing input:', input.name);
+            input.remove();
+        });
+        
+        // Debug: Tampilkan semua file managers
+        console.log('File managers:', window.fileManagers);
+        
+        // Tambahkan file dari setiap manager
+        variables.forEach(v => {
+            const manager = window.fileManagers[v];
+            if (manager) {
+                const files = manager.getFiles();
+                console.log(`Variabel ${v}: ${files.length} files`);
+                
+                if (files.length > 0) {
+                    const dataTransfer = new DataTransfer();
+                    files.forEach(file => {
+                        console.log(`  - Adding file: ${file.name} (${file.size} bytes)`);
+                        dataTransfer.items.add(file);
+                    });
+                    
+                    const newInput = document.createElement('input');
+                    newInput.type = 'file';
+                    newInput.name = `variabel_${v}_files[]`; // PERBAIKAN: Gunakan []
+                    newInput.multiple = true;
+                    newInput.style.display = 'none';
+                    newInput.files = dataTransfer.files;
+                    
+                    console.log(`Created input: ${newInput.name} with ${newInput.files.length} files`);
+                    form.appendChild(newInput);
+                }
+            } else {
+                console.warn(`Manager for variabel ${v} not found`);
+            }
+        });
+        
+        // Debug: Tampilkan semua inputs sebelum submit
+        const allInputs = Array.from(form.elements).filter(el => el.tagName === 'INPUT');
+        console.log('Total inputs before submit:', allInputs.length);
+        allInputs.forEach(input => {
+            console.log(`  - ${input.name}: ${input.type}`);
+        });
+        
+        // Jangan mencegah submit, biarkan form submit normal
+    });
+}
+});
+</script>

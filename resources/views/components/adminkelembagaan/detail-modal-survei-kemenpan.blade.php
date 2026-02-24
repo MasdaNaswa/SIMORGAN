@@ -1,5 +1,6 @@
 <div
     x-data="{
+    
         open: false,
         evaluasi: null,
         jawabanStruktur: [],
@@ -7,6 +8,7 @@
         detailPerhitungan: {},
         interpretasi: {},
         activeTab: 'struktur',
+        
         
         // Array pertanyaan lengkap (tanpa grouping)
         pertanyaanStruktur: [
@@ -168,10 +170,15 @@
                 });
         }
     }"
+     x-init="() => {
+        // Pastikan modal tersembunyi saat pertama kali di-load
+        $el.style.display = 'none';
+    }"
     x-on:open-modal-kemenpan.window="load($event.detail)"
     x-show="open"
     x-cloak
     class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60"
+    style="display: none;"
 >
     <div class="bg-white w-full max-w-6xl rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto m-4">
         <!-- HEADER -->

@@ -13,13 +13,14 @@
             </h1>
 
             <div class="relative group">
-                <button class="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 hover:bg-gray-200 transition-colors">
+                <button
+                    class="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 hover:bg-gray-200 transition-colors">
                     <i class="fas fa-user-circle text-xl md:text-2xl text-blue-600"></i>
                     <span class="text-sm md:text-base">Admin OPD</span>
                 </button>
 
                 <div class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 
-                group-hover:opacity-100 invisible group-hover:visible transition-opacity duration-200 z-50">
+                    group-hover:opacity-100 invisible group-hover:visible transition-opacity duration-200 z-50">
                     <ul class="py-2 text-gray-700 text-sm">
                         <li>
                             <a href="{{ route('opd.profile.edit') }}" class="block px-4 py-2 hover:bg-gray-100">
@@ -72,15 +73,30 @@
                                 <div class="font-medium">{{ $item->judul }}</div>
 
                                 <div class="text-sm text-gray-500">
-                                    Diunggah pada {{ $item->tanggal_upload }} - {{ $item->kategori }}
+                                    Diunggah pada {{ $item->tanggal_upload_formatted }} - {{ $item->kategori }}
                                 </div>
 
                                 @if($item->catatan)
-                                    <div class="mt-1 text-xs italic text-gray-700 truncate max-w-xs"
-                                         title="{{ $item->catatan }}">
-                                         Catatan Admin: {{ $item->catatan }}
+                                    @php
+                                        $maxLength = 30;
+                                        $fullCatatan = $item->catatan;
+                                        $shortCatatan = strlen($fullCatatan) > $maxLength
+                                            ? substr($fullCatatan, 0, $maxLength) . '...'
+                                            : $fullCatatan;
+                                    @endphp
+
+                                    <div class="relative inline-block group text-xs italic text-gray-700 cursor-pointer mt-1">
+                                        Catatan Admin: {{ $shortCatatan }}
+
+                                        @if(strlen($fullCatatan) > $maxLength)
+                                            <div
+                                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 max-w-xs bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-normal break-words shadow-lg">
+                                                {{ $fullCatatan }}
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
+
                             </div>
                         </div>
 
@@ -145,8 +161,8 @@
                                 <span class="px-3 py-2 bg-blue-600 text-white border rounded">{{ $page }}</span>
                             @else
                                 <a href="{{ $url }}"
-                                   class="px-3 py-2 bg-white border text-gray-700 rounded hover:bg-blue-50 hover:text-blue-600">
-                                   {{ $page }}
+                                    class="px-3 py-2 bg-white border text-gray-700 rounded hover:bg-blue-50 hover:text-blue-600">
+                                    {{ $page }}
                                 </a>
                             @endif
                         @endforeach
@@ -168,6 +184,7 @@
         </div>
     </div>
 
+    @include('components.footer')
     {{-- Modal Hapus --}}
     @include('components.opd.hapus-modal-anjab')
 

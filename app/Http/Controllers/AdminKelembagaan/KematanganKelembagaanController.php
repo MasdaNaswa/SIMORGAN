@@ -15,7 +15,60 @@ class KematanganKelembagaanController extends Controller
      */
     public function index(Request $request)
     {
-        // Query dengan alias 'id' agar Blade/DataTables tetap bisa pakai 'id'
+        // ============================
+        // URUTAN OPD MANUAL
+        // ============================
+        $urutanOPD = [
+            "Sekretariat Daerah",
+            "Sekretariat DPRD",
+            "Inspektorat Daerah",
+            "Dinas Pendidikan dan Kebudayaan",
+            "Dinas Kesehatan",
+            "Rumah Sakit Umum Daerah Muhammad Sani",
+            "Rumah Sakit Umum Daerah Tanjung Batu Kundur",
+            "Dinas Pekerjaan Umum dan Penataan Ruang",
+            "Dinas Perumahan Rakyat dan Kawasan Pemukiman",
+            "Dinas Sosial",
+            "Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak",
+            "Dinas Lingkungan Hidup",
+            "Dinas Kependudukan dan Pencatatan Sipil",
+            "Dinas Pemberdayaan Masyarakat dan Desa",
+            "Dinas Perhubungan",
+            "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu",
+            "Dinas Kepemudaan dan Olahraga",
+            "Dinas Pariwisata",
+            "Dinas Perpustakaan dan Kearsipan",
+            "Dinas Perikanan",
+            "Dinas Pangan dan Pertanian",
+            "Dinas Koperasi Usaha Mikro, Perdagangan dan Energi Sumber Daya Mineral",
+            "Dinas Tenaga Kerja dan Perindustrian",
+            "Diskominfo",
+            "Satuan Polisi Pamong Praja",
+            "Badan Perencanaan, Penelitian dan Pengembangan",
+            "Badan Pendapatan Daerah",
+            "Badan Pengelola Keuangan dan Aset Daerah",
+            "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia",
+            "Badan Kesatuan Bangsa dan Politik",
+            "Badan Penanggulangan Bencana Daerah dan Pemadam Kebakaran",
+            "Kecamatan Karimun",
+            "Kecamatan Tebing",
+            "Kecamatan Meral",
+            "Kecamatan Meral Barat",
+            "Kecamatan Buru",
+            "Kecamatan Kundur",
+            "Kecamatan Kundur Barat",
+            "Kecamatan Kundur Utara",
+            "Kecamatan Belat",
+            "Kecamatan Ungar",
+            "Kecamatan Moro",
+            "Kecamatan Durai",
+            "Kecamatan Selat Gelam",
+            "Kecamatan Sugie Besar"
+        ];
+
+        // ============================
+        // QUERY KEMENPAN
+        // ============================
         $queryKemenpan = EvaluasiKemenpan::select(
             'id_evaluasi_kemenpan as id',
             'nama_opd',
@@ -27,6 +80,9 @@ class KematanganKelembagaanController extends Controller
             'created_at'
         )->with('user:id,nama_opd');
 
+        // ============================
+        // QUERY KEMENDAGRI
+        // ============================
         $queryKemendagri = EvaluasiKemendagri::select(
             'id_evaluasi_kemendagri as id',
             'nama_opd',
@@ -35,20 +91,39 @@ class KematanganKelembagaanController extends Controller
             'created_at'
         )->with('user:id,nama_opd');
 
-        // Filter berdasarkan OPD
+        // ============================
+        // FILTER OPD
+        // ============================
         if ($request->filled('opd')) {
             $queryKemenpan->where('nama_opd', 'like', '%' . $request->opd . '%');
             $queryKemendagri->where('nama_opd', 'like', '%' . $request->opd . '%');
         }
 
-        // Pagination 10 row per page
-        $evaluasiKemenpan = $queryKemenpan->orderBy('created_at', 'desc')
+        // ============================
+        // ORDER BY URUTAN OPD
+        // ============================
+        $orderByOPD = "FIELD(nama_opd, '" . implode("','", $urutanOPD) . "')";
+
+        $queryKemenpan
+            ->orderByRaw("$orderByOPD = 0") // OPD tidak terdaftar di bawah
+            ->orderByRaw($orderByOPD);
+
+        $queryKemendagri
+            ->orderByRaw("$orderByOPD = 0")
+            ->orderByRaw($orderByOPD);
+
+        // ============================
+        // PAGINATION
+        // ============================
+        $evaluasiKemenpan = $queryKemenpan
             ->paginate(10, ['*'], 'kemenpan_page');
 
-        $evaluasiKemendagri = $queryKemendagri->orderBy('created_at', 'desc')
+        $evaluasiKemendagri = $queryKemendagri
             ->paginate(10, ['*'], 'kemendagri_page');
 
-        // Statistik
+        // ============================
+        // STATISTIK
+        // ============================
         $stats = [
             'total_kemenpan' => EvaluasiKemenpan::count(),
             'total_kemendagri' => EvaluasiKemendagri::count(),
@@ -56,15 +131,21 @@ class KematanganKelembagaanController extends Controller
             'avg_kemendagri' => (float) EvaluasiKemendagri::avg('total_skor') ?? 0,
         ];
 
-        // List OPD untuk filter
-        $listOPD = Pengguna::whereIn('role', ['OPD', 'opd', 'ADMIN_KELEMBAGAAN'])
-            ->distinct('nama_opd')
-            ->orderBy('nama_opd')
+        // ============================
+        // LIST OPD UNTUK FILTER
+        // ============================
+        $listOPD = Pengguna::whereIn('role', ['OPD'])
+            ->distinct()
             ->pluck('nama_opd');
 
         return view(
             'adminkelembagaan.kematangan-kelembagaan.index',
-            compact('evaluasiKemenpan', 'evaluasiKemendagri', 'stats', 'listOPD')
+            compact(
+                'evaluasiKemenpan',
+                'evaluasiKemendagri',
+                'stats',
+                'listOPD'
+            )
         );
     }
 
@@ -95,7 +176,8 @@ class KematanganKelembagaanController extends Controller
 
                 $evaluasi->delete();
 
-                return redirect()->route('adminkelembagaan.kematangan-kelembagaan.index')
+                return redirect()
+                    ->route('adminkelembagaan.kematangan-kelembagaan.index')
                     ->with('success', 'Data hasil survei berhasil dihapus.');
             }
 
@@ -106,131 +188,105 @@ class KematanganKelembagaanController extends Controller
     }
 
     /**
-     * Tampilkan detail hasil survei Kemenpan (JSON)
+     * Detail Kemenpan (JSON)
      */
-   public function showKemenpanJson($id)
-{
-    $evaluasi = EvaluasiKemenpan::find($id);
-
-    if (!$evaluasi) {
-        return response()->json(['error' => 'Data tidak ditemukan'], 404);
-    }
-
-    // Ambil detail perhitungan
-    $detailRaw = $evaluasi->getDetailPerhitungan() ?? ['struktur' => [], 'proses' => []];
-    
-    // Format detail perhitungan
-    $detailPerhitungan = [];
-    
-    // Struktur
-    if (isset($detailRaw['struktur'])) {
-        foreach ($detailRaw['struktur'] as $subdimensi => $data) {
-            $detailPerhitungan[$subdimensi] = [
-                'skor_mentah' => $data['skor'] ?? 0,
-                'max_skor' => 100
-            ];
-        }
-    }
-    
-    // Proses
-    if (isset($detailRaw['proses'])) {
-        foreach ($detailRaw['proses'] as $subdimensi => $data) {
-            $detailPerhitungan[$subdimensi] = [
-                'skor_mentah' => $data['skor'] ?? 0,
-                'max_skor' => 100
-            ];
-        }
-    }
-
-    // Ambil jawaban langsung dari model (array sederhana)
-    $jawabanStruktur = [];
-    for ($i = 1; $i <= 32; $i++) {
-        $jawabanStruktur[] = $evaluasi->{"struktur_$i"} ?? 'Tidak Diisi';
-    }
-    
-    $jawabanProses = [];
-    for ($i = 1; $i <= 30; $i++) {
-        $jawabanProses[] = $evaluasi->{"proses_$i"} ?? 'Tidak Diisi';
-    }
-
-    // Ambil interpretasi
-    $interpretasi = [];
-    if (method_exists($evaluasi, 'getInterpretasi')) {
-        $interpretasi = $evaluasi->getInterpretasi() ?? [];
-    }
-
-    return response()->json([
-        'evaluasi' => [
-            'nama_opd'      => $evaluasi->nama_opd ?? '',
-            'email'         => $evaluasi->email ?? '',
-            'created_at'    => optional($evaluasi->created_at)->format('d-m-Y') ?? '',
-            'skor_struktur' => $evaluasi->skor_struktur ?? 0,
-            'skor_proses'   => $evaluasi->skor_proses ?? 0,
-            'total_skor'    => $evaluasi->total_skor ?? 0,
-        ],
-        'jawaban' => [
-            'struktur' => $jawabanStruktur, // Format: array [0..31]
-            'proses' => $jawabanProses      // Format: array [0..29]
-        ],
-        'detailPerhitungan' => $detailPerhitungan,
-        'interpretasi' => $interpretasi
-    ]);
-}
-    /**
-     * Tampilkan detail hasil survei Kemendagri
-     */
-    public function showKemendagri($id)
+    public function showKemenpanJson($id)
     {
-        $evaluasi = EvaluasiKemendagri::with('user')->findOrFail($id);
+        $evaluasi = EvaluasiKemenpan::find($id);
 
-        $jawaban = [];
-        $variabels = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi'];
-        foreach ($variabels as $var) {
-            $jawaban["VARIABEL " . strtoupper($var)] = [
-                'tingkat' => $evaluasi->{"variabel_{$var}"},
-                'files' => []
-            ];
+        if (!$evaluasi) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
 
-            for ($i = 1; $i <= 3; $i++) {
-                $filePath = $evaluasi->{"file_path_{$var}_$i"};
-                if ($filePath) {
-                    $jawaban["VARIABEL " . strtoupper($var)]['files'][] = [
-                        'path' => $filePath,
-                        'name' => basename($filePath),
-                        'number' => $i,
-                        'url' => asset('storage/' . $filePath)
+        $detailRaw = $evaluasi->getDetailPerhitungan() ?? ['struktur' => [], 'proses' => []];
+        $detailPerhitungan = [];
+
+        foreach (['struktur', 'proses'] as $jenis) {
+            if (isset($detailRaw[$jenis])) {
+                foreach ($detailRaw[$jenis] as $sub => $data) {
+                    $detailPerhitungan[$sub] = [
+                        'skor_mentah' => $data['skor'] ?? 0,
+                        'max_skor' => 100
                     ];
                 }
             }
         }
 
-        $skorMapping = [
-            'Tingkat I' => 1,
-            'Tingkat II' => 2,
-            'Tingkat III' => 3,
-            'Tingkat IV' => 4,
-            'Tingkat V' => 5
-        ];
+        $jawabanStruktur = [];
+        for ($i = 1; $i <= 32; $i++) {
+            $jawabanStruktur[] = $evaluasi->{"struktur_$i"} ?? 'Tidak Diisi';
+        }
 
-        $detailPerhitungan = [];
-        $totalMentah = 0;
+        $jawabanProses = [];
+        for ($i = 1; $i <= 30; $i++) {
+            $jawabanProses[] = $evaluasi->{"proses_$i"} ?? 'Tidak Diisi';
+        }
+
+        return response()->json([
+            'evaluasi' => [
+                'nama_opd' => $evaluasi->nama_opd ?? '',
+                'email' => $evaluasi->email ?? '',
+                'created_at' => optional($evaluasi->created_at)->format('d-m-Y'),
+                'skor_struktur' => $evaluasi->skor_struktur ?? 0,
+                'skor_proses' => $evaluasi->skor_proses ?? 0,
+                'total_skor' => $evaluasi->total_skor ?? 0,
+            ],
+            'jawaban' => [
+                'struktur' => $jawabanStruktur,
+                'proses' => $jawabanProses
+            ],
+            'detailPerhitungan' => $detailPerhitungan,
+            'interpretasi' => method_exists($evaluasi, 'getInterpretasi')
+                ? $evaluasi->getInterpretasi()
+                : []
+        ]);
+    }
+
+    /**
+     * Detail Kemendagri (JSON)
+     */
+    public function showKemendagriJson($id)
+    {
+        $evaluasi = EvaluasiKemendagri::with('user')->find($id);
+
+        if (!$evaluasi) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
+
+        $variabels = ['i','ii','iii','iv','v','vi','vii','viii','ix','x','xi'];
+        $jawaban = [];
 
         foreach ($variabels as $var) {
-            $tingkat = $evaluasi->{"variabel_{$var}"};
-            $skor = $skorMapping[$tingkat] ?? 0;
-            $totalMentah += $skor;
+            $files = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $path = $evaluasi->{"file_path_{$var}_$i"};
+                if ($path) {
+                    $files[] = [
+                        'name' => basename($path),
+                        'url' => asset('storage/' . $path),
+                        'path' => $path
+                    ];
+                }
+            }
 
-            $detailPerhitungan["VARIABEL " . strtoupper($var)] = [
-                'tingkat' => $tingkat,
-                'skor_mentah' => $skor
+            $jawaban["VARIABEL " . strtoupper($var)] = [
+                'tingkat' => $evaluasi->{"variabel_{$var}"},
+                'files' => $files
             ];
         }
 
-        $skorNormalized = (($totalMentah - 11) / 44) * 100;
-
-        return view(
-            'components.adminkelembagaan.detail-modal-survei-kemendagri',
-            compact('evaluasi', 'jawaban', 'detailPerhitungan', 'totalMentah', 'skorNormalized')
-        );
+        return response()->json([
+            'evaluasi' => [
+                'id' => $evaluasi->id,
+                'nama_opd' => $evaluasi->nama_opd,
+                'email' => $evaluasi->email,
+                'created_at' => $evaluasi->created_at->format('d M Y H:i'),
+                'total_skor' => $evaluasi->total_skor,
+                'tingkat_maturitas' => $evaluasi->tingkat_maturitas,
+                'status' => $evaluasi->status ?? 'Diproses',
+                'catatan' => $evaluasi->catatan
+            ],
+            'jawaban' => $jawaban
+        ]);
     }
 }

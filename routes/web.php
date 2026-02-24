@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\GmailController;   
+use App\Http\Controllers\GmailController;
 use App\Http\Controllers\OPD\DashboardController;
 use App\Http\Controllers\OPD\RBGeneralController;
 use App\Http\Controllers\OPD\RBTematikController;
@@ -88,6 +88,12 @@ Route::prefix('adminpelayananpublik')->name('adminpelayananpublik.')->group(func
     Route::delete('template/{id}/hapus', [TemplateController::class, 'destroy'])->name('template.destroy');
 });
 
+// Admin RB AksesRB Routes
+Route::prefix('adminrb')->group(function () {
+    // Kontrol Akses RB
+    Route::get('/aksesrb', [RBAksesController::class, 'index'])->name('adminrb.aksesrb.index');
+    Route::put('/aksesrb/{id}', [RBAksesController::class, 'update'])->name('rb-access.update');
+});
 
 // Admin RB Kelola Akun Routes
 Route::prefix('adminrb')->group(function () {
@@ -102,19 +108,46 @@ Route::prefix('adminrb')->group(function () {
 });
 
 // Admin RB General
-Route::prefix('adminrb')->group(function () {
-    Route::get('/rb-general', [AdminRBRBGeneralController::class, 'index'])->name('adminrb.rb-general.index');
+Route::prefix('adminrb')->name('adminrb.')->group(function () {
+    // Route untuk index (halaman utama)
+    Route::get('/rb-general', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'index'])->name('rb-general.index');
+    
+    // Route untuk AJAX
+    Route::get('/rb-general/{id}', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'show'])->name('rb-general.show');
+    Route::get('/rb-general/{id}/edit', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'edit'])->name('rb-general.edit');
+    Route::put('/rb-general/{id}', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'update'])->name('rb-general.update');
+    Route::delete('/rb-general/{id}', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'destroy'])->name('rb-general.destroy');
+    
+    // Route untuk Export
+    Route::get('/rb-general/export/excel', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'exportExcel'])->name('rb-general.export.excel');
+    Route::get('/rb-general/export/pdf', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'exportPdf'])->name('rb-general.export.pdf');
 });
 
-
-// RB Tematik
-Route::prefix('adminrb')->group(function () {
-    Route::get('/rb-tematik', [AdminRBRBTematikController::class, 'index'])->name('adminrb.rb-tematik.index');
+// Admin RB Tematik
+Route::prefix('adminrb')->name('adminrb.')->group(function () {
+    // Route untuk halaman utama
+    Route::get('/rb-tematik', [App\Http\Controllers\AdminRB\RBTematikController::class, 'index'])->name('rb-tematik.index');
+    
+    // Route untuk AJAX (show, edit)
+    Route::get('/rb-tematik/{id}', [App\Http\Controllers\AdminRB\RBTematikController::class, 'show'])->name('rb-tematik.show');
+    Route::get('/rb-tematik/{id}/edit', [App\Http\Controllers\AdminRB\RBTematikController::class, 'edit'])->name('rb-tematik.edit');
+    
+    // Route untuk update dan delete
+    Route::post('/rb-tematik/{id}', [App\Http\Controllers\AdminRB\RBTematikController::class, 'update'])->name('rb-tematik.update');
+    Route::delete('/rb-tematik/{id}', [App\Http\Controllers\AdminRB\RBTematikController::class, 'destroy'])->name('rb-tematik.destroy');
+    
+    // Route untuk export (optional)
+    Route::get('/rb-tematik/export/excel', [App\Http\Controllers\AdminRB\RBTematikController::class, 'exportExcel'])->name('rb-tematik.export.excel');
+    Route::get('/rb-tematik/export/pdf', [App\Http\Controllers\AdminRB\RBTematikController::class, 'exportPdf'])->name('rb-tematik.export.pdf');
 });
 
-// PK Bupati
-Route::prefix('adminrb')->group(function () {
-    Route::get('/pk-bupati', [AdminRBPKBupatiController::class, 'index'])->name('adminrb.pk-bupati.index');
+// Admin PK Bupati
+Route::prefix('adminrb')->name('adminrb.')->group(function () {
+    Route::get('/pk-bupati', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'index'])->name('pk-bupati.index');
+    Route::get('/pk-bupati/{id}', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'show'])->name('pk-bupati.show');
+    Route::get('/pk-bupati/{id}/edit', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'edit'])->name('pk-bupati.edit');
+    Route::put('/pk-bupati/{id}', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'update'])->name('pk-bupati.update');
+    Route::delete('/pk-bupati/{id}', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'destroy'])->name('pk-bupati.destroy');
 });
 
 // Admin RB Kelola Data
@@ -146,29 +179,29 @@ Route::middleware(['auth'])->prefix('adminkelembagaan')->name('adminkelembagaan.
 
     // Dokumen
     Route::controller(DokumenController::class)->group(function () {
-    Route::get('/dokumen', 'index')->name('dokumen.index');
-    Route::put('/dokumen/{id}', 'update')->name('dokumen.update');
-    Route::delete('/dokumen/{id}', 'destroy')->name('dokumen.destroy');
-   Route::get('/dokumen/preview/{judul}', 'preview')->name('dokumen.preview');
-});
+        Route::get('/dokumen', 'index')->name('dokumen.index');
+        Route::put('/dokumen/{id}', 'update')->name('dokumen.update');
+        Route::delete('/dokumen/{id}', 'destroy')->name('dokumen.destroy');
+        Route::get('/dokumen/preview/{judul}', 'preview')->name('dokumen.preview');
+    });
 
     // Kematangan Kelembagaan - HASIL SURVEI
     Route::prefix('kematangan-kelembagaan')->name('kematangan-kelembagaan.')->group(function () {
         Route::get('/', [AdminKelembagaanKematanganKelembagaanController::class, 'index'])
             ->name('index');
-        
+
+        // Detail routes
         Route::get('/kemenpan/{id}', [AdminKelembagaanKematanganKelembagaanController::class, 'showKemenpanJson'])
             ->name('show-kemenpan');
-        
-        Route::get('/kemendagri/{id}', [AdminKelembagaanKematanganKelembagaanController::class, 'showKemendagri'])
+
+        Route::get('/kemendagri/{id}', [AdminKelembagaanKematanganKelembagaanController::class, 'showKemendagriJson'])
             ->name('show-kemendagri');
-        
-        Route::delete('/{id}', [AdminKelembagaanKematanganKelembagaanController::class, 'destroy'])
+
+        // Delete route dengan parameter berbeda untuk menghindari konflik
+        Route::delete('/delete/{id}', [AdminKelembagaanKematanganKelembagaanController::class, 'destroy'])
             ->name('destroy');
     });
 });
-
-
 
 // Login Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -177,22 +210,43 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 // Logout Route - Diperbaiki
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// RB Routes
-Route::prefix('rb-general')->group(function () {
-    Route::get('/', [RBGeneralController::class, 'index'])->name('rb-general.index');
+// RB Routes (RB General)
+Route::prefix('rb-general')->name('rb-general.')->group(function () {
+    Route::get('/', [RBGeneralController::class, 'index'])->name('index');
+    Route::post('/', [RBGeneralController::class, 'store'])->name('store');
+    Route::get('/{id}', [RBGeneralController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [RBGeneralController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [RBGeneralController::class, 'update'])->name('update');
+    Route::delete('/{id}', [RBGeneralController::class, 'destroy'])->name('destroy');
 });
 
+// RB Tematik Routes
 Route::prefix('rb-tematik')->group(function () {
     Route::get('/', [RBTematikController::class, 'index'])->name('rb-tematik.index');
+    Route::post('/', [RBTematikController::class, 'store'])->name('rb-tematik.store');
+    Route::get('/{id}', [RBTematikController::class, 'show'])->name('rb-tematik.show');
+    Route::get('/{id}/edit', [RBTematikController::class, 'edit'])->name('rb-tematik.edit');
+    Route::put('/{id}', [RBTematikController::class, 'update'])->name('rb-tematik.update');
+    Route::delete('/{id}', [RBTematikController::class, 'destroy'])->name('rb-tematik.destroy');
 });
 
 // SAKIP Routes
-Route::prefix('pk-bupati')->group(function () {
-    Route::get('/', [PKBupatiController::class, 'index'])->name('pk-bupati.index');
-    Route::get('/pk-bupati/download/pdf', [DownloadController::class, 'downloadPKPdf'])->name('pkbupati.download.pdf');
-    Route::get('/pk-bupati/download/excel', [DownloadController::class, 'downloadPKExcel'])->name('pkbupati.download.excel');
+Route::prefix('pk-bupati')->name('pk-bupati.')->group(function () {
+    Route::get('/', [PKBupatiController::class, 'index'])->name('index');
+    
+    // Route untuk CRUD (sesuaikan dengan prefix)
+    Route::post('/store', [PKBupatiController::class, 'store'])->name('store');
+    Route::get('/show/{id}', [PKBupatiController::class, 'show'])->name('show');
+    Route::put('/update/{id}', [PKBupatiController::class, 'update'])->name('update');
+    Route::delete('/destroy/{id}', [PKBupatiController::class, 'destroy'])->name('destroy');
+    Route::get('/filter', [PKBupatiController::class, 'getDataByFilter'])->name('filter');
+    
+    // Route untuk download
+    Route::get('/download/pdf', [DownloadController::class, 'downloadPKPdf'])->name('download.pdf');
+    Route::get('/download/excel', [DownloadController::class, 'downloadPKExcel'])->name('download.excel');
 });
 
+// Kelembagaan
 // Analisis Jabatan dan Analisis Beban Kerja Routes
 Route::prefix('anjab-abk')->group(function () {
     Route::get('/', [AnjabdanABKController::class, 'index'])->name('anjab-abk.index');
@@ -247,13 +301,15 @@ Route::prefix('pelayanan-publik')->group(function () {
     Route::post('upload', [PelayananPublikController::class, 'upload'])->name('opd.pelayananpublik.upload');
     Route::delete('/laporan/{id}/hapus', [PelayananPublikController::class, 'hapusLaporan'])->name('laporan.hapus');
     Route::get('/laporan/{id}/download', [PelayananPublikController::class, 'download'])->name('laporan.download');
+    Route::get('/laporan/{id}/view', [PelayananPublikController::class, 'viewPdf'])->name('laporan.view');
+    
+    // SKM Routes
+    Route::post('/skm/generate', [PelayananPublikController::class, 'generateSkm'])->name('laporan.skm.generate');
+    Route::delete('/skm/{id}/hapus', [PelayananPublikController::class, 'hapusSkm'])
+    ->name('skm.destroy');
+
 });
 
-Route::prefix('adminrb')->group(function () {
-    // Kontrol Akses RB
-    Route::get('/aksesrb', [RBAksesController::class, 'index'])->name('adminrb.aksesrb.index');
-    Route::put('/aksesrb/{id}', [RBAksesController::class, 'update'])->name('rb-access.update');
-});
 
 Route::middleware(['auth'])->prefix('opd')->name('opd.')->group(function () {
 

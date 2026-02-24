@@ -14,7 +14,6 @@
                 <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
                 <p class="text-gray-700 text-base">
                     Apakah Anda yakin ingin menghapus data ini? <br>
-                    <span class="font-semibold text-red-600">Tindakan ini tidak bisa dibatalkan.</span>
                 </p>
             </div>
 

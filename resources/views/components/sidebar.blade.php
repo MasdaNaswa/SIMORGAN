@@ -36,7 +36,7 @@
           <i class="material-icons">description</i> <span>Pelayanan Publik</span>
         </a>
         <ul class="submenu">
-          <li class="submenu-item"><a href="{{ route('pelayanan-publik.index') }}">Unggah Dokumen</a></li>
+          <li class="submenu-item"><a href="{{ route('pelayanan-publik.index') }}">Dokumen</a></li>
         </ul>
       </li>
 
@@ -85,6 +85,22 @@
 </aside>
 
 <script>
+
+    // Auto open sidebar saat klik icon menu ketika collapsed
+  document.querySelectorAll('.sidebar-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      // Jika sidebar sedang collapse
+      if (sidebar.classList.contains('collapsed')) {
+        sidebar.classList.remove('collapsed');
+        localStorage.setItem('sidebarCollapsed', false);
+
+        // Update icon toggle
+        const icon = toggleBtn.querySelector('i');
+        icon.textContent = 'menu';
+      }
+    });
+  });
+
   // Sort menu utama sidebar berdasarkan abjad
   document.addEventListener('DOMContentLoaded', () => {
     const navList = document.querySelector('.sidebar-nav > ul');
@@ -107,17 +123,24 @@
   const mainContent = document.querySelector('.main-content');
 
   toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+  sidebar.classList.toggle('collapsed');
+  localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
 
-    // Update toggle icon
-    const icon = toggleBtn.querySelector('i');
-    if (sidebar.classList.contains('collapsed')) {
-      icon.textContent = 'chevron_right';
-    } else {
-      icon.textContent = 'menu';
-    }
-  });
+  const icon = toggleBtn.querySelector('i');
+
+  if (sidebar.classList.contains('collapsed')) {
+    icon.textContent = 'chevron_right';
+
+    // 🔥 TUTUP SEMUA SUBMENU SAAT SIDEBAR DITUTUP
+    document.querySelectorAll('.has-submenu.active').forEach(item => {
+      item.classList.remove('active');
+    });
+
+  } else {
+    icon.textContent = 'menu';
+  }
+});
+
 
   // Periksa status sidebar dari localStorage
   document.addEventListener('DOMContentLoaded', () => {

@@ -9,20 +9,39 @@ class PK_Bupati extends Model
 {
     use HasFactory;
 
-    protected $table = 'pk_bupati'; // nama tabel di database
+    protected $table = 'pk_bupati';
 
     protected $fillable = [
+        'no',
+        'tahun',
         'sasaran_strategis',
         'indikator_kinerja',
+        'semester',
         'target_2025',
         'satuan',
-        'target_per_tw',
-        'realisasi_per_tw',
-        'penjelasan_analisis',
+        'target_tw1',
+        'realisasi_tw1',
+        'target_tw2',
+        'realisasi_tw2',
+        'target_tw3',
+        'realisasi_tw3',
+        'target_tw4',
+        'realisasi_tw4',
+        'pagu_anggaran_tw1',
+        'realisasi_anggaran_tw1',
+        'pagu_anggaran_tw2',
+        'realisasi_anggaran_tw2',
+        'pagu_anggaran_tw3',
+        'realisasi_anggaran_tw3',
+        'pagu_anggaran_tw4',
+        'realisasi_anggaran_tw4',
         'program',
-        'realisasi_per_tri_wulan',
+        'penjelasan_analisis',
         'penanggung_jawab',
-        'pagu_anggaran',
-        'realisasi_anggaran',
+    ];
+
+    protected $casts = [
+        'tahun' => 'integer',
+        'no' => 'integer',
     ];
 }

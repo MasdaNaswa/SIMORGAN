@@ -197,11 +197,19 @@ class KematanganKelembagaanController extends Controller
     /**
      * Submit form Kemendagri
      */
-    public function submitKemendagri(Request $request)
+    /**
+ * Submit form Kemendagri
+ */
+public function submitKemendagri(Request $request)
 {
     try {
         $user = Auth::user();
-
+        
+        // DEBUG: Lihat semua input yang diterima
+        \Log::info('=== DEBUG SUBMIT KEMENDAGRI ===');
+        \Log::info('Request data:', $request->all());
+        \Log::info('Files received:', array_keys($request->allFiles()));
+        
         // ===============================
         // 1. VALIDASI DASAR
         // ===============================
@@ -219,47 +227,57 @@ class KematanganKelembagaanController extends Controller
         $request->validate($rules);
 
         // ===============================
-        // 2. VALIDASI FILE SECARA MANUAL (TOLAK FILE WORD)
+        // 2. VALIDASI FILE - PERBAIKI NAMA INPUT
         // ===============================
         foreach ($variabels as $var) {
-            if ($request->hasFile("variabel-{$var}-files")) {
-                $files = $request->file("variabel-{$var}-files");
+            // PERBAIKAN: Gunakan underscore (_) bukan dash (-)
+            $inputName = "variabel_{$var}_files";
+            \Log::info("Checking for files: $inputName");
+            
+            if ($request->hasFile($inputName)) {
+                $files = $request->file($inputName);
+                
+                // Pastikan $files adalah array
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+                
+                \Log::info("Found " . count($files) . " files for variabel $var");
                 
                 // Cek jumlah file maksimal 5 per variabel
                 if (count($files) > 5) {
                     return back()->withErrors([
-                        "variabel-{$var}-files" => "Maksimal 5 file per variabel. Anda mengupload " . count($files) . " file."
+                        $inputName => "Maksimal 5 file per variabel. Anda mengupload " . count($files) . " file."
                     ])->withInput();
                 }
                 
                 foreach ($files as $index => $file) {
-                    // Cek ekstensi file (hanya PDF, JPG, JPEG)
-                    $extension = strtolower($file->getClientOriginalExtension());
-                    $allowedExtensions = ['pdf', 'jpg'];
-                    
-                    if (!in_array($extension, $allowedExtensions)) {
+                    if (!$file->isValid()) {
+                        \Log::error("File tidak valid: " . $file->getClientOriginalName());
                         return back()->withErrors([
-                            "variabel-{$var}-files" => "File untuk Variabel " . strtoupper($var) . " harus PDF, JPG, atau JPEG saja. Format .$extension tidak diizinkan."
+                            $inputName => "File ke-" . ($index + 1) . " tidak valid."
                         ])->withInput();
                     }
                     
-                    // Cek mime type untuk double validation
-                    $mimeType = $file->getMimeType();
-                    $allowedMimes = ['application/pdf', 'image/jpg'];
+                    // Cek ekstensi file (PDF, JPG, JPEG, PNG)
+                    $extension = strtolower($file->getClientOriginalExtension());
+                    $allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
                     
-                    if (!in_array($mimeType, $allowedMimes)) {
+                    if (!in_array($extension, $allowedExtensions)) {
                         return back()->withErrors([
-                            "variabel-{$var}-files" => "File untuk Variabel " . strtoupper($var) . " memiliki format yang tidak diizinkan."
+                            $inputName => "File untuk Variabel " . strtoupper($var) . " harus PDF, JPG, JPEG, atau PNG saja. Format .$extension tidak diizinkan."
                         ])->withInput();
                     }
                     
                     // Cek ukuran file (maksimal 10MB)
-                    if ($file->getSize() > 10 * 1024 * 1024) { // 10MB dalam bytes
+                    if ($file->getSize() > 10 * 1024 * 1024) {
                         return back()->withErrors([
-                            "variabel-{$var}-files" => "File untuk Variabel " . strtoupper($var) . " maksimal 10MB. File Anda: " . round($file->getSize() / 1024 / 1024, 2) . "MB"
+                            $inputName => "File untuk Variabel " . strtoupper($var) . " maksimal 10MB. File Anda: " . round($file->getSize() / 1024 / 1024, 2) . "MB"
                         ])->withInput();
                     }
                 }
+            } else {
+                \Log::info("No files found for variabel $var");
             }
         }
 
@@ -295,47 +313,80 @@ class KematanganKelembagaanController extends Controller
         }
 
         // ===============================
-        // 6. UPLOAD FILE KE STORAGE
+        // 6. UPLOAD FILE KE STORAGE - PERBAIKI NAMA INPUT
         // ===============================
+        \Log::info('=== MEMULAI UPLOAD FILE ===');
+        
         foreach ($variabels as $v) {
-            $inputName = "variabel-{$v}-files";
+            // PERBAIKAN: Gunakan underscore (_) bukan dash (-)
+            $inputName = "variabel_{$v}_files";
+            $uploadedCount = 0;
+            
+            \Log::info("Processing files for variabel $v");
 
             if ($request->hasFile($inputName)) {
                 $files = $request->file($inputName);
-                $uploadedCount = 0;
+                
+                // Pastikan $files adalah array
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+                
+                \Log::info("Files to upload for $v: " . count($files));
 
                 foreach ($files as $index => $file) {
-                    // Pastikan hanya 3 file pertama yang disimpan (sesuai dengan kolom database)
+                    // Hanya simpan 3 file pertama
                     if ($uploadedCount < 3) {
-                        // Generate nama file yang unik
-                        $filename = time() . '_' . $v . '_' . ($index + 1) . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                        
-                        // Simpan file ke storage
-                        $path = $file->storeAs(
-                            "kemendagri/{$user->id_user}/{$v}",
-                            $filename,
-                            'public'
-                        );
-                        
-                        // Simpan path ke database
-                        $column = "file_path_{$v}_" . ($uploadedCount + 1);
-                        $evaluasi->$column = $path;
-                        
-                        $uploadedCount++;
+                        try {
+                            // Generate nama file yang unik
+                            $filename = time() . '_' . $v . '_' . ($index + 1) . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                            
+                            // Path untuk storage
+                            $storagePath = "kemendagri/{$user->id_user}/{$v}/{$filename}";
+                            
+                            \Log::info("Storing file: $filename to path: $storagePath");
+                            
+                            // Simpan file ke storage public
+                            $path = $file->storeAs(
+                                "kemendagri/{$user->id_user}/{$v}",
+                                $filename,
+                                'public'
+                            );
+                            
+                            \Log::info("File stored successfully: $path");
+                            
+                            // Verifikasi file tersimpan
+                            $exists = Storage::disk('public')->exists($path);
+                            \Log::info("File verification: " . ($exists ? 'SUCCESS' : 'FAILED'));
+                            
+                            if (!$exists) {
+                                \Log::error("File failed to save: $path");
+                            } else {
+                                // Simpan path ke database
+                                $column = "file_path_{$v}_" . ($uploadedCount + 1);
+                                $evaluasi->$column = $path;
+                                
+                                $uploadedCount++;
+                                \Log::info("Saved to column: $column with path: $path");
+                            }
+                            
+                        } catch (\Exception $e) {
+                            \Log::error("Error uploading file for variabel $v: " . $e->getMessage());
+                            \Log::error($e->getTraceAsString());
+                            continue;
+                        }
+                    } else {
+                        \Log::info("Skipping file $index for $v - already have 3 files");
                     }
                 }
-
-                // Kosongkan sisa kolom file jika kurang dari 3
-                for ($i = $uploadedCount + 1; $i <= 3; $i++) {
-                    $evaluasi->{"file_path_{$v}_$i"} = '';
-                }
-
-            } else {
-                // Jika tidak ada file, set semua kolom ke string kosong
-                for ($i = 1; $i <= 3; $i++) {
-                    $evaluasi->{"file_path_{$v}_$i"} = '';
-                }
             }
+            
+            // Kosongkan sisa kolom file jika kurang dari 3
+            for ($i = $uploadedCount + 1; $i <= 3; $i++) {
+                $evaluasi->{"file_path_{$v}_$i"} = '';
+            }
+            
+            \Log::info("Finished processing $v. Uploaded: $uploadedCount files");
         }
 
         // ===============================
@@ -344,33 +395,41 @@ class KematanganKelembagaanController extends Controller
         $totalSkor = $evaluasi->hitungSkor();
         $evaluasi->total_skor = $totalSkor;
         $evaluasi->tingkat_maturitas = $evaluasi->tentukanPeringkatKomposit($totalSkor);
-        // HAPUS BARIS INI: $evaluasi->status = 'Diproses';
+        $evaluasi->status = 'Diproses'; // Tambahkan status
 
         // ===============================
-        // 8. LOGGING UNTUK DEBUG
+        // 8. DEBUG DATA SEBELUM DISIMPAN
         // ===============================
-        \Log::info('Data Kemendagri berhasil divalidasi dan akan disimpan:', [
-            'id_user' => $user->id_user,
-            'nama_opd' => $evaluasi->nama_opd,
-            'total_skor' => $evaluasi->total_skor,
-            'tingkat_maturitas' => $evaluasi->tingkat_maturitas
-        ]);
+        \Log::info('=== DATA YANG AKAN DISIMPAN ===');
+        \Log::info('Total Skor: ' . $evaluasi->total_skor);
+        \Log::info('Tingkat Maturitas: ' . $evaluasi->tingkat_maturitas);
+        \Log::info('File Paths:');
+        
+        foreach ($variabels as $v) {
+            for ($i = 1; $i <= 3; $i++) {
+                $path = $evaluasi->{"file_path_{$v}_$i"};
+                if (!empty($path)) {
+                    \Log::info("  Variabel $v, file $i: $path");
+                }
+            }
+        }
 
         // ===============================
         // 9. SIMPAN KE DATABASE
         // ===============================
-        $evaluasi->save();
+        $saved = $evaluasi->save();
+        
+        if (!$saved) {
+            \Log::error('Gagal menyimpan evaluasi ke database');
+            throw new \Exception('Gagal menyimpan data evaluasi');
+        }
+
+        \Log::info('=== EVALUASI BERHASIL DISIMPAN ===');
+        \Log::info('ID Evaluasi: ' . $evaluasi->id_evaluasi_kemendagri);
+        \Log::info('Created At: ' . $evaluasi->created_at);
 
         // ===============================
-        // 10. LOG SUCCESS
-        // ===============================
-        \Log::info('Evaluasi Kemendagri berhasil disimpan:', [
-            'id_evaluasi_kemendagri' => $evaluasi->id_evaluasi_kemendagri,
-            'created_at' => $evaluasi->created_at
-        ]);
-
-        // ===============================
-        // 11. REDIRECT DENGAN PESAN SUKSES
+        // 10. REDIRECT DENGAN PESAN SUKSES
         // ===============================
         return redirect()->route('kematangan.index')
             ->with('success', 'Evaluasi Kemendagri berhasil dikirim!')
@@ -381,19 +440,15 @@ class KematanganKelembagaanController extends Controller
             ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        // Tangkap error validasi khusus
-        return back()
-            ->withErrors($e->validator)
-            ->withInput()
-            ->with('error', 'Validasi gagal. Periksa kembali data yang diinput.');
+        \Log::error('Validation error: ' . json_encode($e->errors()));
+        return back()->withErrors($e->validator)->withInput();
             
     } catch (\Exception $e) {
-        // Tangkap error umum
         \Log::error('Error submit Kemendagri: ' . $e->getMessage());
         \Log::error($e->getTraceAsString());
         
         return back()
-            ->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage())
+            ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
             ->withInput();
     }
 }

@@ -12,7 +12,8 @@
         <div class="text-center">
             <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
             <p class="text-gray-700 text-sm">
-                Apakah Anda yakin ingin menghapus hasil survei dari 
+                Apakah Anda yakin ingin menghapus hasil survei 
+                dari 
                 <span id="opdNameSurvei" class="font-semibold break-all"></span>?
                 <br>
                 Tindakan ini tidak dapat dikembalikan.

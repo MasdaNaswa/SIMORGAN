@@ -1,3 +1,4 @@
+{{-- resources/views/components/adminrb/ubah-modal-akses.blade.php --}}
 @foreach ($aksesRb as $akses)
 <div id="aksesModal-{{ $akses->id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -10,21 +11,21 @@
 
                 <div>
                     <label class="block text-sm font-medium">Status</label>
-                    <select name="is_open" class="w-full border rounded px-3 py-2">
-                        <option value="1" {{ $akses->is_open ? 'selected' : '' }}>Dibuka</option>
-                        <option value="0" {{ !$akses->is_open ? 'selected' : '' }}>Ditutup</option>
+                    <select name="status" class="w-full border rounded px-3 py-2">
+                        <option value="Dibuka" {{ $akses->status == 'Dibuka' ? 'selected' : '' }}>Dibuka</option>
+                        <option value="Ditutup" {{ $akses->status == 'Ditutup' ? 'selected' : '' }}>Ditutup</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium">Tanggal Mulai</label>
-                    <input type="date" name="start_date" value="{{ $akses->start_date }}" 
+                    <input type="date" name="start_date" value="{{ $akses->start_date ? $akses->start_date->format('Y-m-d') : '' }}" 
                            class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium">Deadline</label>
-                    <input type="date" name="end_date" value="{{ $akses->end_date }}" 
+                    <input type="date" name="end_date" value="{{ $akses->end_date ? $akses->end_date->format('Y-m-d') : '' }}" 
                            class="w-full border rounded px-3 py-2">
                 </div>
 

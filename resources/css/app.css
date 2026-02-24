@@ -8,4 +8,48 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Custom Colors untuk semua layout */
+    --color-primary: #4361ee;
+    --color-primary-dark: #3a56d4;
+    --color-secondary: #3fbc93;
+    --color-danger: #ef476f;
+    --color-success: #06d6a0;
+    --color-warning: #ffd166;
+    --color-info: #3a86ff;
+    --color-light: #f8f9fa;
+    --color-dark: #212529;
+    --color-gray: #6c757d;
+    --color-border: #e9ecef;
+    --color-primary-light: #eef2ff;
+    
+    /* Font Family */
+    --font-poppins: 'Poppins', sans-serif;
+}
+
+/* Custom Utilities */
+@layer components {
+    .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors;
+    }
+    
+    .btn-danger {
+        @apply bg-danger text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity;
+    }
+    
+    .btn-success {
+        @apply bg-success text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity;
+    }
+    
+    .btn-warning {
+        @apply bg-warning text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity;
+    }
+    
+    .card {
+        @apply bg-white rounded-lg shadow-sm p-6;
+    }
+    
+    .card-header {
+        @apply border-b border-gray-200 pb-3 mb-4;
+    }
 }

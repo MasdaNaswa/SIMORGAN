@@ -1,331 +1,552 @@
-<div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center z-[9999] p-4">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
-        <!-- Modal Header -->
-        <div class="flex justify-between items-center bg-indigo-600 text-white p-6 rounded-t-lg sticky top-0 z-10">
-            <h3 class="text-xl font-semibold flex items-center gap-2">
-                 Ubah  Rencana Aksi RB General
-            </h3>
-            <button class="text-white hover:text-gray-200 text-2xl" onclick="closeModal('editModal')">
-                &times;
-            </button>
-        </div>
+<div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-40 z-[9999]">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center bg-amber-600 text-white p-6 rounded-t-lg sticky top-0 z-10">
+                <h3 class="text-xl font-semibold flex items-center gap-2">
+                    <i class="fas fa-edit"></i> Ubah Rencana Aksi RB General
+                </h3>
+            </div>
 
-        <!-- Modal Body -->
-        <div class="p-6">
-            <form id="editRenaksiRB">
-                <!-- Bagian Header -->
-                <div class="text-center mb-6 pb-4 border-b border-gray-200">
-                    <h2 class="text-lg font-bold text-indigo-700">UBAH RENCANA AKSI RB GENERAL TAHUN <span id="editTahunHeader">2025</span></h2>
-                </div>
+            <!-- Modal Body -->
+            <div class="p-6">
+                <form id="editRenaksiRB" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="editId" name="id">
 
-                <!-- Bagian Input Data -->
-                <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-indigo-500">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label for="editNo" class="block text-sm font-medium text-gray-700 mb-1">NO</label>
-                            <input type="text" id="editNo" name="editNo" readonly 
-                                class="w-full p-2 border border-gray-300 rounded-md bg-gray-100" />
+                    <!-- Bagian Header -->
+                    <div class="text-center mb-6 pb-4 border-b border-gray-200">
+                        <h2 class="text-lg font-bold text-amber-700">
+                            UBAH RENCANA AKSI RB GENERAL TAHUN <span id="editModalYear">{{  $selectedYear }}</span>
+                        </h2>
+                    </div>
+
+                    <!-- Informasi Utama -->
+                    <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-amber-500">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editNo" class="block text-sm font-medium text-gray-700 mb-1">NO</label>
+                                <input type="text" id="editNo" name="no"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan nomor" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editSasaranStrategi"
+                                    class="block text-sm font-medium text-gray-700 mb-1">SASARAN STRATEGI</label>
+                                <select id="editSasaranStrategi" name="sasaran_strategi" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <option value="">Pilih Sasaran Strategi</option>
+                                    <option value="Terwujudnya Transformasi Digital">Terwujudnya Transformasi Digital
+                                    </option>
+                                    <option
+                                        value="Terciptanya Aparatur Negara yang Kompeten dan Berkinerja Tinggi Berdasarkan Sistem Merit">
+                                        Terciptanya Aparatur Negara yang Kompeten dan Berkinerja Tinggi Berdasarkan
+                                        Sistem
+                                        Merit</option>
+                                    <option value="Terbangunnya Perilaku Birokrasi yang Beretika dan Inovatif">
+                                        Terbangunnya
+                                        Perilaku Birokrasi yang Beretika dan Inovatif</option>
+                                    <option
+                                        value="Terbangunnya Kapabilitas Kelembagaan Berkinerja Tinggi yang berbaris Jejaring dan Lincah">
+                                        Terbangunnya Kapabilitas Kelembagaan Berkinerja Tinggi yang berbaris Jejaring
+                                        dan
+                                        Lincah</option>
+                                    <option
+                                        value="Terwujudnya Kebijakan dan Pelayanan Publik yang Berkualitas dan Inklusif">
+                                        Terwujudnya Kebijakan dan Pelayanan Publik yang Berkualitas dan Inklusif
+                                    </option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="editSasaranStrategi" class="block text-sm font-medium text-gray-700 mb-1">SASARAN STRATEGI</label>
-                            <select id="editSasaranStrategi" name="editSasaranStrategi" required
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Pilih Sasaran Strategi</option>
-                                <option value="A">A. Terwujudnya Transformasi Digital</option>
-                                <option value="B">B. Terciptanya Aparatur Negara yang Kompeten dan Berkinerja Tinggi Berdasarkan Sistem Merit</option>
-                                <option value="C">C. Terbangunnya Perilaku Birokrasi yang Beretika dan Inovatif</option>
-                                <option value="D">D. Terbangunnya Kapabilitas Kelembagaan Berkinerja Tinggi yang berbaris Jejaring dan Lincah</option>
-                                <option value="E">E. Terwujudnya Kebijakan dan Pelayanan Publik yang Berkualitas dan Inklusif</option>
-                            </select>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editIndikator"
+                                    class="block text-sm font-medium text-gray-700 mb-1">INDIKATOR</label>
+                                <input type="text" id="editIndikator" name="indikator_capaian" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan indikator" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editTarget"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TARGET</label>
+                                <input type="text" id="editTarget" name="target" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan target" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="editSatuan"
+                                    class="block text-sm font-medium text-gray-700 mb-1">SATUAN</label>
+                                <select id="editSatuan" name="satuan" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <option value="">--Pilih Satuan--</option>
+                                    <option value="Nilai">Nilai</option>
+                                    <option value="Persen">Persen</option>
+                                    <option value="Bulan">Bulan</option>
+                                    <option value="OPD">OPD</option>
+                                    <option value="Laporan">Laporan</option>
+                                    <option value="Surat Keputusan">Surat Keputusan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editTargetTahun" class="block text-sm font-medium text-gray-700 mb-1">
+                                    TARGET TAHUN <span class="editTargetYearText">{{ $selectedYear}}</span>
+                                </label>
+                                <input type="text" id="editTargetTahun" name="target_tahun"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan target tahun" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label for="editIndikator" class="block text-sm font-medium text-gray-700 mb-1">INDIKATOR CAPAIAN SASARAN STRATEGI DAN IMPLEMENTASI KEBIJAKAN PERCEPATAN</label>
-                            <select id="editIndikator" name="editIndikator" required
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Pilih Indikator</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editTarget" class="block text-sm font-medium text-gray-700 mb-1">TARGET</label>
-                            <input type="text" id="editTarget" name="editTarget"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+                    <!-- Rencana Aksi -->
+                    <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-amber-500">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-clipboard-list text-amber-600"></i>
+                            RENCANA AKSI
+                        </h4>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">RENCANA AKSI</label>
+                        <textarea id="editRencanaAksi" name="rencana_aksi" rows="3" required
+                            class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                            placeholder="Masukkan rencana aksi"></textarea>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div class="form-group">
+                                <label for="editSatuanOutput"
+                                    class="block text-sm font-medium text-gray-700 mb-1">SATUAN
+                                    OUTPUT</label>
+                                <input type="text" id="editSatuanOutput" name="satuan_output"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan satuan output" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editIndikatorOutput"
+                                    class="block text-sm font-medium text-gray-700 mb-1">INDIKATOR OUTPUT</label>
+                                <input type="text" id="editIndikatorOutput" name="indikator_output"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan indikator output" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label for="editSatuan" class="block text-sm font-medium text-gray-700 mb-1">SATUAN</label>
-                            <select id="editSatuan" name="editSatuan"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Pilih Satuan</option>
-                                <option value="Nilai">Nilai</option>
-                                <option value="Persen">Persen</option>
-                                <option value="Bulan">Bulan</option>
-                                <option value="OPD">OPD</option>
-                                <option value="Laporan">Laporan</option>
-                                <option value="Surat Keputusan">Surat Keputusan</option>
-                            </select>
+                    <!-- Renaksi Tahun -->
+                    <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-blue-600"></i>
+                            Renaksi Tahun <span class="editRenaksiYearText">{{ $selectedYear }}</span>
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editRenaksiTw1Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW1 Target</label>
+                                <input type="text" id="editRenaksiTw1Target" name="renaksi_tw1_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan target TW1" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editTw1Rp" class="block text-sm font-medium text-gray-700 mb-1">TW1
+                                    Rp</label>
+                                <input type="text" id="editTw1Rp" name="tw1_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan anggaran TW1" />
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="editTarget2025" class="block text-sm font-medium text-gray-700 mb-1">Target Tahun 2025</label>
-                            <input type="text" id="editTarget2025" name="editTarget2025"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editRenaksiTw2Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW2 Target</label>
+                                <input type="text" id="editRenaksiTw2Target" name="renaksi_tw2_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan target TW2" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editTw2Rp" class="block text-sm font-medium text-gray-700 mb-1">TW2
+                                    Rp</label>
+                                <input type="text" id="editTw2Rp" name="tw2_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan anggaran TW2" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editRenaksiTw3Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW3 Target</label>
+                                <input type="text" id="editRenaksiTw3Target" name="renaksi_tw3_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan target TW3" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editTw3Rp" class="block text-sm font-medium text-gray-700 mb-1">TW3
+                                    Rp</label>
+                                <input type="text" id="editTw3Rp" name="tw3_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan anggaran TW3" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="editRenaksiTw4Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW4 Target</label>
+                                <input type="text" id="editRenaksiTw4Target" name="renaksi_tw4_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan target TW4" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editTw4Rp" class="block text-sm font-medium text-gray-700 mb-1">TW4
+                                    Rp</label>
+                                <input type="text" id="editTw4Rp" name="tw4_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan anggaran TW4" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="editRencanaAksi" class="block text-sm font-medium text-gray-700 mb-1">Rencana Aksi</label>
-                        <textarea id="editRencanaAksi" name="editRencanaAksi" rows="3"
-                            class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+
+                    <!-- Anggaran Tahun -->
+                    <div class="mb-6 p-4 bg-amber-50 rounded-lg">
+                        <label for="anggaran_tahun" class="block text-sm font-medium text-amber-700 mb-1">
+                            <i class="fas fa-money-bill-wave text-amber-600"></i>
+                            ANGGARAN TAHUN <span
+                                class="editanggaranYearText">{{ $selectedYear ?? $currentYear ?? date('Y') }}</span>
+                        </label>
+                        <input type="text" id="editAnggaranTahun" name="anggaran_tahun"
+                            placeholder="Masukkan anggaran {{ $selectedYear ?? $currentYear ?? date('Y') }}"
+                            class="w-full p-2 border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition rupiah-input bg-amber-50">
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="form-group">
-                            <label for="editOutput" class="block text-sm font-medium text-gray-700 mb-1">OUT PUT</label>
-                            <input type="text" id="editOutput" name="editOutput"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+                    <!-- Realisasi Renaksi Tahun -->
+                    <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-green-500">
+                        <h4 class="text-md font-semibold text-green-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-check-circle text-green-600"></i>
+                            Realisasi Renaksi Tahun <span class="editRealisasiYearText">{{ $selectedYear }}</span>
+                        </h4>
+
+                        <!-- TW1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editRealisasiTw1Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW1 Target</label>
+                                <input type="text" id="editRealisasiTw1Target" name="realisasi_tw1_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW1 Target" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editRealisasiTw1Rp" class="block text-sm font-medium text-gray-700 mb-1">TW1
+                                    Rp</label>
+                                <input type="text" id="editRealisasiTw1Rp" name="realisasi_tw1_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW1 Rp" />
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="editSatuanOutput" class="block text-sm font-medium text-gray-700 mb-1">SATUAN OUTPUT</label>
-                            <input type="text" id="editSatuanOutput" name="editSatuanOutput"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+
+                        <!-- TW2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editRealisasiTw2Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW2 Target</label>
+                                <input type="text" id="editRealisasiTw2Target" name="realisasi_tw2_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW2 Target" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editRealisasiTw2Rp" class="block text-sm font-medium text-gray-700 mb-1">TW2
+                                    Rp</label>
+                                <input type="text" id="editRealisasiTw2Rp" name="realisasi_tw2_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW2 Rp" />
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="editIndikatorOutput" class="block text-sm font-medium text-gray-700 mb-1">INDIKATOR OUTPUT</label>
-                            <input type="text" id="editIndikatorOutput" name="editIndikatorOutput"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+
+                        <!-- TW3 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label for="editRealisasiTw3Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW3 Target</label>
+                                <input type="text" id="editRealisasiTw3Target" name="realisasi_tw3_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW3 Target" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editRealisasiTw3Rp" class="block text-sm font-medium text-gray-700 mb-1">TW3
+                                    Rp</label>
+                                <input type="text" id="editRealisasiTw3Rp" name="realisasi_tw3_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW3 Rp" />
+                            </div>
+                        </div>
+
+                        <!-- TW4 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="editRealisasiTw4Target"
+                                    class="block text-sm font-medium text-gray-700 mb-1">TW4 Target</label>
+                                <input type="text" id="editRealisasiTw4Target" name="realisasi_tw4_target"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW4 Target" />
+                            </div>
+                            <div class="form-group">
+                                <label for="editRealisasiTw4Rp" class="block text-sm font-medium text-gray-700 mb-1">TW4
+                                    Rp</label>
+                                <input type="text" id="editRealisasiTw4Rp" name="realisasi_tw4_rp"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan realisasi TW4 Rp" />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Bagian Anggaran per Triwulan -->
-                <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-blue-500">
-                    <h3 class="text-md font-semibold text-gray-800 mb-4">Anggaran Tahun <span id="editTahunAnggaran">2025</span></h3>
+                    <!-- Rumus -->
+                    <div class="mb-4 p-6 bg-gray-50 rounded-lg">
+                        <label for="editRumus" class="block text-sm font-medium text-amber-700 mb-1">
+                            <i class="fas fa-calculator text-amber-600"></i> RUMUS
+                        </label>
+                        <input type="text" id="editRumus" name="rumus"
+                            class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500 font-mono"
+                            placeholder="Masukkan rumus perhitungan" />
+                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label for="editTw1Target" class="block text-sm font-medium text-gray-700 mb-1">TW1 Target</label>
-                            <input type="text" id="editTw1Target" name="editTw1Target"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                        <div class="form-group">
-                            <label for="editTw1Rp" class="block text-sm font-medium text-gray-700 mb-1">TW1 Rp</label>
-                            <input type="number" id="editTw1Rp" name="editTw1Rp"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+                    <!-- Catatan Khusus -->
+                    <div class="mb-6 p-6 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                        <h4 class="text-md font-semibold text-amber-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-clipboard-check text-amber-600"></i> Catatan Khusus Inspektorat
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="editCatatanEvaluasi"
+                                    class="block text-sm font-medium text-amber-700 mb-1">Catatan Evaluasi</label>
+                                <textarea id="editCatatanEvaluasi" name="catatan_evaluasi" rows="2"
+                                    class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800 focus:ring-amber-500 focus:border-amber-500"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCatatanPerbaikan"
+                                    class="block text-sm font-medium text-amber-700 mb-1">Catatan Perbaikan</label>
+                                <textarea id="editCatatanPerbaikan" name="catatan_perbaikan" rows="2"
+                                    class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800 focus:ring-amber-500 focus:border-amber-500"></textarea>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label for="editTw2Target" class="block text-sm font-medium text-gray-700 mb-1">TW2 Target</label>
-                            <input type="text" id="editTw2Target" name="editTw2Target"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                        <div class="form-group">
-                            <label for="editTw2Rp" class="block text-sm font-medium text-gray-700 mb-1">TW2 Rp</label>
-                            <input type="number" id="editTw2Rp" name="editTw2Rp"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label for="editTw3Target" class="block text-sm font-medium text-gray-700 mb-1">TW3 Target</label>
-                            <input type="text" id="editTw3Target" name="editTw3Target"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                        <div class="form-group">
-                            <label for="editTw3Rp" class="block text-sm font-medium text-gray-700 mb-1">TW3 Rp</label>
-                            <input type="number" id="editTw3Rp" name="editTw3Rp"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="editTw4Target" class="block text-sm font-medium text-gray-700 mb-1">TW4 Target</label>
-                            <input type="text" id="editTw4Target" name="editTw4Target"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                        <div class="form-group">
-                            <label for="editTw4Rp" class="block text-sm font-medium text-gray-700 mb-1">TW4 Rp</label>
-                            <input type="number" id="editTw4Rp" name="editTw4Rp"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+                    <!-- Unit Kerja -->
+                    <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-amber-500">
+                        <h4 class="text-md font-semibold text-amber-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-building text-amber-600"></i> Unit Kerja
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="editUnitKerja" class="block text-sm font-medium text-amber-700 mb-1">UNIT
+                                    KERJA</label>
+                                <select id="editUnitKerja" name="unit_kerja" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <option value="">Pilih Unit Kerja</option>
+                                    <option value="Diskominfo">Diskominfo</option>
+                                    <option value="Baperlitbang">Baperlitbang</option>
+                                    <option value="BPKAD">BPKAD</option>
+                                    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
+                                    <option value="Inspektorat Daerah">Inspektorat Daerah</option>
+                                    <option value="BKPSDM">BKPSDM</option>
+                                    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah
+                                    </option>
+                                    <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPelaksana"
+                                    class="block text-sm font-medium text-amber-700 mb-1">PELAKSANA</label>
+                                <input type="text" id="editPelaksana" name="pelaksana"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan pelaksana" />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Rumus -->
-                <div class="mb-4">
-                    <label for="editRumus" class="block text-sm font-medium text-gray-700 mb-1">Rumus</label>
-                    <input type="text" id="editRumus" name="editRumus"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-
-                <!-- Catatan -->
-                <div class="mb-6 p-6 bg-amber-50 rounded-lg border-l-4 border-amber-500">
-                    <h3 class="text-md font-semibold text-amber-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-clipboard-check"></i> Catatan Khusus Inspektorat
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="editCatatanEvaluasi" class="block text-sm font-medium text-amber-700 mb-1">Catatan Evaluasi</label>
-                            <input type="text" id="editCatatanEvaluasi" name="editCatatanEvaluasi"
-                                class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800" readonly />
-                        </div>
-                        <div class="form-group">
-                            <label for="editCatatanPerbaikan" class="block text-sm font-medium text-amber-700 mb-1">Catatan Perbaikan</label>
-                            <input type="text" id="editCatatanPerbaikan" name="editCatatanPerbaikan"
-                                class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800" readonly />
-                        </div>
+                    <!-- Tombol Aksi -->
+                    <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+                        <button type="button"
+                            class="px-4 py-2 bg-gray-500 text-black rounded-md hover:bg-gray-600 transition flex items-center justify-center gap-2"
+                            onclick="closeModal('editModal')"> Batal
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition flex items-center justify-center gap-2">
+                             Simpan
+                        </button>
                     </div>
-                </div>
-
-                <!-- Bagian Unit Kerja -->
-                <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-green-500">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="editUnitKerja" class="block text-sm font-medium text-gray-700 mb-1">UNIT KERJA / SATUAN KERJA PELAKSANAAN</label>
-                            <select id="editUnitKerja" name="editUnitKerja" required
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Pilih Unit Kerja</option>
-                                <option value="Diskominfo">Diskominfo</option>
-                                <option value="Baperlitbang">Baperlitbang</option>
-                                <option value="BPKAD">BPKAD</option>
-                                <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
-                                <option value="Inspektorat Daerah">Inspektorat Daerah</option>
-                                <option value="BKPSDM">BKPSDM</option>
-                                <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah</option>
-                                <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editPelaksana" class="block text-sm font-medium text-gray-700 mb-1">PELAKSANA</label>
-                            <select id="editPelaksana" name="editPelaksana"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Pilih Pelaksana</option>
-                                <option value="Seluruh Perangkat Daerah">Seluruh Perangkat Daerah</option>
-                                <option value="Unit Pelayan Publik">Unit Pelayan Publik</option>
-                                <option value="Unit Layanan Publik">Unit Layanan Publik</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tombol Aksi -->
-                <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-                    <button type="button" class="px-4 py-2 bg-gray-500 text-black rounded-md hover:bg-gray-600 transition flex items-center justify-center gap-2"
-                        onclick="closeModal('editModal')">
-                         Batal
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-                       Simpan 
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-// Fungsi untuk membuka modal edit dengan data yang sudah diisi
-function openEditModal(data) {
-    // Isi form dengan data yang diterima
-    document.getElementById('editNo').value = data.no || '';
-    document.getElementById('editSasaranStrategi').value = data.sasaranStrategi || '';
-    document.getElementById('editIndikator').value = data.indikator || '';
-    document.getElementById('editTarget').value = data.target || '';
-    document.getElementById('editSatuan').value = data.satuan || '';
-    document.getElementById('editTarget2025').value = data.target2025 || '';
-    document.getElementById('editRencanaAksi').value = data.rencanaAksi || '';
-    document.getElementById('editOutput').value = data.output || '';
-    document.getElementById('editSatuanOutput').value = data.satuanOutput || '';
-    document.getElementById('editIndikatorOutput').value = data.indikatorOutput || '';
-    document.getElementById('editTw1Target').value = data.tw1Target || '';
-    document.getElementById('editTw1Rp').value = data.tw1Rp || '';
-    document.getElementById('editTw2Target').value = data.tw2Target || '';
-    document.getElementById('editTw2Rp').value = data.tw2Rp || '';
-    document.getElementById('editTw3Target').value = data.tw3Target || '';
-    document.getElementById('editTw3Rp').value = data.tw3Rp || '';
-    document.getElementById('editTw4Target').value = data.tw4Target || '';
-    document.getElementById('editTw4Rp').value = data.tw4Rp || '';
-    document.getElementById('editRumus').value = data.rumus || '';
-    document.getElementById('editCatatanEvaluasi').value = data.catatanEvaluasi || '';
-    document.getElementById('editCatatanPerbaikan').value = data.catatanPerbaikan || '';
-    document.getElementById('editUnitKerja').value = data.unitKerja || '';
-    document.getElementById('editPelaksana').value = data.pelaksana || '';
-    
-    // Update header tahun
-    const tahunHeader = document.getElementById('editTahunHeader');
-    const tahunAnggaran = document.getElementById('editTahunAnggaran');
-    if (tahunHeader && tahunAnggaran) {
-        tahunHeader.textContent = data.tahun || '2025';
-        tahunAnggaran.textContent = data.tahun || '2025';
+    function toggleTriwulan(twNumber) {
+        const content = document.getElementById(`triwulanContent${twNumber}`);
+        const chevron = document.getElementById(`chevronTW${twNumber}`);
+        
+        if (content && content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            if (chevron) chevron.style.transform = 'rotate(90deg)';
+        } else if (content) {
+            content.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
     }
-    
-    // Buka modal
-    openModal('editModal');
-    
-    // Update opsi indikator berdasarkan sasaran strategi
-    updateEditIndikatorOptions(data.sasaranStrategi);
-}
 
-// Fungsi untuk mengupdate opsi indikator berdasarkan sasaran strategi
-function updateEditIndikatorOptions(sasaranStrategi) {
-    const indikatorSelect = document.getElementById('editIndikator');
-    
-    // Kosongkan opsi indikator sebelumnya
-    indikatorSelect.innerHTML = '<option value="">Pilih Indikator</option>';
-    
-    // Tambahkan opsi berdasarkan pilihan sasaran strategi
-    if (sasaranStrategi === 'A') {
-        addOption(indikatorSelect, 'A1', 'Indeks SPBE');
-        addOption(indikatorSelect, 'A2', 'Tingkat Kematangan Digital Pemerintah Daerah');
-    } else if (sasaranStrategi === 'B') {
-        addOption(indikatorSelect, 'B1', 'Nilai kompetensi ASN');
-        addOption(indikatorSelect, 'B2', 'Indeks Kepuasan Masyarakat terhadap Pelayanan Publik');
-    } else if (sasaranStrategi === 'C') {
-        addOption(indikatorSelect, 'C1', 'Indeks Reformasi Birokrasi');
-        addOption(indikatorSelect, 'C2', 'Nilai Akuntabilitas Kinerja Instansi Pemerintah');
-    } else if (sasaranStrategi === 'D') {
-        addOption(indikatorSelect, 'D1', 'Tingkat Efektivitas Kelembagaan');
-        addOption(indikatorSelect, 'D2', 'Indeks Inovasi Daerah');
-    } else if (sasaranStrategi === 'E') {
-        addOption(indikatorSelect, 'E1', 'Indeks Kepuasan Masyarakat');
-        addOption(indikatorSelect, 'E2', 'Tingkat Kepatuhan Pelayanan Publik');
+    // Fungsi untuk menutup modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
     }
-}
 
-// Fungsi untuk menambahkan opsi ke select
-function addOption(selectElement, value, text) {
-    const option = document.createElement('option');
-    option.value = value;
-    option.textContent = text;
-    selectElement.appendChild(option);
-}
+    // Fungsi untuk membuka modal edit dengan data
+    async function openEditModal(id) {
+        try {
+            console.log('Membuka edit modal untuk ID:', id);
 
-// Event listener untuk perubahan sasaran strategi di form edit
-document.addEventListener('DOMContentLoaded', function() {
-    const sasaranStrategi = document.getElementById('editSasaranStrategi');
-    
-    if (sasaranStrategi) {
-        sasaranStrategi.addEventListener('change', function() {
-            updateEditIndikatorOptions(this.value);
-        });
-    }
-    
-    // Handle form submission
-    const editForm = document.getElementById('editRenaksiRB');
-    if (editForm) {
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Simpan perubahan data di sini
-            alert('Data berhasil diperbarui!');
+            // Show loading
+            openModal('editModal');
+
+            const response = await fetch(`/rb-general/${id}/edit`);
+            const result = await response.json();
+
+            console.log('Data untuk edit:', result.data);
+
+            if (result.success) {
+                const data = result.data;
+
+                // Debug: tampilkan semua data yang diterima
+                console.log('=== DATA UNTUK EDIT ===');
+                console.log('Data realisasi_tw1_target:', data.realisasi_tw1_target);
+                console.log('Data realisasi_tw1_rp:', data.realisasi_tw1_rp);
+                console.log('Data realisasi_tw2_target:', data.realisasi_tw2_target);
+                console.log('Data realisasi_tw2_rp:', data.realisasi_tw2_rp);
+
+                // Isi form dengan data
+                document.getElementById('editId').value = data.id;
+                document.getElementById('editNo').value = data.no || '';
+                document.getElementById('editSasaranStrategi').value = data.sasaran_strategi || '';
+                document.getElementById('editIndikator').value = data.indikator_capaian || '';
+                document.getElementById('editTarget').value = data.target || '';
+                document.getElementById('editSatuan').value = data.satuan || '';
+                document.getElementById('editTargetTahun').value = data.target_tahun || ''; // NAMA BARU
+                document.getElementById('editRencanaAksi').value = data.rencana_aksi || '';
+                document.getElementById('editSatuanOutput').value = data.satuan_output || '';
+                document.getElementById('editIndikatorOutput').value = data.indikator_output || '';
+
+                // Renaksi per TW - NAMA BARU
+                document.getElementById('editRenaksiTw1Target').value = data.renaksi_tw1_target || '';
+                document.getElementById('editTw1Rp').value = data.tw1_rp || '';
+                document.getElementById('editRenaksiTw2Target').value = data.renaksi_tw2_target || '';
+                document.getElementById('editTw2Rp').value = data.tw2_rp || '';
+                document.getElementById('editRenaksiTw3Target').value = data.renaksi_tw3_target || '';
+                document.getElementById('editTw3Rp').value = data.tw3_rp || '';
+                document.getElementById('editRenaksiTw4Target').value = data.renaksi_tw4_target || '';
+                document.getElementById('editTw4Rp').value = data.tw4_rp || '';
+
+                // Anggaran total - NAMA BARU
+                document.getElementById('editAnggaranTotal').value = data.anggaran_total || '';
+
+                // REALISASI
+                document.getElementById('editRealisasiTw1Target').value = data.realisasi_tw1_target || '';
+                document.getElementById('editRealisasiTw1Rp').value = data.realisasi_tw1_rp || '';
+                document.getElementById('editRealisasiTw2Target').value = data.realisasi_tw2_target || '';
+                document.getElementById('editRealisasiTw2Rp').value = data.realisasi_tw2_rp || '';
+                document.getElementById('editRealisasiTw3Target').value = data.realisasi_tw3_target || '';
+                document.getElementById('editRealisasiTw3Rp').value = data.realisasi_tw3_rp || '';
+                document.getElementById('editRealisasiTw4Target').value = data.realisasi_tw4_target || '';
+                document.getElementById('editRealisasiTw4Rp').value = data.realisasi_tw4_rp || '';
+
+                // Lainnya
+                document.getElementById('editRumus').value = data.rumus || '';
+                document.getElementById('editCatatanEvaluasi').value = data.catatan_evaluasi || '';
+                document.getElementById('editCatatanPerbaikan').value = data.catatan_perbaikan || '';
+                document.getElementById('editUnitKerja').value = data.unit_kerja || '';
+                document.getElementById('editPelaksana').value = data.pelaksana || '';
+
+                console.log('Form edit berhasil diisi');
+
+            } else {
+                closeModal('editModal');
+                alert('Gagal mengambil data untuk edit: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
             closeModal('editModal');
-        });
+            alert('Terjadi kesalahan saat mengambil data');
+        }
     }
-});
+
+    // Handle submit form edit
+    document.addEventListener('DOMContentLoaded', function () {
+        const editForm = document.getElementById('editRenaksiRB');
+        let isSubmitting = false;
+
+        if (editForm) {
+            editForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Cegah double submit
+                if (isSubmitting) return;
+                isSubmitting = true;
+
+                // Show loading
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+                submitBtn.disabled = true;
+
+                try {
+                    const id = document.getElementById('editId').value;
+                    const formData = new FormData(this);
+
+                    // Debug: tampilkan data yang dikirim
+                    console.log('=== DATA YANG DIKIRIM ===');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`${key}: ${value}`);
+                    }
+
+                    const response = await fetch(`/rb-general/${id}`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const result = await response.json();
+                    console.log('Response update:', result);
+
+                    if (result.success) {
+                        closeModal('editModal');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
+                    } else {
+                        if (result.errors) {
+                            let errorMessage = 'Terjadi kesalahan:\n';
+                            for (const field in result.errors) {
+                                errorMessage += `- ${result.errors[field][0]}\n`;
+                            }
+                            alert(errorMessage);
+                        } else {
+                            alert('Gagal memperbarui data: ' + result.message);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat memperbarui data: ' + error.message);
+                } finally {
+                    isSubmitting = false;
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+    });
 </script>

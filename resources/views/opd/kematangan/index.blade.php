@@ -6,13 +6,19 @@
 
 <script src="https://unpkg.com/alpinejs" defer></script>
 
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
+
 <div class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-50"
      x-data="{ 
          modalKemenpan: false, 
          modalKemendagri: false,
          modalInfoSurvei: false
      }"
-       @close-kemenpan.window="modalKemenpan = false"
+     @close-kemenpan.window="modalKemenpan = false"
      @close-kemendagri.window="modalKemendagri = false"
      @close-info-survei.window="modalInfoSurvei = false"
 >
@@ -105,8 +111,7 @@
         x-transition:leave-end="opacity-0 scale-95"
         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4"
     >
-        <div           class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl"
-        >
+        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
                 <h3 class="text-xl font-bold">Survei KemenPAN</h3>
                 <button 
@@ -138,8 +143,7 @@
         x-transition:leave-end="opacity-0 scale-95"
         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4"
     >
-        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl"
-        >
+        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
                 <h3 class="text-xl font-bold">Survei Kemendagri</h3>
                 <button 
@@ -171,8 +175,7 @@
         x-transition:leave-end="opacity-0 scale-95"
         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
     >
-        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl border border-gray-200 mx-4"
-        >
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl border border-gray-200 mx-4">
             <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
                 <h3 class="text-2xl font-semibold text-gray-800 flex items-center gap-2">
                     <i class="fas fa-info-circle text-yellow-500"></i>
@@ -209,40 +212,5 @@
 
 </div>
 
+@include('components.footer')
 @endsection
-<button type="button"
-        onclick="closeKemenpanModal()"
-        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm flex items-center gap-2 hover:shadow">
-    Batal
-</button>
-
-<!-- Di bagian bawah file Blade Anda, ganti script yang ada dengan ini -->
-<script>
-function closeKemenpanModal() {
-    // Cara 1: Gunakan Alpine.js event
-    const event = new CustomEvent('close-modal', { 
-        detail: { modalName: 'kemenpan' } 
-    });
-    window.dispatchEvent(event);
-    
-    // Cara 2: Jika masih dalam context yang sama, langsung set modalKemenpan = false
-    try {
-        // Coba akses Alpine.js component dari parent/root
-        const alpineRoot = document.querySelector('[x-data]').__x;
-        if (alpineRoot && alpineRoot.$data) {
-            alpineRoot.$data.modalKemenpan = false;
-        }
-    } catch (e) {
-        console.log('Alpine access error:', e);
-    }
-    
-    // Fallback: cari dan hide modal dengan selector
-    const modal = document.querySelector('[x-show\\="modalKemenpan\\"]');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-    
-    // Reset body overflow jika perlu
-    document.body.style.overflow = 'auto';
-}
-</script>

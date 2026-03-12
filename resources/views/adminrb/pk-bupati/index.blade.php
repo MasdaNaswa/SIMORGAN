@@ -195,336 +195,331 @@
     </div>
 
     <script>
-        // Data indikator dari backend
-        const indikatorData = @json($indikatorData);
-        const currentYear = '{{ $selectedYear }}';
-        const currentSemester = '{{ $selectedSemester }}';
+    // Data indikator dari backend
+    const indikatorData = @json($indikatorData);
+    const currentYear = '{{ $selectedYear }}';
+    const currentSemester = '{{ $selectedSemester }}';
 
-        // Fungsi untuk membuka/tutup modal
-        function openModal(id) {
-            document.getElementById(id)?.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+    // Fungsi untuk membuka/tutup modal
+    function openModal(id) {
+        document.getElementById(id)?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id)?.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Fungsi untuk membuka tab di modal edit
+    function openEditTab(event, tabId) {
+        var tabContents = document.getElementsByClassName("tabcontent-edit");
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.add('hidden');
         }
 
-        function closeModal(id) {
-            document.getElementById(id)?.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+        var tabLinks = document.getElementsByClassName("tablinks-edit");
+        for (var i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
+            tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
         }
 
-        // Fungsi untuk membuka tab di modal edit
-        function openEditTab(event, tabId) {
-            // Sembunyikan semua tab content
-            var tabContents = document.getElementsByClassName("tabcontent-edit");
-            for (var i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.add('hidden');
-            }
+        document.getElementById(tabId).classList.remove('hidden');
 
-            // Hapus class active dari semua tab links
-            var tabLinks = document.getElementsByClassName("tablinks-edit");
-            for (var i = 0; i < tabLinks.length; i++) {
-                tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
-                tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
-            }
+        event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
+        event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
+    }
 
-            // Tampilkan tab yang dipilih
-            document.getElementById(tabId).classList.remove('hidden');
-
-            // Set class active pada tab yang diklik
-            event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
-            event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
+    // Fungsi untuk membuka tab di modal detail
+    function openDetailTab(event, tabId) {
+        var tabContents = document.getElementsByClassName("tabcontent");
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.add('hidden');
         }
 
-        // Fungsi untuk membuka tab di modal detail
-        function openDetailTab(event, tabId) {
-            var tabContents = document.getElementsByClassName("tabcontent");
-            for (var i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.add('hidden');
-            }
-
-            var tabLinks = document.getElementsByClassName("tablinks");
-            for (var i = 0; i < tabLinks.length; i++) {
-                tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
-                tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
-            }
-
-            document.getElementById(tabId).classList.remove('hidden');
-
-            event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
-            event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
+        var tabLinks = document.getElementsByClassName("tablinks");
+        for (var i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
+            tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
         }
 
-        // Fungsi untuk update indikator (Edit)
-        function updateEditIndikator() {
-            const sasaranSelect = document.getElementById('editSasaranStrategis');
-            const indikatorSelect = document.getElementById('editIndikatorKinerja');
-            const selectedSasaran = sasaranSelect.value;
+        document.getElementById(tabId).classList.remove('hidden');
 
-            indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
+        event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
+        event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
+    }
 
-            if (selectedSasaran && indikatorData[selectedSasaran]) {
-                indikatorData[selectedSasaran].forEach((indikator) => {
-                    const option = document.createElement("option");
-                    option.value = indikator;
-                    option.textContent = indikator;
-                    indikatorSelect.appendChild(option);
-                });
-            }
-        }
-
-        // Fungsi showDetail
-        async function showDetail(id) {
-            try {
-                const response = await fetch(`/adminrb/pk-bupati/${id}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    const data = result.data;
-
-                    // Set data ke detail modal
-                    document.getElementById('detailNo').innerHTML = data.no || '-';
-                    document.getElementById('detailTahun').innerHTML = data.tahun || '-';
-                    document.getElementById('detailTahunHeader').innerHTML = data.tahun || '-';
-                    document.getElementById('detailSasaranStrategis').innerHTML = data.sasaranStrategis || '-';
-                    document.getElementById('detailIndikatorKinerja').innerHTML = data.indikatorKinerja || '-';
-                    document.getElementById('detailTarget2025').innerHTML = data.target2025 || '-';
-                    document.getElementById('detailSatuan').innerHTML = data.satuan || '-';
-                    document.getElementById('detailProgram').innerHTML = data.program || '-';
-                    document.getElementById('detailAnalisisEvaluasi').innerHTML = data.analisisEvaluasi || '-';
-                    document.getElementById('detailPenanggungJawab').innerHTML = data.penanggungJawab || '-';
-
-                    // Set TW values
-                    document.getElementById('detailTargetTW1').innerHTML = data.targetTW1 || '-';
-                    document.getElementById('detailRealisasiTW1').innerHTML = data.realisasiTW1 || '-';
-                    document.getElementById('detailPaguTW1').innerHTML = data.paguAnggaranTW1 || '-';
-                    document.getElementById('detailRealisasiAnggaranTW1').innerHTML = data.realisasiAnggaranTW1 || '-';
-
-                    document.getElementById('detailTargetTW2').innerHTML = data.targetTW2 || '-';
-                    document.getElementById('detailRealisasiTW2').innerHTML = data.realisasiTW2 || '-';
-                    document.getElementById('detailPaguTW2').innerHTML = data.paguAnggaranTW2 || '-';
-                    document.getElementById('detailRealisasiAnggaranTW2').innerHTML = data.realisasiAnggaranTW2 || '-';
-
-                    document.getElementById('detailTargetTW3').innerHTML = data.targetTW3 || '-';
-                    document.getElementById('detailRealisasiTW3').innerHTML = data.realisasiTW3 || '-';
-                    document.getElementById('detailPaguTW3').innerHTML = data.paguAnggaranTW3 || '-';
-                    document.getElementById('detailRealisasiAnggaranTW3').innerHTML = data.realisasiAnggaranTW3 || '-';
-
-                    document.getElementById('detailTargetTW4').innerHTML = data.targetTW4 || '-';
-                    document.getElementById('detailRealisasiTW4').innerHTML = data.realisasiTW4 || '-';
-                    document.getElementById('detailPaguTW4').innerHTML = data.paguAnggaranTW4 || '-';
-                    document.getElementById('detailRealisasiAnggaranTW4').innerHTML = data.realisasiAnggaranTW4 || '-';
-
-                    openModal('detailModal');
-                } else {
-                    alert('Gagal memuat data: ' + result.message);
+    // Fungsi showDetail
+    async function showDetail(id) {
+        try {
+            const response = await fetch(`/adminrb/pk-bupati/${id}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
                 }
-            } catch (error) {
-                console.error('Error detail:', error);
-                alert('Gagal memuat data detail');
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const data = result.data;
+
+                document.getElementById('detailNo').innerHTML = data.no || '-';
+                document.getElementById('detailTahun').innerHTML = data.tahun || '-';
+                document.getElementById('detailTahunHeader').innerHTML = data.tahun || '-';
+                document.getElementById('detailSasaranStrategis').innerHTML = data.sasaranStrategis || '-';
+                document.getElementById('detailIndikatorKinerja').innerHTML = data.indikatorKinerja || '-';
+                document.getElementById('detailTarget2025').innerHTML = data.target2025 || '-';
+                document.getElementById('detailSatuan').innerHTML = data.satuan || '-';
+                document.getElementById('detailProgram').innerHTML = data.program || '-';
+                document.getElementById('detailAnalisisEvaluasi').innerHTML = data.analisisEvaluasi || '-';
+                document.getElementById('detailPenanggungJawab').innerHTML = data.penanggungJawab || '-';
+
+                document.getElementById('detailTargetTW1').innerHTML = data.targetTW1 || '-';
+                document.getElementById('detailRealisasiTW1').innerHTML = data.realisasiTW1 || '-';
+                document.getElementById('detailPaguTW1').innerHTML = data.paguAnggaranTW1 || '-';
+                document.getElementById('detailRealisasiAnggaranTW1').innerHTML = data.realisasiAnggaranTW1 || '-';
+
+                document.getElementById('detailTargetTW2').innerHTML = data.targetTW2 || '-';
+                document.getElementById('detailRealisasiTW2').innerHTML = data.realisasiTW2 || '-';
+                document.getElementById('detailPaguTW2').innerHTML = data.paguAnggaranTW2 || '-';
+                document.getElementById('detailRealisasiAnggaranTW2').innerHTML = data.realisasiAnggaranTW2 || '-';
+
+                document.getElementById('detailTargetTW3').innerHTML = data.targetTW3 || '-';
+                document.getElementById('detailRealisasiTW3').innerHTML = data.realisasiTW3 || '-';
+                document.getElementById('detailPaguTW3').innerHTML = data.paguAnggaranTW3 || '-';
+                document.getElementById('detailRealisasiAnggaranTW3').innerHTML = data.realisasiAnggaranTW3 || '-';
+
+                document.getElementById('detailTargetTW4').innerHTML = data.targetTW4 || '-';
+                document.getElementById('detailRealisasiTW4').innerHTML = data.realisasiTW4 || '-';
+                document.getElementById('detailPaguTW4').innerHTML = data.paguAnggaranTW4 || '-';
+                document.getElementById('detailRealisasiAnggaranTW4').innerHTML = data.realisasiAnggaranTW4 || '-';
+
+                openModal('detailModal');
+            } else {
+                alert('Gagal memuat data: ' + result.message);
             }
+        } catch (error) {
+            console.error('Error detail:', error);
+            alert('Gagal memuat data detail');
         }
+    }
 
-        // Fungsi editData
-        async function editData(id) {
-            try {
-                const response = await fetch(`/adminrb/pk-bupati/${id}/edit`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
+    // FUNGSI EDIT DATA
+    async function editData(id) {
+        try {
+            console.log('Membuka edit modal untuk ID:', id);
+            
+            openModal('editModal');
+
+            const response = await fetch(`/adminrb/pk-bupati/${id}/edit`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const data = result.data;
+                console.log('Data received:', data);
+
+                function setValue(elementId, value) {
+                    const el = document.getElementById(elementId);
+                    if (el) {
+                        el.value = value || '';
                     }
-                });
+                }
 
-                const result = await response.json();
+                setValue('editId', data.id);
+                setValue('editNo', data.no);
+                setValue('editTarget2025', data.target2025);
+                setValue('editSatuan', data.satuan);
+                setValue('editProgram', data.program || '');
+                setValue('editAnalisisEvaluasi', data.analisisEvaluasi || '');
 
-                if (result.success) {
-                    const data = result.data;
+                // SET SASARAN STRATEGIS - menggunakan sasaranKey (angka)
+                const sasaranSelect = document.getElementById('editSasaranStrategis');
+                if (sasaranSelect && data.sasaranKey) {
+                    console.log('Setting sasaran strategis dengan key:', data.sasaranKey);
+                    sasaranSelect.value = data.sasaranKey;
+                    sasaranSelect.dispatchEvent(new Event('change'));
+                }
 
-                    // Set form values
-                    document.getElementById('editId').value = data.id;
-                    document.getElementById('editNo').value = data.no;
-                    document.getElementById('editTarget2025').value = data.target2025;
-                    document.getElementById('editSatuan').value = data.satuan;
-                    document.getElementById('editProgram').value = data.program || '';
-                    document.getElementById('editAnalisisEvaluasi').value = data.analisisEvaluasi || '';
-
-                    // Set sasaran strategis
-                    const sasaranSelect = document.getElementById('editSasaranStrategis');
-                    for (let i = 0; i < sasaranSelect.options.length; i++) {
-                        if (sasaranSelect.options[i].value === data.sasaranStrategis) {
-                            sasaranSelect.value = data.sasaranStrategis;
-                            break;
-                        }
-                    }
-
-                    // Update indikator
-                    updateEditIndikator();
-
-                    // Set indikator after update
-                    setTimeout(() => {
-                        const indikatorSelect = document.getElementById('editIndikatorKinerja');
+                // SET INDIKATOR KINERJA - setelah sasaran dipilih dan indikator terisi
+                setTimeout(() => {
+                    const indikatorSelect = document.getElementById('editIndikatorKinerja');
+                    if (indikatorSelect && data.indikatorKinerja) {
+                        console.log('Setting indikator kinerja:', data.indikatorKinerja);
+                        
+                        let optionFound = false;
                         for (let i = 0; i < indikatorSelect.options.length; i++) {
-                            if (indikatorSelect.options[i].value === data.indikatorKinerja) {
-                                indikatorSelect.value = data.indikatorKinerja;
+                            if (indikatorSelect.options[i].text === data.indikatorKinerja) {
+                                indikatorSelect.selectedIndex = i;
+                                optionFound = true;
+                                console.log('Found indikator by text at index:', i);
                                 break;
                             }
                         }
-                    }, 100);
+                        
+                        if (!optionFound) {
+                            indikatorSelect.value = data.indikatorKinerja;
+                        }
+                    }
+                }, 500);
 
-                    // Set TW values
-                    document.getElementById('editTargetTW1').value = data.targetTW1 || '';
-                    document.getElementById('editRealisasiTW1').value = data.realisasiTW1 || '';
-                    document.getElementById('editPaguAnggaranTW1').value = data.paguAnggaranTW1 || '';
-                    document.getElementById('editRealisasiAnggaranTW1').value = data.realisasiAnggaranTW1 || '';
+                // SET TRIWULAN VALUES
+                setValue('editTargetTW1', data.targetTW1 || '');
+                setValue('editRealisasiTW1', data.realisasiTW1 || '');
+                setValue('editPaguAnggaranTW1', data.paguAnggaranTW1 || '');
+                setValue('editRealisasiAnggaranTW1', data.realisasiAnggaranTW1 || '');
 
-                    document.getElementById('editTargetTW2').value = data.targetTW2 || '';
-                    document.getElementById('editRealisasiTW2').value = data.realisasiTW2 || '';
-                    document.getElementById('editPaguAnggaranTW2').value = data.paguAnggaranTW2 || '';
-                    document.getElementById('editRealisasiAnggaranTW2').value = data.realisasiAnggaranTW2 || '';
+                setValue('editTargetTW2', data.targetTW2 || '');
+                setValue('editRealisasiTW2', data.realisasiTW2 || '');
+                setValue('editPaguAnggaranTW2', data.paguAnggaranTW2 || '');
+                setValue('editRealisasiAnggaranTW2', data.realisasiAnggaranTW2 || '');
 
-                    document.getElementById('editTargetTW3').value = data.targetTW3 || '';
-                    document.getElementById('editRealisasiTW3').value = data.realisasiTW3 || '';
-                    document.getElementById('editPaguAnggaranTW3').value = data.paguAnggaranTW3 || '';
-                    document.getElementById('editRealisasiAnggaranTW3').value = data.realisasiAnggaranTW3 || '';
+                setValue('editTargetTW3', data.targetTW3 || '');
+                setValue('editRealisasiTW3', data.realisasiTW3 || '');
+                setValue('editPaguAnggaranTW3', data.paguAnggaranTW3 || '');
+                setValue('editRealisasiAnggaranTW3', data.realisasiAnggaranTW3 || '');
 
-                    document.getElementById('editTargetTW4').value = data.targetTW4 || '';
-                    document.getElementById('editRealisasiTW4').value = data.realisasiTW4 || '';
-                    document.getElementById('editPaguAnggaranTW4').value = data.paguAnggaranTW4 || '';
-                    document.getElementById('editRealisasiAnggaranTW4').value = data.realisasiAnggaranTW4 || '';
+                setValue('editTargetTW4', data.targetTW4 || '');
+                setValue('editRealisasiTW4', data.realisasiTW4 || '');
+                setValue('editPaguAnggaranTW4', data.paguAnggaranTW4 || '');
+                setValue('editRealisasiAnggaranTW4', data.realisasiAnggaranTW4 || '');
 
-                    // Set penanggung jawab
-                    const pjSelect = document.getElementById('editPenanggungJawab');
+                // SET PENANGGUNG JAWAB
+                const pjSelect = document.getElementById('editPenanggungJawab');
+                if (pjSelect && data.penanggungJawab) {
+                    let optionFound = false;
                     for (let i = 0; i < pjSelect.options.length; i++) {
                         if (pjSelect.options[i].value === data.penanggungJawab) {
-                            pjSelect.value = data.penanggungJawab;
+                            pjSelect.selectedIndex = i;
+                            optionFound = true;
+                            console.log('Found penanggung jawab by value:', data.penanggungJawab);
                             break;
                         }
                     }
-
-                    openModal('editModal');
-                } else {
-                    alert('Gagal memuat data: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error edit:', error);
-                alert('Gagal memuat data untuk diedit');
-            }
-        }
-
-        // Fungsi deleteData - SESUAIKAN DENGAN MODAL
-        function deleteData(id) {
-            // Set action form dengan ID yang benar
-            const hapusForm = document.getElementById('hapusForm');
-            if (hapusForm) {
-                hapusForm.action = `/adminrb/pk-bupati/${id}`;
-            }
-
-            // Tampilkan informasi data yang akan dihapus (opsional)
-            const hapusItem = document.getElementById('hapusItem');
-            if (hapusItem) {
-                // Cari data dari tabel untuk menampilkan info
-                const rows = document.querySelectorAll('tbody tr');
-                for (let row of rows) {
-                    const detailButton = row.querySelector('button[onclick*="showDetail"]');
-                    if (detailButton && detailButton.getAttribute('onclick').includes(id)) {
-                        const sasaranCell = row.querySelector('td:nth-child(2)');
-                        if (sasaranCell) {
-                            const sasaranText = sasaranCell.textContent.trim();
-                            hapusItem.textContent = `"${sasaranText.substring(0, 50)}${sasaranText.length > 50 ? '...' : ''}"`;
-                        }
-                        break;
+                    if (!optionFound) {
+                        pjSelect.value = data.penanggungJawab;
                     }
                 }
-            }
 
-            openModal('hapusModal');
+                const firstTab = document.querySelector('.tablinks-edit');
+                if (firstTab) {
+                    firstTab.click();
+                }
+
+            } else {
+                alert('Gagal memuat data: ' + (result.message || 'Unknown error'));
+                closeModal('editModal');
+            }
+        } catch (error) {
+            console.error('Error edit:', error);
+            alert('Gagal memuat data untuk diedit: ' + error.message);
+            closeModal('editModal');
+        }
+    }
+
+    // Fungsi deleteData
+    function deleteData(id) {
+        const hapusForm = document.getElementById('hapusForm');
+        if (hapusForm) {
+            hapusForm.action = `/adminrb/pk-bupati/${id}`;
         }
 
-        // Handle form edit submit
-        document.addEventListener('DOMContentLoaded', function () {
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
+        const hapusItem = document.getElementById('hapusItem');
+        if (hapusItem) {
+            const rows = document.querySelectorAll('tbody tr');
+            for (let row of rows) {
+                const detailButton = row.querySelector('button[onclick*="showDetail"]');
+                if (detailButton && detailButton.getAttribute('onclick').includes(id)) {
+                    const sasaranCell = row.querySelector('td:nth-child(2)');
+                    if (sasaranCell) {
+                        const sasaranText = sasaranCell.textContent.trim();
+                        hapusItem.textContent = `"${sasaranText.substring(0, 50)}${sasaranText.length > 50 ? '...' : ''}"`;
+                    }
+                    break;
+                }
+            }
+        }
 
-                    const id = document.getElementById('editId').value;
+        openModal('hapusModal');
+    }
+
+    // Handle form edit submit
+    document.addEventListener('DOMContentLoaded', function () {
+        const editForm = document.getElementById('editForm');
+        if (editForm) {
+            editForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const id = document.getElementById('editId').value;
+                const formData = new FormData(this);
+                formData.append('_method', 'PUT');
+
+                try {
+                    const response = await fetch(`/adminrb/pk-bupati/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        closeModal('editModal');
+                        location.reload();
+                    } else {
+                        alert('Gagal menyimpan data: ' + (result.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menyimpan data');
+                }
+            });
+        }
+
+        const hapusForm = document.getElementById('hapusForm');
+        if (hapusForm) {
+            hapusForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                try {
+                    const url = this.action;
                     const formData = new FormData(this);
-                    formData.append('_method', 'PUT');
 
-                    try {
-                        const response = await fetch(`/adminrb/pk-bupati/${id}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            },
-                            body: formData
-                        });
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    });
 
-                        const result = await response.json();
+                    const result = await response.json();
 
-                        if (result.success) {
-                            closeModal('editModal');
-                            location.reload();
-                        } else {
-                            alert('Gagal menyimpan data: ' + (result.message || 'Unknown error'));
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menyimpan data');
+                    if (result.success) {
+                        closeModal('hapusModal');
+                        alert('Data berhasil dihapus');
+                        location.reload();
+                    } else {
+                        alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
                     }
-                });
-            }
-
-            // Handle form hapus
-            const hapusForm = document.getElementById('hapusForm');
-            if (hapusForm) {
-                hapusForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
-                    submitBtn.disabled = true;
-
-                    try {
-                        const url = this.action; // URL sudah termasuk ID dari fungsi deleteData
-                        const formData = new FormData(this);
-
-                        const response = await fetch(url, {
-                            method: 'POST', // Laravel menggunakan POST dengan _method=DELETE
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            },
-                            body: formData
-                        });
-
-                        const result = await response.json();
-
-                        if (result.success) {
-                            closeModal('hapusModal');
-                            // Tampilkan notifikasi sukses
-                            alert('Data berhasil dihapus');
-                            location.reload();
-                        } else {
-                            alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus data');
-                    } finally {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                });
-            }
-        });
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus data');
+                }
+            });
+        }
+    });
     </script>
 @endsection

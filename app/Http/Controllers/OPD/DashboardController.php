@@ -1,17 +1,19 @@
 <?php
-// app/Http/Controllers/OPD/DashboardController.php
 
 namespace App\Http\Controllers\OPD;
 
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
-use App\Models\AksesRb; // Tambahkan model AksesRb
+use App\Models\AksesRb;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // CEK DAN UPDATE STATUS YANG EXPIRED TERLEBIH DAHULU
+        $this->checkExpiredStatus();
+        
         $user = Auth::user();
         $nama_opd = $user->nama_opd ?? $user->name;
 
@@ -21,27 +23,28 @@ class DashboardController extends Controller
         $aksesPK = AksesRb::where('jenis_rb', 'PK Bupati')->first();
 
         // Tentukan status dan deadline
-        $statusGeneral = $aksesGeneral ? $aksesGeneral->status : 'Dibuka';
-        $statusTematik = $aksesTematik ? $aksesTematik->status : 'Dibuka';
-        $statusPK = $aksesPK ? $aksesPK->status : 'Dibuka';
+        $statusGeneral = $aksesGeneral ? $aksesGeneral->status : 'Ditutup';
+        $statusTematik = $aksesTematik ? $aksesTematik->status : 'Ditutup';
+        $statusPK = $aksesPK ? $aksesPK->status : 'Ditutup';
 
         // Deadline
         $deadlineGeneral = $aksesGeneral && $aksesGeneral->end_date 
-            ? $aksesGeneral->end_date->format('d/m/Y') 
+            ? \Carbon\Carbon::parse($aksesGeneral->end_date)->format('d/m/Y') 
             : 'Tidak ada';
         $deadlineTematik = $aksesTematik && $aksesTematik->end_date 
-            ? $aksesTematik->end_date->format('d/m/Y') 
+            ? \Carbon\Carbon::parse($aksesTematik->end_date)->format('d/m/Y') 
             : 'Tidak ada';
         $deadlinePK = $aksesPK && $aksesPK->end_date 
-            ? $aksesPK->end_date->format('d/m/Y') 
+            ? \Carbon\Carbon::parse($aksesPK->end_date)->format('d/m/Y') 
             : 'Tidak ada';
 
-        // Status umum (untuk card)
-        $statusUmum = 'Aktif';
+        // Status umum
         if ($statusGeneral === 'Ditutup' && $statusTematik === 'Ditutup' && $statusPK === 'Ditutup') {
             $statusUmum = 'Ditutup';
         } elseif ($statusGeneral === 'Dibuka' || $statusTematik === 'Dibuka' || $statusPK === 'Dibuka') {
             $statusUmum = 'Sebagian Dibuka';
+        } else {
+            $statusUmum = 'Aktif';
         }
 
         // Kategori Kelembagaan
@@ -105,7 +108,6 @@ class DashboardController extends Controller
             'dokumenProsesPublik',
             'dokumenDirevisiPublik',
             'dokumenDisetujuiPublik',
-            // Tambahkan data akses RB
             'statusGeneral',
             'statusTematik',
             'statusPK',
@@ -114,5 +116,23 @@ class DashboardController extends Controller
             'deadlinePK',
             'statusUmum'
         ));
+    }
+
+    /**
+     * Cek dan update status yang sudah melewati deadline
+     */
+    private function checkExpiredStatus()
+    {
+        $now = now()->startOfDay();
+        
+        // Cari semua akses yang statusnya 'Dibuka' tapi sudah melewati deadline
+        $expiredAccess = AksesRb::where('status', 'Dibuka')
+            ->whereNotNull('end_date')
+            ->whereDate('end_date', '<', $now)
+            ->get();
+        
+        foreach ($expiredAccess as $akses) {
+            $akses->update(['status' => 'Ditutup']);
+        }
     }
 }

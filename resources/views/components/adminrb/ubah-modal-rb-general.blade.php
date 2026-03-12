@@ -311,22 +311,16 @@
                     <!-- Unit Kerja -->
                     <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-amber-500">
                         <h4 class="text-md font-semibold text-amber-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-building text-amber-600"></i>
+                            <i class="fas fa-building text-amber-600"></i>UNIT KERJA / SATUAN KERJA PELAKSANAAN
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label for="editUnitKerja" class="block text-sm font-medium text-amber-700 mb-1">KOORDINATOR</label>
                                 <select id="editUnitKerja" name="unit_kerja" required
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
-                                    <option value="">Pilih Unit Kerja</option>
-                                    <option value="Diskominfo">Diskominfo</option>
-                                    <option value="Baperlitbang">Baperlitbang</option>
-                                    <option value="BPKAD">BPKAD</option>
-                                    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
                                     <option value="Inspektorat Daerah">Inspektorat Daerah</option>
-                                    <option value="BKPSDM">BKPSDM</option>
-                                    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah</option>
-                                    <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
+                                    <option value="Bappeda">Bappeda</option>
+                                    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
                                 </select>
                             </div>
                             <div class="form-group">

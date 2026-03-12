@@ -193,304 +193,398 @@
         @include('components.footer')
     </div>
 
-    @push('scripts')
-        <script>
-            // ================ FUNGSI DASAR MODAL ================
-            function openModal(id) {
-                const modal = document.getElementById(id);
-                if (modal) {
-                    modal.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
+@push('scripts')
+    <script>
+        // ================ FUNGSI DASAR MODAL ================
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+
+                // Reset form jika ada
+                if (id === 'editModal') {
+                    const form = document.getElementById('editRenaksiRB');
+                    if (form) form.reset();
                 }
             }
+        }
 
-            function closeModal(id) {
-                const modal = document.getElementById(id);
-                if (modal) {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = 'auto';
+        // ================ FORMAT RUPIAH ================
+        function formatRupiah(angka) {
+            if (!angka || angka === '-' || angka === '0') return '0';
+            return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
 
-                    // Reset form jika ada
-                    if (id === 'editModal') {
-                        const form = document.getElementById('editRenaksiRB');
-                        if (form) form.reset();
-                    }
-                }
-            }
+        function cleanRupiah(value) {
+            if (!value) return '0';
+            return value.toString().replace(/\./g, '');
+        }
 
-            // ================ FORMAT RUPIAH ================
-            function formatRupiah(angka) {
-                if (!angka || angka === '-' || angka === '0') return '0';
-                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            }
-
-            function cleanRupiah(value) {
-                if (!value) return '0';
-                return value.toString().replace(/\./g, '');
-            }
-
-            // ================ DETAIL DATA ================
-            async function showDetail(id) {
-                try {
-                    const response = await fetch(`/adminrb/rb-tematik/${id}`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        const data = result.data;
-
-                        // Set data ke form detail
-                        document.getElementById('detailNo').value = data.id;
-                        document.getElementById('detailPermasalahan').value = data.permasalahan || '-';
-                        document.getElementById('detailSasaranTematik').value = data.sasaran_tematik || '-';
-                        document.getElementById('detailIndikator').value = data.indikator || '-';
-                        document.getElementById('detailTarget').value = data.target || '-';
-                        document.getElementById('detailSatuan').value = data.satuan || '-';
-                        document.getElementById('detailRencanaAksi').value = data.rencana_aksi || '-';
-                        document.getElementById('detailSatuanOutput').value = data.satuan_output || '-';
-                        document.getElementById('detailIndikatorOutput').value = data.indikator_output || '-';
-                        document.getElementById('detailKoordinator').value = data.koordinator || '-';
-                        document.getElementById('detailPelaksana').value = data.pelaksana || '-';
-                        document.getElementById('detailAnggaranTahun').value = data.anggaran_tahun ? 'Rp ' + formatRupiah(data.anggaran_tahun) : 'Rp 0';
-
-                        // Set TW
-                        const twElements = {
-                            'detailTw1Target': data.renaksi_tw1_target,
-                            'detailTw1Rp': data.renaksi_tw1_rp ? 'Rp ' + formatRupiah(data.renaksi_tw1_rp) : 'Rp 0',
-                            'detailTw2Target': data.renaksi_tw2_target,
-                            'detailTw2Rp': data.renaksi_tw2_rp ? 'Rp ' + formatRupiah(data.renaksi_tw2_rp) : 'Rp 0',
-                            'detailTw3Target': data.renaksi_tw3_target,
-                            'detailTw3Rp': data.renaksi_tw3_rp ? 'Rp ' + formatRupiah(data.renaksi_tw3_rp) : 'Rp 0',
-                            'detailTw4Target': data.renaksi_tw4_target,
-                            'detailTw4Rp': data.renaksi_tw4_rp ? 'Rp ' + formatRupiah(data.renaksi_tw4_rp) : 'Rp 0'
-                        };
-
-                        Object.keys(twElements).forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) el.value = twElements[id] || '-';
-                        });
-
-                        // Set tahun
-                        const tahun = data.tahun || '{{ $currentYear }}';
-                        const tahunHeader = document.getElementById('detailTahunHeader');
-                        if (tahunHeader) tahunHeader.textContent = tahun;
-
-                        openModal('detailModal');
-                    }
-                } catch (error) {
-                    console.error('Error detail:', error);
-                    alert('Gagal memuat data detail');
-                }
-            }
-
-            // ================ EDIT DATA ================
-            async function showEdit(id) {
-                try {
-                    const response = await fetch(`/adminrb/rb-tematik/${id}/edit`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        const data = result.data;
-
-                        // Set form action
-                        const formEdit = document.getElementById('editRenaksiRB');
-                        if (formEdit) {
-                            formEdit.action = `/adminrb/rb-tematik/${id}`;
-                        }
-
-                        // Set values ke form edit
-                        document.getElementById('edit_id').value = data.id || '';
-                        document.getElementById('edit_no').value = data.id || '';
-                        document.getElementById('edit_permasalahan').value = data.permasalahan || '';
-                        document.getElementById('edit_sasaran_tematik').value = data.sasaran_tematik || '';
-                        document.getElementById('edit_indikator').value = data.indikator || '';
-                        document.getElementById('edit_target').value = data.target || '';
-                        document.getElementById('edit_satuan').value = data.satuan || '';
-                        document.getElementById('edit_rencana_aksi').value = data.rencana_aksi || '';
-                        document.getElementById('edit_satuan_output').value = data.satuan_output || '';
-                        document.getElementById('edit_indikator_output').value = data.indikator_output || '';
-                        document.getElementById('edit_anggaran_tahun').value = data.anggaran_tahun ? 'Rp ' + formatRupiah(data.anggaran_tahun) : '';
-                        document.getElementById('edit_koordinator').value = data.koordinator || '';
-                        document.getElementById('edit_pelaksana').value = data.pelaksana || '';
-
-                        // Set TW values
-                        document.getElementById('edit_tw1_target').value = data.renaksi_tw1_target || '';
-                        document.getElementById('edit_tw1_rp').value = data.renaksi_tw1_rp ? formatRupiah(data.renaksi_tw1_rp) : '';
-                        document.getElementById('edit_tw2_target').value = data.renaksi_tw2_target || '';
-                        document.getElementById('edit_tw2_rp').value = data.renaksi_tw2_rp ? formatRupiah(data.renaksi_tw2_rp) : '';
-                        document.getElementById('edit_tw3_target').value = data.renaksi_tw3_target || '';
-                        document.getElementById('edit_tw3_rp').value = data.renaksi_tw3_rp ? formatRupiah(data.renaksi_tw3_rp) : '';
-                        document.getElementById('edit_tw4_target').value = data.renaksi_tw4_target || '';
-                        document.getElementById('edit_tw4_rp').value = data.renaksi_tw4_rp ? formatRupiah(data.renaksi_tw4_rp) : '';
-
-                        // Set tahun
-                        const tahun = data.tahun || '{{ $currentYear }}';
-                        const editTahunHeader = document.getElementById('editTahunHeader');
-                        if (editTahunHeader) editTahunHeader.textContent = tahun;
-
-                        // Hitung total anggaran
-                        let totalAnggaran = 0;
-                        ['renaksi_tw1_rp', 'renaksi_tw2_rp', 'renaksi_tw3_rp', 'renaksi_tw4_rp'].forEach(field => {
-                            const value = data[field];
-                            if (value) totalAnggaran += parseInt(value);
-                        });
-
-                        const editAnggaranTotal = document.getElementById('editAnggaranTotal');
-                        if (editAnggaranTotal) {
-                            editAnggaranTotal.value = 'Rp ' + totalAnggaran.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                        }
-
-                        // Buka modal
-                        openModal('editModal');
-                    }
-                } catch (error) {
-                    console.error('Error edit:', error);
-                    alert('Gagal memuat data untuk diedit');
-                }
-            }
-
-            // ================ HAPUS DATA ================
-            function openHapusModal(id) {
-                const form = document.getElementById("hapusForm");
-                if (form) {
-                    form.action = `/adminrb/rb-tematik/${id}`;
-                }
-                openModal("hapusModal");
-            }
-
-            // ================ HANDLE EDIT FORM SUBMIT ================
-            document.addEventListener('DOMContentLoaded', function () {
-                // Format Rupiah untuk input
-                document.addEventListener('keyup', function (e) {
-                    if (e.target.classList.contains('rupiah-input')) {
-                        let value = e.target.value.replace(/\./g, '');
-                        value = value.replace(/\D/g, '');
-
-                        if (value !== '') {
-                            value = parseInt(value).toString();
-                            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                            e.target.value = value;
-                        }
+        // ================ DETAIL DATA DENGAN REALISASI ================
+        async function showDetail(id) {
+            try {
+                const response = await fetch(`/adminrb/rb-tematik/${id}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     }
                 });
 
-                // Handle form edit
-                const formEdit = document.getElementById('editRenaksiRB');
-                if (formEdit) {
-                    formEdit.addEventListener('submit', async function (e) {
-                        e.preventDefault();
+                const result = await response.json();
 
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.innerHTML;
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-                        submitBtn.disabled = true;
+                if (result.success) {
+                    const data = result.data;
 
-                        try {
-                            const formData = new FormData(this);
-                            formData.append('_method', 'PUT');
+                    // Set data ke form detail
+                    document.getElementById('detailNo').value = data.id || '-';
+                    document.getElementById('detailPermasalahan').value = data.permasalahan || '-';
+                    document.getElementById('detailSasaranTematik').value = data.sasaran_tematik || '-';
+                    document.getElementById('detailIndikator').value = data.indikator || '-';
+                    document.getElementById('detailTarget').value = data.target || '-';
+                    document.getElementById('detailTargetTahun').value = data.target_tahun || '-';
+                    document.getElementById('detailSatuan').value = data.satuan || '-';
+                    document.getElementById('detailRencanaAksi').value = data.rencana_aksi || '-';
+                    document.getElementById('detailSatuanOutput').value = data.satuan_output || '-';
+                    document.getElementById('detailIndikatorOutput').value = data.indikator_output || '-';
+                    document.getElementById('detailKoordinator').value = data.koordinator || '-';
+                    document.getElementById('detailPelaksana').value = data.pelaksana || '-';
+                    document.getElementById('detailAnggaranTahun').value = data.anggaran_tahun ? 'Rp ' + formatRupiah(data.anggaran_tahun) : 'Rp 0';
 
-                            // Clean rupiah fields
-                            ['edit_tw1_rp', 'edit_tw2_rp', 'edit_tw3_rp', 'edit_tw4_rp', 'edit_anggaran_tahun'].forEach(field => {
-                                const value = formData.get(field);
+                    // Set nilai TW Rencana Aksi
+                    document.getElementById('detailTw1Target').innerHTML = data.renaksi_tw1_target || '-';
+                    document.getElementById('detailTw1Rp').innerHTML = data.renaksi_tw1_rp ? 'Rp ' + formatRupiah(data.renaksi_tw1_rp) : 'Rp 0';
+                    
+                    document.getElementById('detailTw2Target').innerHTML = data.renaksi_tw2_target || '-';
+                    document.getElementById('detailTw2Rp').innerHTML = data.renaksi_tw2_rp ? 'Rp ' + formatRupiah(data.renaksi_tw2_rp) : 'Rp 0';
+                    
+                    document.getElementById('detailTw3Target').innerHTML = data.renaksi_tw3_target || '-';
+                    document.getElementById('detailTw3Rp').innerHTML = data.renaksi_tw3_rp ? 'Rp ' + formatRupiah(data.renaksi_tw3_rp) : 'Rp 0';
+                    
+                    document.getElementById('detailTw4Target').innerHTML = data.renaksi_tw4_target || '-';
+                    document.getElementById('detailTw4Rp').innerHTML = data.renaksi_tw4_rp ? 'Rp ' + formatRupiah(data.renaksi_tw4_rp) : 'Rp 0';
+                    
+                    document.getElementById('detailRumus').value = data.rumus || '-';
+
+                    // Set nilai REALISASI
+                    const realisasiTw1Target = document.getElementById('detailRealisasiTw1Target');
+                    if (realisasiTw1Target) {
+                        realisasiTw1Target.innerHTML = data.realisasi_renaksi_tw1_target || '-';
+                    }
+                    
+                    const realisasiTw1Rp = document.getElementById('detailRealisasiTw1Rp');
+                    if (realisasiTw1Rp) {
+                        realisasiTw1Rp.innerHTML = data.realisasi_renaksi_tw1_rp ? 'Rp ' + formatRupiah(data.realisasi_renaksi_tw1_rp) : 'Rp 0';
+                    }
+
+                    const realisasiTw2Target = document.getElementById('detailRealisasiTw2Target');
+                    if (realisasiTw2Target) {
+                        realisasiTw2Target.innerHTML = data.realisasi_renaksi_tw2_target || '-';
+                    }
+                    
+                    const realisasiTw2Rp = document.getElementById('detailRealisasiTw2Rp');
+                    if (realisasiTw2Rp) {
+                        realisasiTw2Rp.innerHTML = data.realisasi_renaksi_tw2_rp ? 'Rp ' + formatRupiah(data.realisasi_renaksi_tw2_rp) : 'Rp 0';
+                    }
+
+                    const realisasiTw3Target = document.getElementById('detailRealisasiTw3Target');
+                    if (realisasiTw3Target) {
+                        realisasiTw3Target.innerHTML = data.realisasi_renaksi_tw3_target || '-';
+                    }
+                    
+                    const realisasiTw3Rp = document.getElementById('detailRealisasiTw3Rp');
+                    if (realisasiTw3Rp) {
+                        realisasiTw3Rp.innerHTML = data.realisasi_renaksi_tw3_rp ? 'Rp ' + formatRupiah(data.realisasi_renaksi_tw3_rp) : 'Rp 0';
+                    }
+
+                    const realisasiTw4Target = document.getElementById('detailRealisasiTw4Target');
+                    if (realisasiTw4Target) {
+                        realisasiTw4Target.innerHTML = data.realisasi_renaksi_tw4_target || '-';
+                    }
+                    
+                    const realisasiTw4Rp = document.getElementById('detailRealisasiTw4Rp');
+                    if (realisasiTw4Rp) {
+                        realisasiTw4Rp.innerHTML = data.realisasi_renaksi_tw4_rp ? 'Rp ' + formatRupiah(data.realisasi_renaksi_tw4_rp) : 'Rp 0';
+                    }
+
+                    // Set tahun
+                    const tahun = data.tahun || '{{ $currentYear }}';
+                    const tahunHeader = document.getElementById('detailTahunHeader');
+                    if (tahunHeader) tahunHeader.textContent = tahun;
+
+                    openModal('detailModal');
+                }
+            } catch (error) {
+                console.error('Error detail:', error);
+                alert('Gagal memuat data detail');
+            }
+        }
+
+        // ================ EDIT DATA ================
+        async function showEdit(id) {
+            try {
+                const response = await fetch(`/adminrb/rb-tematik/${id}/edit`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const data = result.data;
+
+                    // Set form action
+                    const formEdit = document.getElementById('editRenaksiRB');
+                    if (formEdit) {
+                        formEdit.action = `/adminrb/rb-tematik/${id}`;
+                    }
+
+                    // Set values ke form edit
+                    document.getElementById('edit_id').value = data.id || '';
+                    document.getElementById('edit_no').value = data.id || '';
+                    document.getElementById('edit_permasalahan').value = data.permasalahan || '';
+                    document.getElementById('edit_sasaran_tematik').value = data.sasaran_tematik || '';
+                    document.getElementById('edit_indikator').value = data.indikator || '';
+                    document.getElementById('edit_target').value = data.target || '';
+                    document.getElementById('edit_target_tahun').value = data.target_tahun || '';
+                    document.getElementById('edit_satuan').value = data.satuan || '';
+                    document.getElementById('edit_rencana_aksi').value = data.rencana_aksi || '';
+                    document.getElementById('edit_satuan_output').value = data.satuan_output || '';
+                    document.getElementById('edit_indikator_output').value = data.indikator_output || '';
+                    document.getElementById('edit_anggaran_tahun').value = data.anggaran_tahun ? 'Rp ' + formatRupiah(data.anggaran_tahun) : '';
+                    document.getElementById('edit_koordinator').value = data.koordinator || '';
+                    document.getElementById('edit_pelaksana').value = data.pelaksana || '';
+
+                    // Set TW values (Rencana Aksi)
+                    document.getElementById('edit_tw1_target').value = data.renaksi_tw1_target || '';
+                    document.getElementById('edit_tw1_rp').value = data.renaksi_tw1_rp ? formatRupiah(data.renaksi_tw1_rp) : '';
+                    document.getElementById('edit_tw2_target').value = data.renaksi_tw2_target || '';
+                    document.getElementById('edit_tw2_rp').value = data.renaksi_tw2_rp ? formatRupiah(data.renaksi_tw2_rp) : '';
+                    document.getElementById('edit_tw3_target').value = data.renaksi_tw3_target || '';
+                    document.getElementById('edit_tw3_rp').value = data.renaksi_tw3_rp ? formatRupiah(data.renaksi_tw3_rp) : '';
+                    document.getElementById('edit_tw4_target').value = data.renaksi_tw4_target || '';
+                    document.getElementById('edit_tw4_rp').value = data.renaksi_tw4_rp ? formatRupiah(data.renaksi_tw4_rp) : '';
+                    document.getElementById('edit_rumus').value = data.rumus || '';
+
+                    // Set REALISASI values untuk form edit
+                    const editRealisasiTw1Target = document.getElementById('edit_realisasi_tw1_target');
+                    if (editRealisasiTw1Target) {
+                        editRealisasiTw1Target.value = data.realisasi_renaksi_tw1_target || '';
+                    }
+                    
+                    const editRealisasiTw1Rp = document.getElementById('edit_realisasi_tw1_rp');
+                    if (editRealisasiTw1Rp) {
+                        editRealisasiTw1Rp.value = data.realisasi_renaksi_tw1_rp ? formatRupiah(data.realisasi_renaksi_tw1_rp) : '';
+                    }
+
+                    const editRealisasiTw2Target = document.getElementById('edit_realisasi_tw2_target');
+                    if (editRealisasiTw2Target) {
+                        editRealisasiTw2Target.value = data.realisasi_renaksi_tw2_target || '';
+                    }
+                    
+                    const editRealisasiTw2Rp = document.getElementById('edit_realisasi_tw2_rp');
+                    if (editRealisasiTw2Rp) {
+                        editRealisasiTw2Rp.value = data.realisasi_renaksi_tw2_rp ? formatRupiah(data.realisasi_renaksi_tw2_rp) : '';
+                    }
+
+                    const editRealisasiTw3Target = document.getElementById('edit_realisasi_tw3_target');
+                    if (editRealisasiTw3Target) {
+                        editRealisasiTw3Target.value = data.realisasi_renaksi_tw3_target || '';
+                    }
+                    
+                    const editRealisasiTw3Rp = document.getElementById('edit_realisasi_tw3_rp');
+                    if (editRealisasiTw3Rp) {
+                        editRealisasiTw3Rp.value = data.realisasi_renaksi_tw3_rp ? formatRupiah(data.realisasi_renaksi_tw3_rp) : '';
+                    }
+
+                    const editRealisasiTw4Target = document.getElementById('edit_realisasi_tw4_target');
+                    if (editRealisasiTw4Target) {
+                        editRealisasiTw4Target.value = data.realisasi_renaksi_tw4_target || '';
+                    }
+                    
+                    const editRealisasiTw4Rp = document.getElementById('edit_realisasi_tw4_rp');
+                    if (editRealisasiTw4Rp) {
+                        editRealisasiTw4Rp.value = data.realisasi_renaksi_tw4_rp ? formatRupiah(data.realisasi_renaksi_tw4_rp) : '';
+                    }
+
+                    // Set tahun
+                    const tahun = data.tahun || '{{ $currentYear }}';
+                    const editTahunHeader = document.getElementById('editTahunHeader');
+                    if (editTahunHeader) editTahunHeader.textContent = tahun;
+
+                    // Hitung total anggaran
+                    let totalAnggaran = 0;
+                    ['renaksi_tw1_rp', 'renaksi_tw2_rp', 'renaksi_tw3_rp', 'renaksi_tw4_rp'].forEach(field => {
+                        const value = data[field];
+                        if (value) totalAnggaran += parseInt(value);
+                    });
+
+                    const editAnggaranTotal = document.getElementById('editAnggaranTotal');
+                    if (editAnggaranTotal) {
+                        editAnggaranTotal.value = 'Rp ' + totalAnggaran.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                    }
+
+                    // Buka modal
+                    openModal('editModal');
+                }
+            } catch (error) {
+                console.error('Error edit:', error);
+                alert('Gagal memuat data untuk diedit');
+            }
+        }
+
+        // ================ HAPUS DATA ================
+        function openHapusModal(id) {
+            const form = document.getElementById("hapusForm");
+            if (form) {
+                form.action = `/adminrb/rb-tematik/${id}`;
+            }
+            openModal("hapusModal");
+        }
+
+        // ================ HANDLE EDIT FORM SUBMIT ================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Format Rupiah untuk input
+            document.addEventListener('keyup', function (e) {
+                if (e.target.classList.contains('rupiah-input')) {
+                    let value = e.target.value.replace(/\./g, '');
+                    value = value.replace(/\D/g, '');
+
+                    if (value !== '') {
+                        value = parseInt(value).toString();
+                        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        e.target.value = value;
+                    }
+                }
+            });
+
+            // Handle form edit
+            const formEdit = document.getElementById('editRenaksiRB');
+            if (formEdit) {
+                formEdit.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+                    submitBtn.disabled = true;
+
+                    try {
+                        const formData = new FormData(this);
+                        
+                        // PASTIKAN INI ADA - mengirim method PUT
+                        formData.append('_method', 'PUT');
+
+                        // Clean rupiah fields (Rencana Aksi)
+                        const rupiahFields = [
+                            'edit_tw1_rp', 'edit_tw2_rp', 'edit_tw3_rp', 'edit_tw4_rp', 
+                            'edit_anggaran_tahun', 'edit_realisasi_tw1_rp', 'edit_realisasi_tw2_rp', 
+                            'edit_realisasi_tw3_rp', 'edit_realisasi_tw4_rp'
+                        ];
+                        
+                        rupiahFields.forEach(field => {
+                            const element = document.getElementById(field);
+                            if (element) {
+                                const value = element.value;
                                 if (value) {
                                     formData.set(field, cleanRupiah(value));
                                 }
-                            });
-
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-                            const url = this.action;
-
-                            const response = await fetch(url, {
-                                method: 'POST',
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken
-                                },
-                                body: formData
-                            });
-
-                            const result = await response.json();
-
-                            if (result.success) {
-                                closeModal('editModal');
-                                // Reload halaman atau update data
-                                window.location.reload();
-                            } else {
-                                alert('Gagal menyimpan data: ' + (result.message || 'Unknown error'));
                             }
-                        } catch (error) {
-                            console.error('Error:', error);
-                            alert('Terjadi kesalahan saat menyimpan data');
-                        } finally {
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
+                        });
+
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+                        const url = this.action;
+
+                        const response = await fetch(url, {
+                            method: 'POST', // Tetap POST karena kita pakai _method PUT
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            closeModal('editModal');
+                            // Reload halaman atau update data
+                            window.location.reload();
+                        } else {
+                            alert('Gagal menyimpan data: ' + (result.message || 'Unknown error'));
                         }
-                    });
-                }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat menyimpan data');
+                    } finally {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
 
-                // Handle form hapus
-                const hapusForm = document.getElementById('hapusForm');
-                if (hapusForm) {
-                    hapusForm.addEventListener('submit', async function (e) {
-                        e.preventDefault();
+            // Handle form hapus
+            const hapusForm = document.getElementById('hapusForm');
+            if (hapusForm) {
+                hapusForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
 
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.innerHTML;
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
-                        submitBtn.disabled = true;
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+                    submitBtn.disabled = true;
 
-                        try {
-                            const formData = new FormData(this);
-                            formData.append('_method', 'DELETE');
+                    try {
+                        const formData = new FormData(this);
+                        formData.append('_method', 'DELETE');
 
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-                            const url = this.action;
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+                        const url = this.action;
 
-                            const response = await fetch(url, {
-                                method: 'POST',
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken
-                                },
-                                body: formData
-                            });
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                            body: formData
+                        });
 
-                            const result = await response.json();
+                        const result = await response.json();
 
-                            if (result.success) {
-                                closeModal('hapusModal');
-                                window.location.reload();
-                            } else {
-                                alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
-                            }
-                        } catch (error) {
-                            console.error('Error:', error);
-                            alert('Terjadi kesalahan saat menghapus data');
-                        } finally {
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
+                        if (result.success) {
+                            closeModal('hapusModal');
+                            window.location.reload();
+                        } else {
+                            alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
                         }
-                    });
-                }
-            });
-        </script>
-    @endpush
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat menghapus data');
+                    } finally {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+        });
+    </script>
+@endpush
 @endsection

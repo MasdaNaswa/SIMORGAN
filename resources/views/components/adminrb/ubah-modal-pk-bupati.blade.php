@@ -10,6 +10,11 @@
 
             <!-- Modal Body - SCROLLABLE AREA -->
             <div class="flex-1 overflow-y-auto p-6">
+                 <div class="text-center mb-6 pb-4 border-b border-gray-200">
+                        <h2 class="text-lg font-bold text-amber-700">
+                            UBAH RENCANA AKSI PK BUPATI TAHUN {{  $selectedYear }}
+                        </h2>
+                    </div>
                 <form id="editForm" method="POST">
                     @csrf
                     @method('PUT')
@@ -133,23 +138,13 @@
                             Program dan Evaluasi
                         </h4>
                         
-                        <div class="grid grid-cols-1 gap-4 mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label for="editProgram" class="block text-sm font-medium text-gray-700 mb-1">Program</label>
                                 <input type="text" id="editProgram" name="program" 
                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 gap-4 mb-4">
-                            <div>
-                                <label for="editAnalisisEvaluasi" class="block text-sm font-medium text-gray-700 mb-1">Penjelasan Analisis dan Evaluasi</label>
-                                <textarea id="editAnalisisEvaluasi" name="analisisEvaluasi" rows="3" 
-                                          class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 gap-4">
+                            
                             <div>
                                 <label for="editPenanggungJawab" class="block text-sm font-medium text-gray-700 mb-1">Penanggung Jawab</label>
                                 <select id="editPenanggungJawab" name="penanggungJawab" required 
@@ -161,6 +156,14 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="editAnalisisEvaluasi" class="block text-sm font-medium text-gray-700 mb-1">Penjelasan Analisis dan Evaluasi</label>
+                                <textarea id="editAnalisisEvaluasi" name="analisisEvaluasi" rows="3" 
+                                          class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -170,10 +173,11 @@
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('editModal')"
                         class="px-6 py-2 bg-gray-500 text-black rounded-md hover:bg-gray-600 transition flex items-center justify-center gap-2">
-                         Batal
+                        Batal
                     </button>
                     <button type="submit" form="editForm"
-                        class="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition flex items-center justify-center gap-2"> Simpan
+                        class="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition flex items-center justify-center gap-2">
+                         Simpan
                     </button>
                 </div>
             </div>
@@ -184,23 +188,19 @@
 <script>
 // Fungsi untuk membuka tab di modal edit
 function openEditTab(event, tabId) {
-    // Sembunyikan semua tab content
     var tabContents = document.getElementsByClassName("tabcontent-edit");
     for (var i = 0; i < tabContents.length; i++) {
         tabContents[i].classList.add('hidden');
     }
 
-    // Hapus class active dari semua tab links
     var tabLinks = document.getElementsByClassName("tablinks-edit");
     for (var i = 0; i < tabLinks.length; i++) {
         tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
         tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
     }
 
-    // Tampilkan tab yang dipilih
     document.getElementById(tabId).classList.remove('hidden');
 
-    // Set class active pada tab yang diklik
     event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
     event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
 }
@@ -209,7 +209,7 @@ function openEditTab(event, tabId) {
 function updateEditIndikator() {
     const sasaranSelect = document.getElementById('editSasaranStrategis');
     const indikatorSelect = document.getElementById('editIndikatorKinerja');
-    const selectedSasaran = sasaranSelect.value;
+    const selectedSasaran = sasaranSelect.value;      
 
     indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
 

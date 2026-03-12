@@ -34,13 +34,6 @@
                 <div
                     class="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <h2 class="text-lg md:text-xl font-semibold text-gray-800">Daftar Akun OPD</h2>
-                    <div class="relative w-full sm:w-auto">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input type="text" placeholder="Cari..."
-                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 w-full text-sm">
-                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -121,14 +114,10 @@
             }
         }
 
- 
-
         function openHapus(id) {
-    const form = document.getElementById('deleteForm');
-    form.action = `/adminkelembagaan/kelola-akun/${id}`; // set action sesuai id
-    openModal('hapusModal');
-}
-
+            const form = document.getElementById('deleteForm');
+            form.action = `/adminkelembagaan/kelola-akun/${id}`; // set action sesuai id
+            openModal('hapusModal');
+        }
     </script>
-
 @endpush

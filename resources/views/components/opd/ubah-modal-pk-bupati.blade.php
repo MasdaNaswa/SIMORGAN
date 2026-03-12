@@ -21,21 +21,25 @@
                             <i class="fas fa-info-circle text-amber-600"></i>
                             Informasi Dasar
                         </h4>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label for="editNo" class="block text-sm font-medium text-gray-700 mb-1">NO</label>
-                                <input type="text" id="editNo" name="no" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <input type="text" id="editNo" name="no" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 mb-4">
                             <div>
-                                <label for="editSasaranStrategis" class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis</label>
-                                <select id="editSasaranStrategis" name="sasaranStrategis" required onchange="updateEditIndikator()" class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <label for="editSasaranStrategis"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis</label>
+                                <select id="editSasaranStrategis" name="sasaranStrategis" required
+                                    onchange="updateEditIndikator()"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                     <option value="">Pilih Sasaran Strategis</option>
                                     <?php foreach ($sasaranOptions as $key => $value): ?>
-                                        <option value="<?= $key ?>"><?= $value ?></option>
+                                    <option value="<?= $key ?>"><?= $value ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -43,8 +47,10 @@
 
                         <div class="grid grid-cols-1 gap-4 mb-4">
                             <div>
-                                <label for="editIndikatorKinerja" class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja</label>
-                                <select id="editIndikatorKinerja" name="indikatorKinerja" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <label for="editIndikatorKinerja"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja</label>
+                                <select id="editIndikatorKinerja" name="indikatorKinerja" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                     <option value="">Pilih Sasaran Strategis terlebih dahulu</option>
                                 </select>
                             </div>
@@ -52,12 +58,16 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="editTarget2025" class="block text-sm font-medium text-gray-700 mb-1">Target 2025</label>
-                                <input type="text" id="editTarget2025" name="target2025" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <label for="editTarget2025" class="block text-sm font-medium text-gray-700 mb-1">Target
+                                    2025</label>
+                                <input type="text" id="editTarget2025" name="target2025" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
                             <div>
-                                <label for="editSatuan" class="block text-sm font-medium text-gray-700 mb-1">Satuan</label>
-                                <input type="text" id="editSatuan" name="satuan" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <label for="editSatuan"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Satuan</label>
+                                <input type="text" id="editSatuan" name="satuan" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
                         </div>
                     </div>
@@ -71,13 +81,17 @@
 
                         <!-- Tab navigation -->
                         <div class="tab flex border border-gray-300 bg-gray-100 rounded-t-md overflow-hidden mb-4">
-                            <button type="button" class="tablinks-edit px-4 py-2 bg-white font-medium active border-b-2 border-amber-600 text-amber-700"
+                            <button type="button"
+                                class="tablinks-edit px-4 py-2 bg-white font-medium active border-b-2 border-amber-600 text-amber-700"
                                 onclick="openEditTab(event, 'editTriwulan1')">Triwulan I</button>
-                            <button type="button" class="tablinks-edit px-4 py-2 bg-gray-100 font-medium text-gray-700 hover:bg-gray-200"
+                            <button type="button"
+                                class="tablinks-edit px-4 py-2 bg-gray-100 font-medium text-gray-700 hover:bg-gray-200"
                                 onclick="openEditTab(event, 'editTriwulan2')">Triwulan II</button>
-                            <button type="button" class="tablinks-edit px-4 py-2 bg-gray-100 font-medium text-gray-700 hover:bg-gray-200"
+                            <button type="button"
+                                class="tablinks-edit px-4 py-2 bg-gray-100 font-medium text-gray-700 hover:bg-gray-200"
                                 onclick="openEditTab(event, 'editTriwulan3')">Triwulan III</button>
-                            <button type="button" class="tablinks-edit px-4 py-2 bg-gray-100 font-medium text-gray-700 hover:bg-gray-200"
+                            <button type="button"
+                                class="tablinks-edit px-4 py-2 bg-gray-100 font-medium text-gray-700 hover:bg-gray-200"
                                 onclick="openEditTab(event, 'editTriwulan4')">Triwulan IV</button>
                         </div>
 
@@ -88,33 +102,34 @@
                                     <label for="editTargetTW1" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW1 - Target
                                     </label>
-                                    <input type="text" id="editTargetTW1" name="targetTW1" 
-                                           placeholder="Masukkan target TW1"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editTargetTW1" name="targetTW1"
+                                        placeholder="Masukkan target TW1"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
                                     <label for="editRealisasiTW1" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW1 - Realisasi
                                     </label>
                                     <input type="text" id="editRealisasiTW1" name="realisasiTW1"
-                                           placeholder="Masukkan realisasi TW1"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="Masukkan realisasi TW1"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editPaguAnggaranTW1" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editPaguAnggaranTW1"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW1 - Pagu Anggaran
                                     </label>
-                                    <input type="text" id="editPaguAnggaranTW1" name="paguAnggaranTW1"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editPaguAnggaranTW1" name="paguAnggaranTW1" placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editRealisasiAnggaranTW1" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editRealisasiAnggaranTW1"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW1 - Realisasi Anggaran
                                     </label>
                                     <input type="text" id="editRealisasiAnggaranTW1" name="realisasiAnggaranTW1"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                             </div>
                         </div>
@@ -126,33 +141,34 @@
                                     <label for="editTargetTW2" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW2 - Target
                                     </label>
-                                    <input type="text" id="editTargetTW2" name="targetTW2" 
-                                           placeholder="Masukkan target TW2"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editTargetTW2" name="targetTW2"
+                                        placeholder="Masukkan target TW2"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
                                     <label for="editRealisasiTW2" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW2 - Realisasi
                                     </label>
                                     <input type="text" id="editRealisasiTW2" name="realisasiTW2"
-                                           placeholder="Masukkan realisasi TW2"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="Masukkan realisasi TW2"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editPaguAnggaranTW2" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editPaguAnggaranTW2"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW2 - Pagu Anggaran
                                     </label>
-                                    <input type="text" id="editPaguAnggaranTW2" name="paguAnggaranTW2"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editPaguAnggaranTW2" name="paguAnggaranTW2" placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editRealisasiAnggaranTW2" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editRealisasiAnggaranTW2"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW2 - Realisasi Anggaran
                                     </label>
                                     <input type="text" id="editRealisasiAnggaranTW2" name="realisasiAnggaranTW2"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                             </div>
                         </div>
@@ -164,33 +180,34 @@
                                     <label for="editTargetTW3" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW3 - Target
                                     </label>
-                                    <input type="text" id="editTargetTW3" name="targetTW3" 
-                                           placeholder="Masukkan target TW3"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editTargetTW3" name="targetTW3"
+                                        placeholder="Masukkan target TW3"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
                                     <label for="editRealisasiTW3" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW3 - Realisasi
                                     </label>
                                     <input type="text" id="editRealisasiTW3" name="realisasiTW3"
-                                           placeholder="Masukkan realisasi TW3"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="Masukkan realisasi TW3"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editPaguAnggaranTW3" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editPaguAnggaranTW3"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW3 - Pagu Anggaran
                                     </label>
-                                    <input type="text" id="editPaguAnggaranTW3" name="paguAnggaranTW3"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editPaguAnggaranTW3" name="paguAnggaranTW3" placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editRealisasiAnggaranTW3" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editRealisasiAnggaranTW3"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW3 - Realisasi Anggaran
                                     </label>
                                     <input type="text" id="editRealisasiAnggaranTW3" name="realisasiAnggaranTW3"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                             </div>
                         </div>
@@ -202,33 +219,34 @@
                                     <label for="editTargetTW4" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW4 - Target
                                     </label>
-                                    <input type="text" id="editTargetTW4" name="targetTW4" 
-                                           placeholder="Masukkan target TW4"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editTargetTW4" name="targetTW4"
+                                        placeholder="Masukkan target TW4"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
                                     <label for="editRealisasiTW4" class="block text-sm font-medium text-gray-700 mb-1">
                                         TW4 - Realisasi
                                     </label>
                                     <input type="text" id="editRealisasiTW4" name="realisasiTW4"
-                                           placeholder="Masukkan realisasi TW4"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="Masukkan realisasi TW4"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editPaguAnggaranTW4" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editPaguAnggaranTW4"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW4 - Pagu Anggaran
                                     </label>
-                                    <input type="text" id="editPaguAnggaranTW4" name="paguAnggaranTW4"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <input type="text" id="editPaguAnggaranTW4" name="paguAnggaranTW4" placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                                 <div>
-                                    <label for="editRealisasiAnggaranTW4" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="editRealisasiAnggaranTW4"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         TW4 - Realisasi Anggaran
                                     </label>
                                     <input type="text" id="editRealisasiAnggaranTW4" name="realisasiAnggaranTW4"
-                                           placeholder="0"
-                                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                        placeholder="0"
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                 </div>
                             </div>
                         </div>
@@ -240,33 +258,38 @@
                             <i class="fas fa-clipboard-list text-green-600"></i>
                             Program dan Evaluasi
                         </h4>
-                        
-                        <div class="grid grid-cols-1 gap-4 mb-4">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <!-- Kolom Kiri: Program -->
                             <div>
-                                <label for="editProgram" class="block text-sm font-medium text-gray-700 mb-1">Program</label>
-                                <input type="text" id="editProgram" name="program" 
-                                       class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <label for="editProgram"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Program</label>
+                                <input type="text" id="editProgram" name="program"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 gap-4 mb-4">
+
+                            <!-- Kolom Kanan: Penanggung Jawab -->
                             <div>
-                                <label for="editAnalisisEvaluasi" class="block text-sm font-medium text-gray-700 mb-1">Penjelasan Analisis dan Evaluasi</label>
-                                <textarea id="editAnalisisEvaluasi" name="analisisEvaluasi" rows="3" 
-                                          class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label for="editPenanggungJawab" class="block text-sm font-medium text-gray-700 mb-1">Penanggung Jawab</label>
-                                <select id="editPenanggungJawab" name="penanggungJawab" required 
-                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                <label for="editPenanggungJawab"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Penanggung Jawab</label>
+                                <select id="editPenanggungJawab" name="penanggungJawab" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                     <option value="">Pilih Penanggung Jawab</option>
                                     <?php foreach ($penanggungJawabOptions as $option): ?>
-                                        <option value="<?= $option ?>"><?= $option ?></option>
+                                    <option value="<?= $option ?>"><?= $option ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                            </div>
+                        </div>
+
+                        <!-- Analisis Evaluasi (tetap satu baris penuh) -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="editAnalisisEvaluasi"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Penjelasan Analisis dan
+                                    Evaluasi</label>
+                                <textarea id="editAnalisisEvaluasi" name="analisisEvaluasi" rows="3"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"></textarea>
                             </div>
                         </div>
                     </div>
@@ -278,7 +301,7 @@
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('editModal')"
                         class="px-6 py-2 bg-gray-500 text-black rounded-md hover:bg-gray-600 transition flex items-center justify-center gap-2">
-                      Batal
+                        Batal
                     </button>
                     <button type="submit" form="editForm"
                         class="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition flex items-center justify-center gap-2">
@@ -291,60 +314,60 @@
 </div>
 
 <script>
-// Fungsi untuk membuka tab di modal edit
-function openEditTab(event, tabId) {
-    // Sembunyikan semua tab content
-    var tabContents = document.getElementsByClassName("tabcontent-edit");
-    for (var i = 0; i < tabContents.length; i++) {
-        tabContents[i].classList.add('hidden');
+    // Fungsi untuk membuka tab di modal edit
+    function openEditTab(event, tabId) {
+        // Sembunyikan semua tab content
+        var tabContents = document.getElementsByClassName("tabcontent-edit");
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.add('hidden');
+        }
+
+        // Hapus class active dari semua tab links
+        var tabLinks = document.getElementsByClassName("tablinks-edit");
+        for (var i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
+            tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
+        }
+
+        // Tampilkan tab yang dipilih
+        document.getElementById(tabId).classList.remove('hidden');
+
+        // Set class active pada tab yang diklik
+        event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
+        event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
     }
 
-    // Hapus class active dari semua tab links
-    var tabLinks = document.getElementsByClassName("tablinks-edit");
-    for (var i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
-        tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
+    // Fungsi untuk membuka tab di modal detail
+    function openDetailTab(event, tabId) {
+        // Sembunyikan semua tab content
+        var tabContents = document.getElementsByClassName("tabcontent");
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.add('hidden');
+        }
+
+        // Hapus class active dari semua tab links
+        var tabLinks = document.getElementsByClassName("tablinks");
+        for (var i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
+            tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
+        }
+
+        // Tampilkan tab yang dipilih
+        document.getElementById(tabId).classList.remove('hidden');
+
+        // Set class active pada tab yang diklik
+        event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
+        event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
     }
 
-    // Tampilkan tab yang dipilih
-    document.getElementById(tabId).classList.remove('hidden');
-
-    // Set class active pada tab yang diklik
-    event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
-    event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
-}
-
-// Fungsi untuk membuka tab di modal detail
-function openDetailTab(event, tabId) {
-    // Sembunyikan semua tab content
-    var tabContents = document.getElementsByClassName("tabcontent");
-    for (var i = 0; i < tabContents.length; i++) {
-        tabContents[i].classList.add('hidden');
+    // Fungsi untuk menutup modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
     }
 
-    // Hapus class active dari semua tab links
-    var tabLinks = document.getElementsByClassName("tablinks");
-    for (var i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
-        tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
+    // Fungsi untuk update indikator (anda perlu mengimplementasikan ini sesuai kebutuhan)
+    function updateEditIndikator() {
+        // Implementasi untuk mengisi dropdown indikator berdasarkan sasaran strategis yang dipilih
+        console.log('Update indikator based on selected sasaran strategis');
     }
-
-    // Tampilkan tab yang dipilih
-    document.getElementById(tabId).classList.remove('hidden');
-
-    // Set class active pada tab yang diklik
-    event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
-    event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
-}
-
-// Fungsi untuk menutup modal
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-}
-
-// Fungsi untuk update indikator (anda perlu mengimplementasikan ini sesuai kebutuhan)
-function updateEditIndikator() {
-    // Implementasi untuk mengisi dropdown indikator berdasarkan sasaran strategis yang dipilih
-    console.log('Update indikator based on selected sasaran strategis');
-}
 </script>

@@ -34,13 +34,13 @@
 <script>
 function downloadExcel() {
     const year = document.getElementById('yearFilter').value;
-    window.location.href = `/adminrb/rb-general/export/excel?year=${year}`;
+    window.location.href = `/adminrb/pk-bupati/export/excel?year=${year}`;
     closeModal('unduhModal');
 }
 
 function downloadPdf() {
     const year = document.getElementById('yearFilter').value;
-    window.location.href = `/adminrb/rb-general/export/pdf?year=${year}`;
+    window.location.href = `/adminrb/pk-bupati/export/pdf?year=${year}`;
     closeModal('unduhModal');
 }
 </script>

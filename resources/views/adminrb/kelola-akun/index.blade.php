@@ -99,41 +99,142 @@
     {{-- Modals --}}
     @include('adminrb.kelola-akun.partials.add-modal')
     @include('adminrb.kelola-akun.partials.hapus-modal')
+    @include('adminrb.kelola-akun.partials.duplicate-email-modal')
 
 @endsection
 
 @push('scripts')
-    <script>
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+   <script>
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        
+        // Reset form jika modal add ditutup
+        if (id === 'addOPDModal') {
+            document.getElementById('formTambahAkun').reset();
+        }
+    }
+
+    function openHapus(id) {
+        document.getElementById('deleteForm').action = `/adminrb/kelola-akun/${id}`;
+        openModal('hapusModal');
+    }
+
+    function cekEmailSebelumSubmit() {
+        const email = document.getElementById('emailInput').value;
+        const nama_opd = document.getElementById('nama_opd').value;
+        const password = document.getElementById('password').value;
+        
+        // Validasi sederhana
+        if (!nama_opd || !email || !password) {
+            alert('Semua field harus diisi!');
+            return;
+        }
+        
+        // Validasi format email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Format email tidak valid!');
+            return;
+        }
+        
+        // Tampilkan loading pada button
+        const btnTambah = event.target;
+        const originalText = btnTambah.innerHTML;
+        btnTambah.disabled = true;
+        btnTambah.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
+        
+        // Gunakan route check-email yang sudah ada
+        fetch(`/adminrb/kelola-akun/check-email?email=${encodeURIComponent(email)}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
             }
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.duplicate) {
+                // Email sudah ada, tampilkan modal peringatan
+                closeModal('addOPDModal');
+                
+                // Isi data ke modal duplicate
+                document.getElementById('duplicateEmailMessage').textContent = data.message;
+                document.getElementById('existingAccountName').textContent = data.existing_user.nama_opd;
+                document.getElementById('existingAccountEmail').textContent = data.existing_user.email;
+                document.getElementById('existingAccountRole').textContent = data.existing_user.role;
+                document.getElementById('existingAccountCreatedBy').textContent = data.existing_user.created_by;
+                document.getElementById('existingAccountCreatedAt').textContent = data.existing_user.created_at;
+                
+                openModal('duplicateEmailModal');
+            } else {
+                // Email tersedia, lanjutkan simpan
+                simpanAkunBaru(nama_opd, email, password);
             }
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat memeriksa email. Silakan coba lagi.');
+        })
+        .finally(() => {
+            btnTambah.disabled = false;
+            btnTambah.innerHTML = originalText;
+        });
+    }
 
-        function openDetail(nama, email, role, status) {
-            document.getElementById('detailNama').value = nama;
-            document.getElementById('detailEmail').value = email;
-            document.getElementById('detailRole').value = role;
-            document.getElementById('detailStatus').value = status;
-            openModal('detailModal'); // ✅ pakai detailModal
-        }
-
-        function openHapus(id) {
-            const form = document.getElementById('deleteForm');
-            form.action = `/adminrb/kelola-akun/${id}`; // route DELETE
-            openModal('hapusModal');
-        }
-
-    </script>
+    function simpanAkunBaru(nama_opd, email, password) {
+        const btnTambah = event.target;
+        const originalText = btnTambah.innerHTML;
+        btnTambah.disabled = true;
+        btnTambah.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        
+        fetch('{{ route("akun.store") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                nama_opd: nama_opd,
+                email: email,
+                password: password,
+                role: 'OPD'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Sukses - reload halaman
+                window.location.reload();
+            } else {
+                // Tampilkan error validasi
+                let errorMsg = 'Gagal menyimpan data:\n';
+                if (data.errors) {
+                    Object.values(data.errors).forEach(err => {
+                        errorMsg += '- ' + err + '\n';
+                    });
+                } else {
+                    errorMsg += data.message || 'Terjadi kesalahan';
+                }
+                alert(errorMsg);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menyimpan data');
+        })
+        .finally(() => {
+            btnTambah.disabled = false;
+            btnTambah.innerHTML = originalText;
+        });
+    }
+</script>
 
 @endpush

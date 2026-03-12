@@ -20,7 +20,7 @@
                         
                         <div class="mt-2">
                             <p class="text-sm text-gray-500" id="infoAksesMessage">
-                                Maaf, akses RB General sedang ditutup. Anda tidak dapat menambah data baru saat ini.
+                                Maaf, akses RB Tematik sedang ditutup. Anda tidak dapat menambah data baru saat ini.
                             </p>
                             
                             <!-- Informasi tambahan -->

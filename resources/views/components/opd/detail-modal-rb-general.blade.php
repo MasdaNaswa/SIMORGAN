@@ -13,7 +13,7 @@
                 <!-- Bagian Header -->
                 <div class="text-center mb-6 pb-4 border-b border-gray-200">
                     <h2 class="text-lg font-bold text-green-700">
-                        DETAIL RENCANA AKSI RB GENERAL TAHUN <span id="detailModalYear">2025</span>
+                        DETAIL RENCANA AKSI RB GENERAL TAHUN {{ $selectedYear }}
                     </h2>
                 </div>
 

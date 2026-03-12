@@ -11,10 +11,9 @@
             <!-- Modal Body -->
             <div class="p-6">
                 <!-- Bagian Header -->
-                <div class="text-center mb-6 pb-4  border-gray-200">
-                    <h2 class="text-lg font-bold text-green-700 flex items-center justify-center gap-2">
-                        <i class="fas fa-clipboard-list text-green-600"></i>
-                        DETAIL RENCANA AKSI RB GENERAL TAHUN <span id="detailTahunHeader">{{$selectedYear}}</span>
+                <div class="text-center mb-6 pb-4 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-green-700">
+                        DETAIL RENCANA AKSI RB GENERAL TAHUN {{ $selectedYear }}
                     </h2>
                 </div>
 

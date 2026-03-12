@@ -1,8 +1,10 @@
 <?php
+// app/Http/Controllers/OPD/PKBupatiController.php
 
 namespace App\Http\Controllers\OPD;
 
 use App\Http\Controllers\Controller;
+use App\Models\AksesRb;
 use App\Models\PK_Bupati;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +21,25 @@ class PKBupatiController extends Controller
         $tahun = $request->get('tahun', date('Y'));
         $semester = $request->get('semester', '1');
         
+        // ============== TAMBAHAN: Ambil data akses ==============
+        $akses = AksesRb::where('jenis_rb', 'PK Bupati')->first();
+        
+        // Cek apakah akses bisa dibuka (untuk tombol Tambah)
+        $canAccess = $akses && $akses->isAccessible();
+        
+        // Ambil pesan jika akses ditutup
+        $accessMessage = null;
+        if (!$canAccess && $akses) {
+            if ($akses->status !== 'Dibuka') {
+                $accessMessage = 'Akses PK Bupati sedang ditutup oleh admin.';
+            } elseif ($akses->start_date && now()->startOfDay()->lt($akses->start_date)) {
+                $accessMessage = 'Akses PK Bupati akan dibuka pada ' . $akses->start_date->format('d/m/Y');
+            } elseif ($akses->end_date && now()->startOfDay()->gt($akses->end_date)) {
+                $accessMessage = 'Akses PK Bupati telah ditutup pada ' . $akses->end_date->format('d/m/Y');
+            }
+        }
+        // ============== END TAMBAHAN ==============
+        
         // Konversi semester dari form (1/2) ke format database (I/II)
         $semesterDb = $semester == '1' ? 'I' : 'II';
         
@@ -26,8 +47,8 @@ class PKBupatiController extends Controller
         $pkData = PK_Bupati::where('tahun', $tahun)
             ->where('semester', $semesterDb)
             ->orderBy('no', 'asc')
-            ->paginate(10) // Menggunakan paginate() bukan get()
-            ->withQueryString(); // Mempertahankan query string saat berpindah halaman
+            ->paginate(10)
+            ->withQueryString();
 
         // Data untuk dropdown indikator
         $indikatorData = [
@@ -100,7 +121,12 @@ class PKBupatiController extends Controller
             'semester', 
             'indikatorData',
             'sasaranOptions',
-            'penanggungJawabOptions'
+            'penanggungJawabOptions',
+            // ============== TAMBAHAN: Kirim ke view ==============
+            'canAccess',
+            'accessMessage',
+            'akses'
+            // ============== END TAMBAHAN ==============
         ));
     }
 
@@ -109,6 +135,16 @@ class PKBupatiController extends Controller
      */
     public function store(Request $request)
     {
+        // ============== TAMBAHAN: Cek akses SEBELUM menyimpan ==============
+        $akses = AksesRb::where('jenis_rb', 'PK Bupati')->first();
+        if (!$akses || !$akses->isAccessible()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditutup. Tidak dapat menambah data baru.'
+            ], 403);
+        }
+        // ============== END TAMBAHAN ==============
+
         $validator = Validator::make($request->all(), [
             // Informasi Dasar
             'no' => 'required|integer|min:1|max:999',
@@ -204,7 +240,7 @@ class PKBupatiController extends Controller
                 'penjelasan_analisis' => $request->analisisEvaluasi,
                 'penanggung_jawab' => $request->penanggungJawab,
                 'tahun' => $request->tahun,
-                'semester' => $semesterDb, // Simpan dalam format I/II
+                'semester' => $semesterDb,
                 'created_by' => Auth::id()
             ];
 
@@ -282,6 +318,16 @@ class PKBupatiController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // ============== TAMBAHAN: Cek akses SEBELUM update ==============
+        $akses = AksesRb::where('jenis_rb', 'PK Bupati')->first();
+        if (!$akses || !$akses->isAccessible()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditutup. Tidak dapat mengubah data.'
+            ], 403);
+        }
+        // ============== END TAMBAHAN ==============
+
         $validator = Validator::make($request->all(), [
             'no' => 'required|integer|min:1|max:999',
             'sasaranStrategis' => 'required|string|max:500',
@@ -399,6 +445,16 @@ class PKBupatiController extends Controller
      */
     public function destroy($id)
     {
+        // ============== TAMBAHAN: Cek akses SEBELUM hapus ==============
+        $akses = AksesRb::where('jenis_rb', 'PK Bupati')->first();
+        if (!$akses || !$akses->isAccessible()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditutup. Tidak dapat menghapus data.'
+            ], 403);
+        }
+        // ============== END TAMBAHAN ==============
+
         try {
             DB::beginTransaction();
 

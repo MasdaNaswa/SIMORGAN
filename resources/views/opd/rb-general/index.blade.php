@@ -1,3 +1,4 @@
+{{-- resources/views/opd/rb-general/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Monitoring Bagor')
@@ -33,7 +34,7 @@
         <!-- Konten Utama -->
         <main class="flex-1 px-4 md:px-8 py-6 bg-[#F8FAFC]">
             
-            <!-- ========== TAMBAHAN: Info Banner jika akses ditutup ========== -->
+            <!-- Info Banner jika akses ditutup -->
             @if(isset($canAccess) && !$canAccess && isset($accessMessage))
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-lg">
                     <div class="flex items-center">
@@ -48,7 +49,6 @@
                     </div>
                 </div>
             @endif
-            <!-- ========== END TAMBAHAN ========== -->
 
             <div class="flex flex-col md:flex-row justify-between items-center px-4 md:px-6 py-4 gap-4 md:gap-0">
                 <div class="flex items-center gap-3">
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <!-- ========== TAMBAHAN: Tombol Tambah dengan pengecekan akses ========== -->
+                    <!-- Tombol Tambah dengan pengecekan akses -->
                     <button 
                         class="flex items-center gap-2 py-2 px-4 rounded transition focus:outline-none focus:ring-2 text-sm md:text-base
                         @if(isset($canAccess) && $canAccess)
@@ -82,7 +82,6 @@
                     >
                         <span>Tambah</span>
                     </button>
-                    <!-- ========== END TAMBAHAN ========== -->
                 </div>
             </div>
 
@@ -131,15 +130,27 @@
                                                     <i class="fas fa-eye text-sm"></i>
                                                 </button>
                                                 
-                                                <!-- Edit - tetap bisa meskipun akses ditutup (sesuai permintaan) -->
+                                                <!-- Edit - hanya jika akses dibuka -->
+                                                @if(isset($canAccess) && $canAccess)
                                                 <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200" title="Edit" onclick="openEditModal({{ $item->id }})">
                                                     <i class="fas fa-edit text-sm"></i>
                                                 </button>
+                                                @else
+                                                <button class="p-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed" title="Akses ditutup" disabled onclick="openInfoAksesModal()">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </button>
+                                                @endif
                                                 
-                                                <!-- Hapus - tetap bisa meskipun akses ditutup (sesuai permintaan) -->
+                                                <!-- Hapus - hanya jika akses dibuka -->
+                                                @if(isset($canAccess) && $canAccess)
                                                 <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-200" title="Hapus" onclick="openHapusModal({{ $item->id }})">
                                                     <i class="fas fa-trash text-sm"></i>
                                                 </button>
+                                                @else
+                                                <button class="p-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed" title="Akses ditutup" disabled onclick="openInfoAksesModal()">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -191,28 +202,20 @@
     </div>
 
     <script>
-        // ========== TAMBAHAN: Data akses dari server ==========
+        // Data akses dari server
         const canAccess = @json($canAccess ?? false);
         const accessMessage = @json($accessMessage ?? 'Akses RB General sedang ditutup.');
         const aksesData = @json($akses ?? null);
-        // ========== END TAMBAHAN ==========
 
         // Simpan tahun yang dipilih ke localStorage
         document.addEventListener('DOMContentLoaded', function () {
-            // Ambil dropdown tahun
             const yearFilter = document.getElementById('yearFilter');
 
             if (yearFilter) {
-                // Ambil tahun yang dipilih saat ini
                 const selectedYear = yearFilter.value;
-
-                // Simpan ke localStorage
                 localStorage.setItem('selectedYear', selectedYear);
-
-                // Update header tahun di modal jika ada
                 updateModalYearHeaders(selectedYear);
 
-                // Tambahkan event listener untuk perubahan
                 yearFilter.addEventListener('change', function () {
                     const newYear = this.value;
                     localStorage.setItem('selectedYear', newYear);
@@ -220,45 +223,35 @@
                 });
             }
 
-            // Fungsi untuk update header tahun di semua modal
             function updateModalYearHeaders(year) {
-                // Update modal tambah
                 const addModalHeader = document.querySelector('#addModal h2');
                 if (addModalHeader) {
                     addModalHeader.textContent = `RENCANA AKSI RB GENERAL TAHUN ${year}`;
                 }
 
-                // Update modal edit header
                 const editModalHeader = document.querySelector('#editModal h2');
                 if (editModalHeader) {
                     editModalHeader.textContent = `UBAH RENCANA AKSI RB GENERAL TAHUN ${year}`;
                 }
 
-                // Update modal detail header
                 const detailYearHeader = document.getElementById('detailTahunHeader');
                 if (detailYearHeader) {
                     detailYearHeader.textContent = year;
                 }
             }
 
-            // Inisialisasi saat halaman dimuat
             const savedYear = localStorage.getItem('selectedYear') || '2025';
             updateModalYearHeaders(savedYear);
         });
 
-        // Fungsi helper untuk mengisi nilai ke elemen
         function setValue(elementId, value) {
             const element = document.getElementById(elementId);
             if (element) {
                 element.value = value || '';
-            } else {
-                console.warn(`Element with ID "${elementId}" not found`);
             }
         }
 
-        // ==============================================
         // FUNGSI MODAL UMUM
-        // ==============================================
         function openModal(id) {
             document.getElementById(id)?.classList.remove('hidden');
         }
@@ -267,7 +260,7 @@
             document.getElementById(id)?.classList.add('hidden');
         }
 
-        // ========== TAMBAHAN: Fungsi khusus untuk akses ==========
+        // FUNGSI MODAL TAMBAH
         function openAddModal() {
             if (!canAccess) {
                 openInfoAksesModal();
@@ -276,7 +269,6 @@
             
             openModal('addModal');
             
-            // Update tahun di modal tambah
             const yearFilter = document.getElementById('yearFilter');
             const currentYear = yearFilter ? yearFilter.value : localStorage.getItem('selectedYear') || '2025';
             
@@ -291,14 +283,13 @@
             }
         }
 
+        // FUNGSI MODAL INFO AKSES
         function openInfoAksesModal() {
-            // Update pesan di modal info
             const messageEl = document.getElementById('infoAksesMessage');
             if (messageEl) {
                 messageEl.textContent = accessMessage;
             }
             
-            // Update deadline jika ada
             if (aksesData && aksesData.end_date) {
                 const deadlineEl = document.getElementById('infoAksesDeadline');
                 if (deadlineEl) {
@@ -306,7 +297,6 @@
                 }
             }
             
-            // Update tanggal buka jika ada
             if (aksesData && aksesData.start_date && new Date(aksesData.start_date) > new Date()) {
                 const startDateEl = document.getElementById('infoAksesStartDate');
                 if (startDateEl) {
@@ -316,14 +306,10 @@
             
             openModal('infoAksesModal');
         }
-        // ========== END TAMBAHAN ==========
 
-        // ==============================================
-        // MODAL DETAIL - Ambil data dari API
-        // ==============================================
+        // MODAL DETAIL
         async function openDetailModal(id) {
             try {
-                console.log('Membuka detail modal untuk ID:', id);
                 openModal('detailModal');
 
                 const response = await fetch(`/rb-general/${id}`);
@@ -336,7 +322,6 @@
 
                 const data = result.data;
 
-                // Isi form detail dengan data
                 setValue('detailNo', data.no || data.id || '');
                 setValue('detailSasaranStrategi', data.sasaranStrategi || '');
                 setValue('detailIndikator', data.indikator || '');
@@ -374,23 +359,14 @@
             }
         }
 
-        // ==============================================
-        // MODAL HAPUS
-        // ==============================================
-        function openHapusModal(id) {
-            const form = document.getElementById("hapusForm");
-            if (form) {
-                form.action = `/rb-general/${id}`;
-            }
-            openModal("hapusModal");
-        }
-
-        // ==============================================
-        // MODAL EDIT - Ambil data dari API
-        // ==============================================
+        // MODAL EDIT
         async function openEditModal(id) {
+            if (!canAccess) {
+                openInfoAksesModal();
+                return;
+            }
+            
             try {
-                console.log('Membuka edit modal untuk ID:', id);
                 openModal('editModal');
 
                 const response = await fetch(`/rb-general/${id}/edit`);
@@ -404,7 +380,6 @@
 
                 const data = result.data;
 
-                // Isi form dengan data
                 setValue('editId', data.id || '');
                 setValue('editNo', data.no || '');
                 setValue('editSasaranStrategi', data.sasaran_strategi || '');
@@ -444,9 +419,21 @@
             }
         }
 
-        // ==============================================
+        // MODAL HAPUS
+        function openHapusModal(id) {
+            if (!canAccess) {
+                openInfoAksesModal();
+                return;
+            }
+            
+            const form = document.getElementById("hapusForm");
+            if (form) {
+                form.action = `/rb-general/${id}`;
+            }
+            openModal("hapusModal");
+        }
+
         // EVENT LISTENER UNTUK FORM EDIT
-        // ==============================================
         document.addEventListener('DOMContentLoaded', function () {
             const editForm = document.getElementById('editRenaksiRB');
             let isEditing = false;
@@ -493,7 +480,7 @@
                                 }
                                 alert(errorMessage);
                             } else {
-                                console.error('Gagal memperbarui data:', result.message);
+                                alert(result.message || 'Gagal memperbarui data');
                             }
                             isEditing = false;
                         }
@@ -511,9 +498,6 @@
             }
         });
 
-        // ==============================================
-        // EXPORT FUNCTIONS GLOBAL
-        // ==============================================
         window.openModal = openModal;
         window.closeModal = closeModal;
         window.openAddModal = openAddModal;

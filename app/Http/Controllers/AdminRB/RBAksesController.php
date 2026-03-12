@@ -4,7 +4,7 @@
 namespace App\Http\Controllers\AdminRB;
 
 use App\Http\Controllers\Controller;
-use App\Models\AksesRb; // Sesuai dengan nama model Anda
+use App\Models\AksesRb;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +15,9 @@ class RBAksesController extends Controller
      */
     public function index()
     {
+        // CEK DAN UPDATE STATUS YANG EXPIRED TERLEBIH DAHULU
+        $this->checkExpiredStatus();
+        
         // Ambil data dari database
         $aksesRb = AksesRb::orderBy('id')->get();
         
@@ -28,6 +31,24 @@ class RBAksesController extends Controller
     }
 
     /**
+     * Cek dan update status yang sudah melewati deadline
+     */
+    private function checkExpiredStatus()
+    {
+        $now = now()->startOfDay();
+        
+        // Cari semua akses yang statusnya 'Dibuka' tapi sudah melewati deadline
+        $expiredAccess = AksesRb::where('status', 'Dibuka')
+            ->whereNotNull('end_date')
+            ->whereDate('end_date', '<', $now)
+            ->get();
+        
+        foreach ($expiredAccess as $akses) {
+            $akses->update(['status' => 'Ditutup']);
+        }
+    }
+
+    /**
      * Create default data if not exists
      */
     private function createDefaultData()
@@ -35,7 +56,7 @@ class RBAksesController extends Controller
         $defaultData = [
             [
                 'jenis_rb' => 'RB General',
-                'status' => 'Dibuka', // Menggunakan status, bukan is_open
+                'status' => 'Dibuka',
                 'start_date' => now()->startOfMonth()->toDateString(),
                 'end_date' => now()->endOfMonth()->toDateString(),
             ],
@@ -54,7 +75,10 @@ class RBAksesController extends Controller
         ];
 
         foreach ($defaultData as $data) {
-            AksesRb::create($data);
+            AksesRb::firstOrCreate(
+                ['jenis_rb' => $data['jenis_rb']],
+                $data
+            );
         }
     }
 
@@ -63,7 +87,7 @@ class RBAksesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validasi input - menggunakan status enum, bukan is_open boolean
+        // Validasi input
         $request->validate([
             'status' => 'required|in:Dibuka,Ditutup',
             'start_date' => 'nullable|date',
@@ -75,6 +99,17 @@ class RBAksesController extends Controller
 
             $akses = AksesRb::findOrFail($id);
             
+            // Jika mengubah status menjadi Dibuka, cek dulu apakah belum melewati deadline
+            if ($request->status === 'Dibuka' && $request->end_date) {
+                $endDate = \Carbon\Carbon::parse($request->end_date)->startOfDay();
+                $now = now()->startOfDay();
+                
+                if ($now->greaterThan($endDate)) {
+                    return redirect()->back()
+                        ->with('error', 'Tidak dapat membuka akses karena sudah melewati deadline!');
+                }
+            }
+            
             $akses->update([
                 'status' => $request->status,
                 'start_date' => $request->start_date,
@@ -84,12 +119,12 @@ class RBAksesController extends Controller
             DB::commit();
 
             return redirect()->route('adminrb.aksesrb.index')
-                             ->with('success', 'Akses RB berhasil diperbarui.');
+                ->with('success', 'Akses RB berhasil diperbarui.');
 
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                             ->with('error', 'Gagal memperbarui akses RB: ' . $e->getMessage());
+                ->with('error', 'Gagal memperbarui akses RB: ' . $e->getMessage());
         }
     }
 }

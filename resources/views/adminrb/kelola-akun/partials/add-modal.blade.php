@@ -2,20 +2,23 @@
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-y-auto">
     <div class="flex justify-between items-center bg-green-600 text-white p-4 rounded-t-lg">
       <h3 class="text-lg font-semibold">Tambah Akun OPD</h3>
+      <button type="button" onclick="closeModal('addOPDModal')" class="text-white hover:text-gray-200">
+        <i class="fas fa-times text-xl"></i>
+      </button>
     </div>
-    <form action="{{ route('akun.store') }}" method="POST" class="p-6 space-y-2">
+    <form id="formTambahAkun" method="POST" class="p-6 space-y-2">
       @csrf
-      <di>
+      <div>
         <label class="block text-sm font-medium text-gray-600">Nama OPD</label>
-        <input type="text" name="nama_opd" class="w-full p-2 border rounded-md" required>
-      </di>
+        <input type="text" name="nama_opd" id="nama_opd" class="w-full p-2 border rounded-md" required>
+      </div>
       <div>
         <label class="block text-sm font-medium text-gray-600">Email</label>
-        <input type="email" name="email" class="w-full p-2 border rounded-md" required>
+        <input type="email" name="email" id="emailInput" class="w-full p-2 border rounded-md" required>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-600">Password</label>
-        <input type="password" name="password" class="w-full p-2 border rounded-md" required>
+        <input type="password" name="password" id="password" class="w-full p-2 border rounded-md" required>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-600">Role</label>
@@ -25,7 +28,7 @@
       </div>
       <div class="flex justify-end gap-2">
         <button type="button" onclick="closeModal('addOPDModal')" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-gray-600">Batal</button>
-        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Tambah</button>
+        <button type="button" onclick="cekEmailSebelumSubmit()" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Tambah</button>
       </div>
     </form>
   </div>

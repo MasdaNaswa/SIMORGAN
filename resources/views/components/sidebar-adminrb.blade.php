@@ -59,14 +59,6 @@
         </a>
       </li>
 
-      <!-- Kelola Sasaran & Strategi-->
-      <li class="nav-item">
-        <a href="{{ route('adminrb.kelola-data.index') }}">
-          <i class="fas fa-bullseye text-blue-600 text-[20px]"></i><span>Kelola Data</span>
-        </a>
-      </li>
-
-
       <ul class="submenu">
         <!-- RB Berdampak -->
         <li class="submenu-item has-submenu">

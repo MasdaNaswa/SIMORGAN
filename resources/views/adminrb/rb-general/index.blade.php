@@ -1,3 +1,4 @@
+{{-- resources/views/adminrb/rb-general/index.blade.php --}}
 @extends('layouts.adminrb')
 
 @section('title', 'Monitoring Bagor - Admin RB')
@@ -11,6 +12,9 @@
                     <i class="fas fa-file-alt text-blue-600"></i>
                     <span class="hidden sm:inline">RB General</span>
                 </h1>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-600">Admin</span>
+                </div>
             </div>
         </header>
 
@@ -23,12 +27,13 @@
                     @php
                         $startYear = 2024;
                         $currentYear = now()->year;
-                        $years = range($startYear, $currentYear);
+                        $years = range($startYear, $currentYear + 1);
+                        rsort($years);
                     @endphp
                     <form method="GET" id="yearForm">
-                        <select name="year" id="yearFilter" 
-                                class="py-2 px-3 rounded border border-gray-300 hover:border-blue-500 transition focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm md:text-base"
-                                onchange="this.form.submit()">
+                        <select name="year" id="yearFilter"
+                            class="py-2 px-3 rounded border border-gray-300 hover:border-blue-500 transition focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm md:text-base"
+                            onchange="this.form.submit()">
                             @foreach($years as $year)
                                 <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
                             @endforeach
@@ -37,8 +42,17 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <button class="flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300 text-sm md:text-base"
-                            onclick="openModal('unduhModal')">
+                    <!-- Tombol Tambah Data (Admin) -->
+                    <button
+                        class="flex items-center gap-2 bg-[#2F75B5] text-white py-2 px-4 rounded hover:bg-[#1e4f7a] transition focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
+                        onclick="openModal('addModal')">
+                        <i class="fas fa-plus"></i>
+                        <span>Tambah Data</span>
+                    </button>
+                    
+                    <button
+                        class="flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300 text-sm md:text-base"
+                        onclick="openModal('unduhModal')">
                         <i class="fas fa-download"></i>
                         <span>Unduh</span>
                     </button>
@@ -72,7 +86,7 @@
                                 <tr class="hover:bg-blue-50 transition-colors">
                                     <td class="py-3 px-4 font-medium text-gray-900 text-sm">{{ $loop->iteration }}</td>
                                     <td class="py-3 px-4 text-sm">
-                                        <span class="font-semibold text-black-600">{{ $item->unit_kerja }}</span>
+                                        <span class="font-semibold text-blue-600">{{ $item->unit_kerja }}</span>
                                         @if($item->pelaksana)
                                             <br><span class="text-xs text-gray-500">({{ $item->pelaksana }})</span>
                                         @endif
@@ -93,19 +107,13 @@
                                     </td>
                                     <td class="py-3 px-4">
                                         <div class="flex justify-center gap-1">
-                                            <button class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-200" 
-                                                    title="Lihat Detail" 
-                                                    onclick="openDetailModal({{ $item->id }})">
+                                            <button class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-200" title="Lihat Detail" onclick="openDetailModal({{ $item->id }})">
                                                 <i class="fas fa-eye text-sm"></i>
                                             </button>
-                                            <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-200" 
-                                                    title="Edit Data" 
-                                                    onclick="openEditModal({{ $item->id }})">
+                                            <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-200" title="Edit Data" onclick="openEditModal({{ $item->id }})">
                                                 <i class="fas fa-edit text-sm"></i>
                                             </button>
-                                            <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-200" 
-                                                    title="Hapus Data" 
-                                                    onclick="openHapusModal({{ $item->id }})">
+                                            <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-200" title="Hapus Data" onclick="openHapusModal({{ $item->id }})">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </button>
                                         </div>
@@ -117,7 +125,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <i class="fas fa-database text-5xl text-gray-300 mb-3"></i>
                                             <p class="text-lg font-medium">Tidak ada data untuk tahun {{ $selectedYear }}</p>
-                                            <p class="text-sm mt-1">Belum ada OPD yang menginput data RB General</p>
+                                            <p class="text-sm mt-1">Klik tombol "Tambah Data" untuk menambahkan data baru</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -126,18 +134,58 @@
                     </table>
                 </div>
 
-                <!-- Info Footer -->
+                <!-- Info Footer dan Pagination -->
                 @if($rbData->count() > 0)
-                <div class="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600">
-                    <div>
-                        Menampilkan <span class="font-semibold">1-{{ $rbData->count() }}</span> dari <span class="font-semibold">{{ $rbData->count() }}</span> entri
+                    <div class="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600">
+                        <div>
+                            Menampilkan
+                            <span class="font-semibold">{{ $rbData->firstItem() }}</span>
+                            -
+                            <span class="font-semibold">{{ $rbData->lastItem() }}</span>
+                            dari
+                            <span class="font-semibold">{{ $rbData->total() }}</span>
+                            entri
+                        </div>
+
+                        <div class="flex gap-2 mt-2 sm:mt-0">
+                            @if($rbData->onFirstPage())
+                                <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            @else
+                                <a href="{{ $rbData->previousPageUrl() }}"
+                                    class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                                    Sebelumnya
+                                </a>
+                            @endif
+
+                            @foreach($rbData->getUrlRange(max(1, $rbData->currentPage() - 2), min($rbData->lastPage(), $rbData->currentPage() + 2)) as $page => $url)
+                                @if($page == $rbData->currentPage())
+                                    <span class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">{{ $page }}</span>
+                                @else
+                                    <a href="{{ $url }}"
+                                        class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">{{ $page }}</a>
+                                @endif
+                            @endforeach
+
+                            @if($rbData->hasMorePages())
+                                <a href="{{ $rbData->nextPageUrl() }}"
+                                    class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                                    Selanjutnya
+                                </a>
+                            @else
+                                <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            @endif
+                        </div>
                     </div>
-                </div>
                 @endif
             </div>
         </main>
 
         <!-- Modals -->
+        @include('components.adminrb.tambah-modal-rb-general')
         @include('components.adminrb.ubah-modal-rb-general')
         @include('components.adminrb.detail-modal-rb-general')
         @include('components.adminrb.hapus-modal-rb-general')
@@ -152,10 +200,12 @@
         // Fungsi Modal
         function openModal(id) {
             document.getElementById(id)?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal(id) {
             document.getElementById(id)?.classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }
 
         // Helper set value
@@ -164,21 +214,18 @@
             if (el) el.value = value || '';
         }
 
-        // Fungsi Detail Modal - DIPERBAIKI
+        // Fungsi Detail Modal
         async function openDetailModal(id) {
             try {
                 console.log('Membuka detail modal untuk ID:', id);
                 openModal('detailModal');
-                
+
                 const response = await fetch(`/adminrb/rb-general/${id}`);
                 const result = await response.json();
 
-                console.log('Response detail:', result); // DEBUG
-
                 if (result.success) {
                     const d = result.data;
-                    
-                    // Isi data ke form detail - SESUAIKAN DENGAN RESPONSE DARI CONTROLLER
+
                     setValue('detailNo', d.no || '');
                     setValue('detailSasaranStrategi', d.sasaran_strategi || '');
                     setValue('detailIndikator', d.indikator_capaian || '');
@@ -210,47 +257,42 @@
                     setValue('detailCatatanPerbaikan', d.catatan_perbaikan || '');
                     setValue('detailUnitKerja', d.unit_kerja || '');
                     setValue('detailPelaksana', d.pelaksana || '');
-                    
-                    // Update header tahun
+
                     const tahunSpan = document.getElementById('detailTahunHeader');
                     if (tahunSpan) tahunSpan.textContent = d.tahun || '{{ $selectedYear }}';
                 } else {
-                    console.error('Gagal mengambil data:', result.message);
+                    alert('Gagal mengambil data: ' + result.message);
                 }
             } catch (error) {
                 console.error('Error detail:', error);
-                closeModal('detailModal');
+                alert('Terjadi kesalahan saat mengambil data');
             }
         }
 
-        // Fungsi Edit Modal - DIPERBAIKI
+        // Fungsi Edit Modal
         async function openEditModal(id) {
             try {
                 console.log('Membuka edit modal untuk ID:', id);
                 openModal('editModal');
-                
+
                 const response = await fetch(`/adminrb/rb-general/${id}/edit`);
                 const result = await response.json();
 
-                console.log('Response edit:', result); // DEBUG
-
                 if (result.success) {
                     const d = result.data;
-                    
-                    // Isi form edit - SESUAIKAN DENGAN RESPONSE DARI CONTROLLER
+
                     setValue('editId', d.id || '');
                     setValue('editNo', d.no || '');
-                    
-                    // Select elements
+
                     const sasaranSelect = document.getElementById('editSasaranStrategi');
                     if (sasaranSelect) sasaranSelect.value = d.sasaran_strategi || '';
-                    
+
                     setValue('editIndikator', d.indikator_capaian || '');
                     setValue('editTarget', d.target || '');
-                    
+
                     const satuanSelect = document.getElementById('editSatuan');
                     if (satuanSelect) satuanSelect.value = d.satuan || '';
-                    
+
                     setValue('editTargetTahun', d.target_tahun || '');
                     setValue('editRencanaAksi', d.rencana_aksi || '');
                     setValue('editSatuanOutput', d.satuan_output || '');
@@ -275,17 +317,17 @@
                     setValue('editRumus', d.rumus || '');
                     setValue('editCatatanEvaluasi', d.catatan_evaluasi || '');
                     setValue('editCatatanPerbaikan', d.catatan_perbaikan || '');
-                    
+
                     const unitSelect = document.getElementById('editUnitKerja');
                     if (unitSelect) unitSelect.value = d.unit_kerja || '';
-                    
+
                     setValue('editPelaksana', d.pelaksana || '');
                 } else {
-                    console.error('Gagal mengambil data:', result.message);
+                    alert('Gagal mengambil data: ' + result.message);
                 }
             } catch (error) {
                 console.error('Error edit:', error);
-                closeModal('editModal');
+                alert('Terjadi kesalahan saat mengambil data');
             }
         }
 
@@ -297,17 +339,22 @@
         }
 
         // Handle submit form edit
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const editForm = document.getElementById('editRenaksiRB');
-            
+
             if (editForm) {
-                editForm.addEventListener('submit', async function(e) {
+                editForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-                    
+
                     const id = document.getElementById('editId').value;
                     const formData = new FormData(this);
                     formData.append('_method', 'PUT');
-                    
+
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+                    submitBtn.disabled = true;
+
                     try {
                         const response = await fetch(`/adminrb/rb-general/${id}`, {
                             method: 'POST',
@@ -318,21 +365,76 @@
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             }
                         });
-                        
+
                         const result = await response.json();
-                        
+
                         if (result.success) {
+                            alert('Data berhasil diupdate!');
                             closeModal('editModal');
-                            // Refresh halaman setelah 1 detik
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1000);
+                            setTimeout(() => window.location.reload(), 1000);
                         } else {
-                            alert('Gagal mengupdate data: ' + result.message);
+                            if (result.errors) {
+                                let errorMessage = 'Validasi gagal:\n';
+                                for (const field in result.errors) {
+                                    errorMessage += `• ${result.errors[field][0]}\n`;
+                                }
+                                alert(errorMessage);
+                            } else {
+                                alert('Gagal mengupdate data: ' + result.message);
+                            }
                         }
                     } catch (error) {
                         console.error('Error:', error);
                         alert('Terjadi kesalahan saat mengupdate data');
+                    } finally {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+
+            // Handle form hapus
+            const hapusForm = document.getElementById('hapusForm');
+            if (hapusForm) {
+                hapusForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const form = this;
+                    const url = form.action;
+                    const formData = new FormData(form);
+                    formData.append('_method', 'DELETE');
+
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+                    submitBtn.disabled = true;
+
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            alert('Data berhasil dihapus!');
+                            closeModal('hapusModal');
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            alert('Gagal menghapus data: ' + result.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat menghapus data');
+                    } finally {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
                     }
                 });
             }

@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function toggleCatatan() {
         const val = statusSelect.value.toLowerCase();
 
-        if (val === "Revisi") {
+        if (val === "revisi") {
             catatanInput.disabled = false;
             catatanInput.style.background = "white";
         } else {

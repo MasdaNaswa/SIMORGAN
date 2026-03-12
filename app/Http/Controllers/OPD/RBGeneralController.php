@@ -17,10 +17,10 @@ class RBGeneralController extends Controller
     {
         $selectedYear = request()->get('year', date('Y'));
 
-        // ============== TAMBAHAN: Ambil data akses ==============
+        // Ambil data akses
         $akses = AksesRb::where('jenis_rb', 'RB General')->first();
         
-        // Cek apakah akses bisa dibuka (untuk tombol Tambah)
+        // Cek apakah akses bisa dibuka (untuk semua operasi)
         $canAccess = $akses && $akses->isAccessible();
         
         // Ambil pesan jika akses ditutup
@@ -34,7 +34,6 @@ class RBGeneralController extends Controller
                 $accessMessage = 'Akses RB General telah ditutup pada ' . $akses->end_date->format('d/m/Y');
             }
         }
-        // ============== END TAMBAHAN ==============
 
         // Ambil data
         $rbData = RB_General::where('tahun', $selectedYear)
@@ -45,10 +44,9 @@ class RBGeneralController extends Controller
         return view('opd.rb-general.index', compact(
             'rbData', 
             'selectedYear',
-            // ============== TAMBAHAN: Kirim ke view ==============
             'canAccess',
-            'accessMessage'
-            // ============== END TAMBAHAN ==============
+            'accessMessage',
+            'akses'
         ));
     }
 
@@ -57,7 +55,7 @@ class RBGeneralController extends Controller
      */
     public function store(Request $request)
     {
-        // ============== TAMBAHAN: Cek akses SEBELUM menyimpan ==============
+        // CEK AKSES - TAMBAH DATA
         $akses = AksesRb::where('jenis_rb', 'RB General')->first();
         if (!$akses || !$akses->isAccessible()) {
             return response()->json([
@@ -65,7 +63,6 @@ class RBGeneralController extends Controller
                 'message' => 'Akses ditutup. Tidak dapat menambah data baru.'
             ], 403);
         }
-        // ============== END TAMBAHAN ==============
 
         try {
             $validated = $request->validate([
@@ -162,7 +159,6 @@ class RBGeneralController extends Controller
     
     /**
      * Get data untuk detail modal (AJAX)
-     * NOTE: Method ini TETAP BISA diakses meskipun akses ditutup
      */
     public function show($id)
     {
@@ -218,8 +214,6 @@ class RBGeneralController extends Controller
     
     /**
      * Get data untuk edit modal (AJAX)
-     * NOTE: Method ini TETAP BISA diakses meskipun akses ditutup
-     * (hanya mengambil data, tidak mengubah)
      */
     public function edit($id)
     {
@@ -274,13 +268,17 @@ class RBGeneralController extends Controller
 
     /**
      * Update data RB General
-     * NOTE: Method ini TETAP BISA diakses meskipun akses ditutup
-     * (sesuai permintaan: kalau mau ubah bisa)
      */
     public function update(Request $request, $id)
     {
-        // ============== TIDAK ADA PENGECEKAN AKSES ==============
-        // (Sesuai permintaan: bisa update meskipun akses ditutup)
+        // CEK AKSES - UPDATE DATA
+        $akses = AksesRb::where('jenis_rb', 'RB General')->first();
+        if (!$akses || !$akses->isAccessible()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditutup. Tidak dapat mengubah data.'
+            ], 403);
+        }
         
         try {
             $validated = $request->validate([
@@ -368,13 +366,17 @@ class RBGeneralController extends Controller
 
     /**
      * Hapus data RB General
-     * NOTE: Method ini TETAP BISA diakses meskipun akses ditutup
-     * (sesuai permintaan: kalau mau hapus bisa)
      */
     public function destroy($id)
     {
-        // ============== TIDAK ADA PENGECEKAN AKSES ==============
-        // (Sesuai permintaan: bisa hapus meskipun akses ditutup)
+        // CEK AKSES - HAPUS DATA
+        $akses = AksesRb::where('jenis_rb', 'RB General')->first();
+        if (!$akses || !$akses->isAccessible()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditutup. Tidak dapat menghapus data.'
+            ], 403);
+        }
         
         try {
             $rb = RB_General::findOrFail($id);

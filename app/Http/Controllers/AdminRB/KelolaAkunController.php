@@ -26,6 +26,32 @@ class KelolaAkunController extends Controller
         return view('adminrb.kelola-akun.index', compact('akun'));
     }
 
+      public function checkEmail(Request $request)
+    {
+        $email = $request->get('email');
+        
+        // Cari user berdasarkan email
+        $existingUser = Pengguna::where('email', $email)->first();
+        
+        if ($existingUser) {
+            return response()->json([
+                'duplicate' => true,
+                'message' => 'Email ' . $email . ' sudah digunakan',
+                'existing_user' => [
+                    'nama_opd' => $existingUser->nama_opd,
+                    'email' => $existingUser->email,
+                    'role' => $existingUser->role,
+                    'created_by' => $existingUser->created_by,
+                    'created_at' => $existingUser->created_at->format('d/m/Y H:i')
+                ]
+            ]);
+        }
+        
+        return response()->json([
+            'duplicate' => false
+        ]);
+    }
+
     // Tambah akun OPD baru
     public function store(Request $request)
     {

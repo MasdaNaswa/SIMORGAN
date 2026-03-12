@@ -23,7 +23,7 @@
                 class="h-32 mx-auto transition-transform duration-300 hover:scale-105">
         </div>
 
-        <h2 class="text-center text-2xl font-semibold mb-8">LOGIN MONITORING BAGOR</h2>
+        <h2 class="text-center text-2xl font-semibold mb-8">LOGIN SIMORGAN</h2>
 
         <!-- 🔹 Tambahkan action dan csrf -->
         <form id="loginForm" action="{{ route('login.submit') }}" method="POST">
@@ -32,52 +32,69 @@
             <!-- Email input -->
             <div class="mb-6 relative">
                 <label for="email" class="block mb-2 font-medium text-gray-700">Email</label>
-                <i class=" top-11 left-3 text-gray-400"></i>
-                <input type="text" id="email" name="email" placeholder="Masukkan email" required
-                    class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
+                <div class="relative">
+                    <i class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-envelope"></i>
+                    <input type="text" id="email" name="email" placeholder="Masukkan email" required
+                        class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
+                </div>
             </div>
 
-            <!-- Password input -->
+            <!-- Password input with eye icon -->
             <div class="mb-6 relative">
                 <label for="password" class="block mb-2 font-medium text-gray-700">Kata Sandi</label>
-                <i class=" text-gray-400"></i>
-                <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" required
-                    class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
-
+                <div class="relative">
+                    <i class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" required
+                        class="w-full pl-10 pr-12 py-3 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition" />
+                    <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                        <i class="fas fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- Role select -->
-            <div class="mb-6">
+            <!-- Role select with dropdown icon -->
+            <div class="mb-6 relative">
                 <label for="role" class="block mb-2 font-medium text-gray-700">Login Sebagai</label>
-                <select id="role" name="role" required
-                    class="w-full py-3 px-4 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none appearance-none pr-10 relative">
-                    <option value="">-- Pilih Role --</option>
-                    <option value="bagor">Bagian Organisasi (Bagor)</option>
-                    <option value="opd">OPD</option>
-                </select>
+                <div class="relative">
+                    <i class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-user-tag"></i>
+                    <select id="role" name="role" required
+                        class="w-full py-3 pl-10 pr-10 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none appearance-none">
+                        <option value="">-- Pilih Role --</option>
+                        <option value="bagor">Bagian Organisasi (Bagor)</option>
+                        <option value="opd">OPD</option>
+                    </select>
+                    <i class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-chevron-down pointer-events-none"></i>
+                </div>
             </div>
 
             <!-- Bagor Role select -->
             <div class="mb-6 hidden" id="bagor-role-list">
                 <label for="bagor-role" class="block mb-2 font-medium text-gray-700">Pilih Bagor Role</label>
-                <select id="bagor-role" name="bagor_role"
-                    class="w-full py-3 px-4 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none appearance-none pr-10 relative">
-                    <option value="">-- Pilih Bagor Role --</option>
-                    <option value="adminrb">Admin RB</option>
-                    <option value="admin_pelayanan">Admin Pelayanan Publik</option>
-                    <option value="admin_kelembagaan">Admin Kelembagaan</option>
-                </select>
+                <div class="relative">
+                    <i class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-user-tie"></i>
+                    <select id="bagor-role" name="bagor_role"
+                        class="w-full py-3 pl-10 pr-10 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none appearance-none">
+                        <option value="">-- Pilih Bagor Role --</option>
+                        <option value="adminrb">Admin RB</option>
+                        <option value="admin_pelayanan">Admin Pelayanan Publik</option>
+                        <option value="admin_kelembagaan">Admin Kelembagaan</option>
+                    </select>
+                    <i class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-chevron-down pointer-events-none"></i>
+                </div>
             </div>
 
             <!-- OPD select -->
             <div class="mb-6 hidden" id="opd-list">
                 <label for="opd" class="block mb-2 font-medium text-gray-700">Pilih OPD</label>
-                <select name="nama_opd" class="w-full p-2 border rounded-md" required>
-                    @foreach($opdList as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-
+                <div class="relative">
+                    <i class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-building"></i>
+                    <select name="nama_opd" class="w-full py-3 pl-10 pr-10 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none appearance-none" required>
+                        @foreach($opdList as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <i class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-chevron-down pointer-events-none"></i>
+                </div>
             </div>
 
             <button type="submit"
@@ -100,6 +117,22 @@
     </div>
 
     <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', function() {
+            // Toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            // Toggle the eye icon
+            eyeIcon.classList.toggle('fa-eye');
+            eyeIcon.classList.toggle('fa-eye-slash');
+        });
+
+        // Role select functionality
         const roleSelect = document.getElementById('role');
         const opdList = document.getElementById('opd-list');
         const bagorRoleList = document.getElementById('bagor-role-list');

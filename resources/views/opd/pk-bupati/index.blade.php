@@ -1,3 +1,4 @@
+{{-- resources/views/opd/pk-bupati/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'PK Bupati - OPD')
@@ -33,6 +34,23 @@
     <!-- Konten Utama -->
     <main class="flex-1 px-4 md:px-8 py-6 bg-[#F8FAFC]">
 
+        <!-- ========== TAMBAHAN: Info Banner jika akses ditutup ========== -->
+        @if(isset($canAccess) && !$canAccess && isset($accessMessage))
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-lg">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <span class="font-bold">Informasi Akses:</span> {{ $accessMessage }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+        <!-- ========== END TAMBAHAN ========== -->
+
         <!-- Filter Tahun & Semester + Tombol Tambah -->
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 px-4 md:px-6 py-4">
             <div class="flex flex-col md:flex-row items-center gap-4">
@@ -67,10 +85,20 @@
             </div>
 
             <div class="flex gap-2">
-                <button class="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
-                    onclick="openModal('addModal')">
+                <!-- ========== TAMBAHAN: Tombol Tambah dengan pengecekan akses ========== -->
+                <button 
+                    class="flex items-center gap-2 py-2 px-4 rounded transition focus:outline-none focus:ring-2 text-sm md:text-base
+                    @if(isset($canAccess) && $canAccess)
+                        bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300"
+                        onclick="openAddModal()"
+                    @else
+                        bg-gray-400 text-gray-200 cursor-not-allowed"
+                        onclick="openInfoAksesModal()"
+                    @endif
+                
                     <span>Tambah</span>
                 </button>
+                <!-- ========== END TAMBAHAN ========== -->
             </div>
         </div>
 
@@ -115,21 +143,42 @@
                                     <td class="py-3 px-4 text-sm max-w-xs truncate" title="{{ $item->penanggung_jawab }}">{{ $item->penanggung_jawab }}</td>
                                     <td class="py-3 px-4">
                                         <div class="flex justify-center gap-1">
+                                            <!-- Detail - selalu bisa dilihat -->
                                             <button class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors" 
                                                 title="Lihat Detail" 
                                                 onclick="showDetail({{ $item->id }})">
                                                 <i class="fas fa-eye text-sm"></i>
                                             </button>
+                                            
+                                            <!-- ========== TAMBAHAN: Edit - hanya jika akses dibuka ========== -->
+                                            @if(isset($canAccess) && $canAccess)
                                             <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors" 
                                                 title="Edit" 
                                                 onclick="editData({{ $item->id }})">
                                                 <i class="fas fa-edit text-sm"></i>
                                             </button>
+                                            @else
+                                            <button class="p-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed" 
+                                                title="Akses ditutup" disabled onclick="openInfoAksesModal()">
+                                                <i class="fas fa-edit text-sm"></i>
+                                            </button>
+                                            @endif
+                                            <!-- ========== END TAMBAHAN ========== -->
+                                            
+                                            <!-- ========== TAMBAHAN: Hapus - hanya jika akses dibuka ========== -->
+                                            @if(isset($canAccess) && $canAccess)
                                             <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors" 
                                                 title="Hapus" 
                                                 onclick="deleteData({{ $item->id }})">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </button>
+                                            @else
+                                            <button class="p-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed" 
+                                                title="Akses ditutup" disabled onclick="openInfoAksesModal()">
+                                                <i class="fas fa-trash text-sm"></i>
+                                            </button>
+                                            @endif
+                                            <!-- ========== END TAMBAHAN ========== -->
                                         </div>
                                     </td>
                                 </tr>
@@ -153,9 +202,9 @@
                 </div>
                 <div class="flex gap-2">
                     @if($pkData->onFirstPage())
-                            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed"><i class="fas fa-chevron-left"></i></span></span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed"><i class="fas fa-chevron-left"></i></span>
                     @else
-                        <a href="{{ $pkData->previousPageUrl() }}" class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50"></a>
+                        <a href="{{ $pkData->previousPageUrl() }}" class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">Sebelumnya</a>
                     @endif
                     
                     @foreach($pkData->getUrlRange(max(1, $pkData->currentPage() - 2), min($pkData->lastPage(), $pkData->currentPage() + 2)) as $page => $url)
@@ -167,7 +216,7 @@
                     @endforeach
                     
                     @if($pkData->hasMorePages())
-                        <a href="{{ $pkData->nextPageUrl() }}" class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50"></a>
+                        <a href="{{ $pkData->nextPageUrl() }}" class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">Selanjutnya</a>
                     @else
                         <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed"><i class="fas fa-chevron-right"></i></span>
                     @endif
@@ -182,6 +231,7 @@
 
 <!-- Include Modals -->
 @include('components.opd.tambah-modal-pk-bupati')
+@include('components.opd.info-akses-pk-bupati') {{-- Modal info akses --}}
 @include('components.opd.ubah-modal-pk-bupati')
 @include('components.opd.detail-modal-pk-bupati')
 @include('components.opd.hapus-modal-pk-bupati')
@@ -190,6 +240,12 @@
 
 @push('scripts')
 <script>
+    // ================ TAMBAHAN: Data akses dari server ================
+    const canAccess = @json($canAccess ?? false);
+    const accessMessage = @json($accessMessage ?? 'Akses PK Bupati sedang ditutup.');
+    const aksesData = @json($akses ?? null);
+    // ================ END TAMBAHAN ================
+
     // Data indikator dari backend
     const indikatorData = @json($indikatorData);
     const currentYear = '{{ $tahun }}';
@@ -205,6 +261,59 @@
         document.getElementById(id)?.classList.add('hidden');
         document.body.style.overflow = 'auto';
     }
+
+    // ================ TAMBAHAN: Fungsi untuk modal info akses ================
+    function openInfoAksesModal() {
+        // Update pesan di modal info
+        const messageEl = document.getElementById('infoAksesMessage');
+        if (messageEl) {
+            messageEl.textContent = accessMessage;
+        }
+        
+        // Update deadline jika ada
+        if (aksesData && aksesData.end_date) {
+            const deadlineEl = document.getElementById('infoAksesDeadline');
+            if (deadlineEl) {
+                const date = new Date(aksesData.end_date);
+                deadlineEl.textContent = date.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            document.getElementById('infoAksesDeadlineContainer')?.classList.remove('hidden');
+        } else {
+            document.getElementById('infoAksesDeadlineContainer')?.classList.add('hidden');
+        }
+        
+        // Update tanggal buka jika ada
+        if (aksesData && aksesData.start_date && new Date(aksesData.start_date) > new Date()) {
+            const startDateEl = document.getElementById('infoAksesStartDate');
+            if (startDateEl) {
+                const date = new Date(aksesData.start_date);
+                startDateEl.textContent = date.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            document.getElementById('infoAksesStartDateContainer')?.classList.remove('hidden');
+        } else {
+            document.getElementById('infoAksesStartDateContainer')?.classList.add('hidden');
+        }
+        
+        openModal('infoAksesModal');
+    }
+
+    function openAddModal() {
+        if (!canAccess) {
+            openInfoAksesModal();
+            return;
+        }
+        
+        openModal('addModal');
+    }
+    // ================ END TAMBAHAN ================
 
     // Fungsi untuk update dropdown indikator (Tambah)
     function updateIndikator() {
@@ -291,6 +400,13 @@
 
     // Fungsi untuk mengisi form edit
     function editData(id) {
+        // ================ TAMBAHAN: Cek akses sebelum membuka modal edit ================
+        if (!canAccess) {
+            openInfoAksesModal();
+            return;
+        }
+        // ================ END TAMBAHAN ================
+        
         fetch(`/pk-bupati/show/${id}`)
             .then(response => response.json())
             .then(result => {
@@ -365,6 +481,13 @@
 
     // Fungsi untuk konfirmasi hapus
     function deleteData(id) {
+        // ================ TAMBAHAN: Cek akses sebelum membuka modal hapus ================
+        if (!canAccess) {
+            openInfoAksesModal();
+            return;
+        }
+        // ================ END TAMBAHAN ================
+        
         document.getElementById('hapusId').value = id;
         document.getElementById('hapusItem').textContent = '';
         openModal('hapusModal');

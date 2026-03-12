@@ -311,7 +311,7 @@
 
                                     <div class="flex items-center gap-2 text-xs text-gray-500">
                                         <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                                        <span>Upload up to 5 supported files: PDF or drawing. Max 10 MB per file.</span>
+                                        <span>Upload up to 3 supported files: PDF or drawing. Max 10 MB per file.</span>
                                     </div>
                                 </div>
                             </div>

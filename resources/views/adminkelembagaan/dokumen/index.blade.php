@@ -71,10 +71,10 @@
                                     </td>
                                     <td class="py-3 px-4">
                                         <span
-                                            class="px-2 py-1 rounded  
-                                                        {{ $item->status == 'Disetujui' ? 'bg-green-600' : ($item->status == 'Revisi' ? 'bg-yellow-500' : ($item->status == 'Diproses' ? 'bg-red-500' : '')) }}">
-                                            {{ $item->status ?? 'Belum diperiksa' }}
-                                        </span>
+    class="px-2 py-1 rounded text-white
+        {{ $item->status == 'Disetujui' ? 'bg-green-600' : ($item->status == 'Revisi' ? 'bg-yellow-500' : ($item->status == 'Diproses' ? 'bg-red-500' : '')) }}">
+    {{ $item->status ?? 'Belum diperiksa' }}
+</span>
                                     </td>
                                     <td class="py-3 px-4">{{ $item->catatan ?? '-' }}</td>
                                     <td class="py-3 px-4 text-center">

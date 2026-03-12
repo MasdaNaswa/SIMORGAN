@@ -18,7 +18,7 @@
                     <!-- Bagian Header -->
                     <div class="text-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-lg font-bold text-amber-700">
-                            UBAH RENCANA AKSI RB GENERAL TAHUN <span id="editModalYear">{{  $selectedYear }}</span>
+                            UBAH RENCANA AKSI RB GENERAL TAHUN {{  $selectedYear }}
                         </h2>
                     </div>
 
@@ -345,23 +345,74 @@
                                 <select id="editUnitKerja" name="unit_kerja" required
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                     <option value="">Pilih Unit Kerja</option>
-                                    <option value="Diskominfo">Diskominfo</option>
-                                    <option value="Baperlitbang">Baperlitbang</option>
-                                    <option value="BPKAD">BPKAD</option>
-                                    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
                                     <option value="Inspektorat Daerah">Inspektorat Daerah</option>
-                                    <option value="BKPSDM">BKPSDM</option>
-                                    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah
-                                    </option>
-                                    <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
+                                    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
+                                    <option value="Bappeda">Bappeda</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="editPelaksana"
                                     class="block text-sm font-medium text-amber-700 mb-1">PELAKSANA</label>
-                                <input type="text" id="editPelaksana" name="pelaksana"
-                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
-                                    placeholder="Masukkan pelaksana" />
+                                <select id="editPelaksana" name="pelaksana"
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
+                                    <option value="">Pilih Pelaksana</option>
+                                    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah
+                                    </option>
+                                    <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
+                                    <option value="Bagian Perekonomian Setda">Bagian Perekonomian Setda</option>
+                                    <option value="Bakesbangpol">Bakesbangpol</option>
+                                    <option value="BPKAD">BPKAD</option>
+                                    <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan
+                                        Pencatatan Sipil</option>
+                                    <option value="Diskominfo">Diskominfo</option>
+                                    <option value="Dinas Tenaga Kerja dan Perindustrian">Dinas Tenaga Kerja dan
+                                        Perindustrian</option>
+                                    <option value="Dispora">Dinas Kepemudaan dan Olahraga</option>
+                                    <option value="Dispusip">Dinas Perpustakaan dan Arsip Daerah</option>
+                                    <option value="Dinas Kesehatan">Dinas Kesehatan</option>
+                                    <option value="Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM">Dinas Koperasi,
+                                        Usaha Mikro, Perdagangan, dan ESDM</option>
+                                    <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
+                                    <option value="Dinas Pangan">Dinas Pangan</option>
+                                    <option value="Dinas Pangan dan Pertanian">Dinas Pangan dan Pertanian</option>
+                                    <option value="Dinas Pemberdayaan Masyarakat Desa">Dinas Pemberdayaan Masyarakat
+                                        Desa</option>
+                                    <option value="Dinas Pengendalian Penduduk, KB, PP, dan PA">Dinas Pengendalian
+                                        Penduduk, KB, PP, dan PA</option>
+                                    <option value="Dinas Perhubungan">Dinas Perhubungan</option>
+                                    <option value="Dinas Perikanan">Dinas Perikanan</option>
+                                    <option value="Dinas Perumahan Rakyat dan Kawasan Pemukiman">Dinas Perumahan Rakyat
+                                        dan Kawasan Pemukiman</option>
+                                    <option value="Dinas Pertanian">Dinas Pertanian</option>
+                                    <option value="Dinas Pendidikan dan Kebudayaan">Dinas Pendidikan dan Kebudayaan
+                                    </option>
+                                    <option value="Dinas Pekerjaan Umum dan Penataan Ruang">Dinas Pekerjaan Umum dan
+                                        Penataan Ruang</option>
+                                    <option value="Dinas Sosial">Dinas Sosial</option>
+                                    <option value="DPMPTSP">DPMPTSP</option>
+                                    <option value="Kecamatan Belat">Kecamatan Belat</option>
+                                    <option value="Kecamatan Buru">Kecamatan Buru</option>
+                                    <option value="Kecamatan Durai">Kecamatan Durai</option>
+                                    <option value="Kecamatan Karimun">Kecamatan Karimun</option>
+                                    <option value="Kecamatan Kundur">Kecamatan Kundur</option>
+                                    <option value="Kecamatan Kundur Barat">Kecamatan Kundur Barat</option>
+                                    <option value="Kecamatan Kundur Utara">Kecamatan Kundur Utara</option>
+                                    <option value="Kecamatan Meral">Kecamatan Meral</option>
+                                    <option value="Kecamatan Meral Barat">Kecamatan Meral Barat</option>
+                                    <option value="Kecamatan Moro">Kecamatan Moro</option>
+                                    <option value="Kecamatan Selat Gelam">Kecamatan Selat Gelam</option>
+                                    <option value="Kecamatan Sugie Besar">Kecamatan Sugie Besar</option>
+                                    <option value="Kecamatan Tebing">Kecamatan Tebing</option>
+                                    <option value="Kecamatan Unggar">Kecamatan Unggar</option>
+                                    <option value="PTSP">PTSP</option>
+                                    <option value="RSUD M.SANI">RSUD M.SANI</option>
+                                    <option value="RSUD Tanjung Batu Kundur">RSUD Tanjung Batu Kundur</option>
+                                    <option value="Satpol PP">Satpol PP</option>
+                                    <option value="Sekretariat Daerah">Sekretariat Daerah</option>
+                                    <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+                                    <option value="UKPBJ">UKPBJ</option>
+                                    <option value="Unit Pelayan Publik">Unit Pelayan Publik</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -374,7 +425,7 @@
                         </button>
                         <button type="submit"
                             class="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition flex items-center justify-center gap-2">
-                             Simpan
+                            Simpan
                         </button>
                     </div>
                 </form>
@@ -387,7 +438,7 @@
     function toggleTriwulan(twNumber) {
         const content = document.getElementById(`triwulanContent${twNumber}`);
         const chevron = document.getElementById(`chevronTW${twNumber}`);
-        
+
         if (content && content.classList.contains('hidden')) {
             content.classList.remove('hidden');
             if (chevron) chevron.style.transform = 'rotate(90deg)';

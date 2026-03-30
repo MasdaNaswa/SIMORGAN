@@ -60,9 +60,8 @@
     </h2>
     <ol class="list-decimal pl-5 space-y-2">
         <li>Pilih kategori laporan yang sesuai</li>
-        <li>Klik pada template untuk melihat preview</li>
-        <li>Isi laporan sesuai periode menggunakan template</li>
-        <li>Download template</li>
+        <li>Klik unduh untuk mengunduh template</li>
+        <li>Isi laporan sesuai format template</li>     
         <li>Simpan dokumen dengan format: <strong>NAMA_DOKUMEN_WAKTU_PELAKSANAN_NAMA_OPD</strong></li>
         <li>Unggah dokumen melalui menu Unggah Dokumen</li>
     </ol>

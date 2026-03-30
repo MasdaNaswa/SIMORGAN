@@ -105,6 +105,7 @@
                                     <option value="Surat Keputusan">Surat Keputusan</option>
                                     <option value="Kali">Kali</option>
                                     <option value="Orang">Orang</option>
+                                    <option value="Dan Lain-Lain">Dan Lain-Lain</option>
                                 </select>
                             </div>
                             <div class="form-group">

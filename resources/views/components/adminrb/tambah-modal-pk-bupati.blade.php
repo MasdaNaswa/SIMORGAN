@@ -30,41 +30,17 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis <span
                                     class="text-red-500">*</span></label>
-                            <select id="sasaranStrategis" name="sasaranStrategis" required onchange="updateIndikator()"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Pilih Sasaran Strategis</option>
-                                <option value="1">1. Meningkatnya Investasi Daerah</option>
-                                <option value="2">2. Berkembangnya Sektor Ekonomi Dominan</option>
-                                <option value="3">3. Meningkatnya Pendapatan Asli Daerah</option>
-                                <option value="4">4. Meningkatnya Akses Kebutuhan Insfrastruktur Dasar Masyarakat Yang
-                                    Merata</option>
-                                <option value="5">5. Terwujudnya Prasarana Penghubung yang Optimal</option>
-                                <option value="6">6. Meningkatnya Derajat Kesehatan Masyarakat</option>
-                                <option value="7">7. Meningkatnya Derajat Pendidikan Masyarakat</option>
-                                <option value="8">8. Terwujudnya Kesetaraan Gender</option>
-                                <option value="9">9. Terwujudnya Pengendalian Penduduk</option>
-                                <option value="10">10. Meningkatnya Peran Pemuda Dalam Pembangunan</option>
-                                <option value="11">11. Meningkatnya Peran Serta Masyarakat Dalam Pelestarian Nilai
-                                    Budaya Daerah</option>
-                                <option value="12">12. Meningkatnya Kesejahteraan Sosial</option>
-                                <option value="13">13. Mendorong Perluasan Dan Kesempatan Kerja Bagi Tenaga Kerja di
-                                    Daerah</option>
-                                <option value="14">14. Meningkatnya Pengelolaan dan Kelestarian Lingkungan Hidup
-                                </option>
-                                <option value="15">15. Meningkatnya Kualitas Udara, Tanah dan Air</option>
-                                <option value="16">16. Terwujudnya Birokrasi Yang Profesional, Bersih dan Akuntabel
-                                </option>
-                                <option value="17">17. Meningkatnya Kualitas Pelayanan Publik</option>
-                            </select>
+                            <input type="text" id="sasaranStrategis" name="sasaranStrategis" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Masukkan sasaran strategis">
                         </div>
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja <span
                                     class="text-red-500">*</span></label>
-                            <select id="indikatorKinerja" name="indikatorKinerja" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Pilih Sasaran Strategis terlebih dahulu</option>
-                            </select>
+                            <input type="text" id="indikatorKinerja" name="indikatorKinerja" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Masukkan indikator kinerja">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,7 +61,7 @@
                         </div>
                     </div>
 
-                    <!-- Target dan Realisasi per Triwulan -->
+                    <!-- Target dan Realisasi per Triwulan (sama seperti sebelumnya) -->
                     <div class="mb-6 p-6 bg-green-50 rounded-lg border-l-4 border-green-500">
                         <h3 class="text-md font-semibold text-green-800 mb-4">Target dan Realisasi per Triwulan</h3>
 
@@ -278,7 +254,7 @@
                                     Perlindungan Anak</option>
                                 <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
                                 <option value="Dinas Sosial">Dinas Sosial</option>
-                                <option value="Dinas Tenaga Kerja dan Periindustrian">Dinas Tenaga Kerja und
+                                <option value="Dinas Tenaga Kerja dan Periindustrian">Dinas Tenaga Kerja dan
                                     Periindustrian</option>
                                 <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
                                 <option value="Bagian Tata Pembangunan">Bagian Tata Pembangunan</option>
@@ -289,6 +265,67 @@
                                 <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan
                                     Pencatatan Sipil</option>
                                 <option value="RSUD M.SANI">RSUD M.SANI</option>
+                                <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah</option>
+                                <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
+                                <option value="Bagian Perekonomian Setda">Bagian Perekonomian Setda</option>
+                                <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
+                                <option value="Bakesbangpol">Bakesbangpol</option>
+                                <option value="Baperlitbang">Baperlitbang</option>
+                                <option value="BPKAD">BPKAD</option>
+                                <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan
+                                    Pencatatan Sipil</option>
+                                <option value="Dinas Pemberdayaan Perempuan dan Perlindungan Anak">Dinas Pemberdayaan
+                                    Perempuan dan Perlindungan Anak</option>
+                                <option value="Diskominfo">Diskominfo</option>
+                                <option value="Dinas Tenaga Kerja dan Perindustrian">Dinas Tenaga Kerja dan
+                                    Perindustrian</option>
+                                <option value="Dinas Kepemudaan, dan Olahraga">Dinas Kepemudaan, dan Olahraga</option>
+                                <option value="Dinas Perpustakaan dan Arsip Daerah">Dinas Perpustakaan dan Arsip Daerah
+                                </option>
+                                <option value="Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM">Dinas Koperasi, Usaha
+                                    Mikro, Perdagangan, dan ESDM</option>
+                                <option value="Dinas Pariwisata">Dinas Pariwisata</option>
+                                <option value="Dinas Pemberdayaan Masyarakat Desa">Dinas Pemberdayaan Masyarakat Desa
+                                </option>
+                                <option value="Dinas Perumahan Rakyat dan Kawasan Pemukiman">Dinas Perumahan Rakyat dan
+                                    Kawasan Pemukiman</option>
+                                <option value="Dinas Pertanian">Dinas Pertanian</option>
+                                <option value="DPMPTSP">DPMPTSP</option>
+                                <option value="Inspektorat Daerah">Inspektorat Daerah</option>
+                                <option value="Kecamatan Belat">Kecamatan Belat</option>
+                                <option value="Kecamatan Buru">Kecamatan Buru</option>
+                                <option value="Kecamatan Durai">Kecamatan Durai</option>
+                                <option value="Kecamatan Karimun">Kecamatan Karimun</option>
+                                <option value="Kecamatan Kundur">Kecamatan Kundur</option>
+                                <option value="Kecamatan Kundur Barat">Kecamatan Kundur Barat</option>
+                                <option value="Kecamatan Kundur Utara">Kecamatan Kundur Utara</option>
+                                <option value="Kecamatan Meral">Kecamatan Meral</option>
+                                <option value="Kecamatan Meral Barat">Kecamatan Meral Barat</option>
+                                <option value="Kecamatan Moro">Kecamatan Moro</option>
+                                <option value="Kecamatan Selat Gelam">Kecamatan Selat Gelam</option>
+                                <option value="Kecamatan Sugie Besar">Kecamatan Sugie Besar</option>
+                                <option value="Kecamatan Tebing">Kecamatan Tebing</option>
+                                <option value="Kecamatan Ungar">Kecamatan Ungar</option>
+                                <option value="PTSP">PTSP</option>
+                                <option value="RSUD Tanjung Batu Kundur">RSUD Tanjung Batu Kundur</option>
+                                <option value="Satpol PP">Satpol PP</option>
+                                <option value="Sekretariat Daerah">Sekretariat Daerah</option>
+                                <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+                                <option value="UKPBJ">UKPBJ</option>
+                                <option value="Unit Pelayan Publik">Unit Pelayan Publik</option>
+                                <option value="UPT PUSKESMAS KARIMUN">UPT PUSKESMAS KARIMUN</option>
+                                <option value="UPT PUSKESMAS TEBING">UPT PUSKESMAS TEBING</option>
+                                <option value="UPT PUSKESMAS MERAL">UPT PUSKESMAS MERAL</option>
+                                <option value="UPT PUSKESMAS MERAL BARAT">UPT PUSKESMAS MERAL BARAT</option>
+                                <option value="UPT PUSKESMAS BURU">UPT PUSKESMAS BURU</option>
+                                <option value="UPT PUSKESMAS TANJUNG BATU">UPT PUSKESMAS TANJUNG BATU</option>
+                                <option value="UPT PUSKESMAS KUNDUR BARAT">UPT PUSKESMAS KUNDUR BARAT</option>
+                                <option value="UPT PUSKESMAS TANJUNG BERLIAN">UPT PUSKESMAS TANJUNG BERLIAN</option>
+                                <option value="UPT PUSKESMAS BELAT">UPT PUSKESMAS BELAT</option>
+                                <option value="UPT PUSKESMAS UNGAR">UPT PUSKESMAS UNGAR</option>
+                                <option value="UPT PUSKESMAS MORO">UPT PUSKESMAS MORO</option>
+                                <option value="UPT PUSKESMAS DURAI">UPT PUSKESMAS DURAI</option>
+                                <option value="UPT PUSKESMAS NIUR PERMAI">UPT PUSKESMAS NIUR PERMAI</option>
                             </select>
                         </div>
                     </div>
@@ -306,8 +343,8 @@
                     </div>
                 </form>
             </div>
+        </div>
     </div>
-</div>
 </div>
 
 <script>
@@ -331,53 +368,12 @@
         evt.currentTarget.classList.add('bg-gray-200');
     }
 
-    // Fungsi untuk update dropdown indikator
-    function updateIndikator() {
-        const sasaranSelect = document.getElementById("sasaranStrategis");
-        const indikatorSelect = document.getElementById("indikatorKinerja");
-        const selectedSasaran = sasaranSelect.value;
-
-        // Data indikator berdasarkan sasaran strategis
-        const indikatorData = {
-            1: ["Nilai Investasi"],
-            2: ["Nilai PDRB Sektor Pertanian, Kehutanan Dan Perikanan (Dalam Miliar Rp)"],
-            3: ["Persentase PAD Terhadap Pendapatan Daerah"],
-            4: ["Rasio KK yang Terlayani Insfrastruktur Dasar"],
-            5: ["Rasio Panjang Dalam Kondisi Baik", "Rasio Konektivitas Angkutan Laut", "Rasio Konektivitas Angkutan Darat"],
-            6: ["Angka Harapan Hidup"],
-            7: ["Angka Harapan Lama Sekolah", "Rata - Rata Lama Sekolah"],
-            8: ["Indeks Pembangunan Gender"],
-            9: ["Laju Pertumbuhan Penduduk"],
-            10: ["Indeks Pembangunan Pemuda"],
-            11: ["Rasio SDM Kebudayaan Berprestasi"],
-            12: ["Persentase PPKS Mandiri"],
-            13: ["Tingkat Pengangguran Terbuka"],
-            14: ["Luas Ruang Terbuka Hijau", "Indeks Kinerja Pengelolaan sampah"],
-            15: ["Indeks Kualitas Air", "Indeks Kualitas Udara", "Indeks Kualitas Lahan"],
-            16: ["Nilai LPPD", "Indeks Reformasi Birokrasi", "Nilai Manajemen Risiko Indeks"],
-            17: ["Indeks Pelayanan Publik"]
-        };
-
-        // Kosongkan dropdown indikator
-        indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
-
-        // Jika sasaran strategis dipilih, isi dropdown indikator
-        if (selectedSasaran && indikatorData[selectedSasaran]) {
-            indikatorData[selectedSasaran].forEach((indikator) => {
-                const option = document.createElement("option");
-                option.value = indikator;
-                option.textContent = indikator;
-                indikatorSelect.appendChild(option);
-            });
-        }
-    }
-
     // Fungsi untuk mendapatkan nomor otomatis
     function setAutoNumber() {
-        // Cari semua baris di tabel (gunakan selector yang lebih umum)
+        // Cari semua baris di tabel
         const table = document.querySelector('.bg-white.shadow.rounded-lg table');
         let maxNo = 0;
-        
+
         if (table) {
             const rows = table.querySelectorAll('tbody tr');
             rows.forEach(row => {
@@ -391,7 +387,7 @@
                 }
             });
         }
-        
+
         const nextNumber = maxNo + 1;
         const noInput = document.getElementById('no');
         if (noInput) {
@@ -401,7 +397,7 @@
 
     // Override fungsi openModal yang ada
     const originalOpenModal = window.openModal;
-    window.openModal = function(modalId) {
+    window.openModal = function (modalId) {
         if (originalOpenModal) {
             originalOpenModal(modalId);
         } else {
@@ -411,7 +407,7 @@
                 document.body.style.overflow = 'hidden';
             }
         }
-        
+
         // Jika modal tambah yang dibuka, set nomor otomatis
         if (modalId === 'addModal') {
             setTimeout(setAutoNumber, 100);

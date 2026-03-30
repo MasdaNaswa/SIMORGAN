@@ -1,4 +1,4 @@
-<div id="addModal" class="add-modal fixed inset-0 z-[9999] hidden">
+<div id="addModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-[9999] p-">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto ">
             <!-- Modal Header -->
@@ -13,6 +13,8 @@
                 <form id="pkForm" method="POST" action="{{ route('pk-bupati.store') }}">
                     @csrf
                     <input type="hidden" id="editIndex" />
+                    <input type="hidden" name="tahun" id="tahunInput" value="{{ $tahun ?? date('Y') }}">
+                    <input type="hidden" name="semester" id="semesterInput" value="{{ $semester ?? '1' }}">
 
                     <!-- Informasi Dasar -->
                     <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-blue-500">
@@ -22,54 +24,31 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">NO <span
                                         class="text-red-500">*</span></label>
-                                <input type="number" id="no" name="no" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <input type="number" id="no" name="no" required readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <p class="text-xs text-gray-500 mt-1">Nomor akan terisi otomatis</p>
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis <span
                                     class="text-red-500">*</span></label>
-                            <select id="sasaranStrategis" name="sasaranStrategis" required onchange="updateIndikator()"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Pilih Sasaran Strategis</option>
-                                <option value="1">1. Meningkatnya Investasi Daerah</option>
-                                <option value="2">2. Berkembangnya Sektor Ekonomi Dominan</option>
-                                <option value="3">3. Meningkatnya Pendapatan Asli Daerah</option>
-                                <option value="4">4. Meningkatnya Akses Kebutuhan Insfrastruktur Dasar Masyarakat Yang
-                                    Merata</option>
-                                <option value="5">5. Terwujudnya Prasarana Penghubung yang Optimal</option>
-                                <option value="6">6. Meningkatnya Derajat Kesehatan Masyarakat</option>
-                                <option value="7">7. Meningkatnya Derajat Pendidikan Masyarakat</option>
-                                <option value="8">8. Terwujudnya Kesetaraan Gender</option>
-                                <option value="9">9. Terwujudnya Pengendalian Penduduk</option>
-                                <option value="10">10. Meningkatnya Peran Pemuda Dalam Pembangunan</option>
-                                <option value="11">11. Meningkatnya Peran Serta Masyarakat Dalam Pelestarian Nilai
-                                    Budaya Daerah</option>
-                                <option value="12">12. Meningkatnya Kesejahteraan Sosial</option>
-                                <option value="13">13. Mendorong Perluasan Dan Kesempatan Kerja Bagi Tenaga Kerja di
-                                    Daerah</option>
-                                <option value="14">14. Meningkatnya Pengelolaan dan Kelestarian Lingkungan Hidup
-                                </option>
-                                <option value="15">15. Meningkatnya Kualitas Udara, Tanah dan Air</option>
-                                <option value="16">16. Terwujudnya Birokrasi Yang Profesional, Bersih dan Akuntabel
-                                </option>
-                                <option value="17">17. Meningkatnya Kualitas Pelayanan Publik</option>
-                            </select>
+                            <input type="text" id="sasaranStrategis" name="sasaranStrategis" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Masukkan sasaran strategis">
                         </div>
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja <span
                                     class="text-red-500">*</span></label>
-                            <select id="indikatorKinerja" name="indikatorKinerja" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Pilih Sasaran Strategis terlebih dahulu</option>
-                            </select>
+                            <input type="text" id="indikatorKinerja" name="indikatorKinerja" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Masukkan indikator kinerja">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Target {{ $selectedYear }}
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Target {{ $tahun ?? date('Y') }}
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" id="target2025" name="target2025" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -278,7 +257,7 @@
                                     Perlindungan Anak</option>
                                 <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
                                 <option value="Dinas Sosial">Dinas Sosial</option>
-                                <option value="Dinas Tenaga Kerja dan Periindustrian">Dinas Tenaga Kerja dan
+                                <option value="Dinas Tenaga Kerja dan Periindustrian">Dinas Tenaga Kerja und
                                     Periindustrian</option>
                                 <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
                                 <option value="Bagian Tata Pembangunan">Bagian Tata Pembangunan</option>
@@ -306,22 +285,19 @@
                     </div>
                 </form>
             </div>
+        </div>
     </div>
-</div>
 </div>
 
 <script>
     // Fungsi untuk beralih tab form
     function openFormTab(evt, tabId) {
-        // Sembunyikan semua tab content
         document.querySelectorAll('#addModal .tabcontent').forEach(tab => {
             tab.classList.add('hidden');
         });
 
-        // Tampilkan tab yang dipilih
         document.getElementById(tabId).classList.remove('hidden');
 
-        // Update tombol tab yang aktif
         document.querySelectorAll('#addModal .tablinks').forEach(btn => {
             btn.classList.remove('bg-gray-200');
             btn.classList.add('bg-gray-100');
@@ -329,46 +305,5 @@
 
         evt.currentTarget.classList.remove('bg-gray-100');
         evt.currentTarget.classList.add('bg-gray-200');
-    }
-
-    // Fungsi untuk update dropdown indikator
-    function updateIndikator() {
-        const sasaranSelect = document.getElementById("sasaranStrategis");
-        const indikatorSelect = document.getElementById("indikatorKinerja");
-        const selectedSasaran = sasaranSelect.value;
-
-        // Data indikator berdasarkan sasaran strategis
-        const indikatorData = {
-            1: ["Nilai Investasi"],
-            2: ["Nilai PDRB Sektor Pertanian, Kehutanan Dan Perikanan (Dalam Miliar Rp)"],
-            3: ["Persentase PAD Terhadap Pendapatan Daerah"],
-            4: ["Rasio KK yang Terlayani Insfrastruktur Dasar"],
-            5: ["Rasio Panjang Dalam Kondisi Baik", "Rasio Konektivitas Angkutan Laut", "Rasio Konektivitas Angkutan Darat"],
-            6: ["Angka Harapan Hidup"],
-            7: ["Angka Harapan Lama Sekolah", "Rata - Rata Lama Sekolah"],
-            8: ["Indeks Pembangunan Gender"],
-            9: ["Laju Pertumbuhan Penduduk"],
-            10: ["Indeks Pembangunan Pemuda"],
-            11: ["Rasio SDM Kebudayaan Berprestasi"],
-            12: ["Persentase PPKS Mandiri"],
-            13: ["Tingkat Pengangguran Terbuka"],
-            14: ["Luas Ruang Terbuka Hijau", "Indeks Kinerja Pengelolaan sampah"],
-            15: ["Indeks Kualitas Air", "Indeks Kualitas Udara", "Indeks Kualitas Lahan"],
-            16: ["Nilai LPPD", "Indeks Reformasi Birokrasi", "Nilai Manajemen Risiko Indeks"],
-            17: ["Indeks Pelayanan Publik"]
-        };
-
-        // Kosongkan dropdown indikator
-        indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
-
-        // Jika sasaran strategis dipilih, isi dropdown indikator
-        if (selectedSasaran && indikatorData[selectedSasaran]) {
-            indikatorData[selectedSasaran].forEach((indikator) => {
-                const option = document.createElement("option");
-                option.value = indikator;
-                option.textContent = indikator;
-                indikatorSelect.appendChild(option);
-            });
-        }
     }
 </script>

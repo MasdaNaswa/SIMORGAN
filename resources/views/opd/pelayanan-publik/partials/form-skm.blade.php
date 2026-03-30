@@ -57,10 +57,9 @@
                     </label>
                     <input type="text" name="nip_penandatangan"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                        placeholder="Contoh: 19651212 198803 1 001" required id="nipInput" oninput="formatNIP(this)"
-                        onblur="formatNIP(this)">
+                        placeholder="Masukkan NIP" required id="nipInput">
                     <p class="text-xs text-gray-500 mt-1">
-                        Format: 18 digit angka
+                        Masukkan NIP penandatangan
                     </p>
                 </div>
 
@@ -183,7 +182,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                             <tr>
+                            <tr>
                                 <th class="border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700">No.</th>
                                 <th class="border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700">Jenis
                                     Layanan</th>
@@ -209,7 +208,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                                 </th>
                                 <th class="border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700">IKM Per
                                     Jenis Layanan</th>
-                             </tr>
+                            </tr>
                         </thead>
                         <tbody id="jenisLayananTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -260,7 +259,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <!-- Template Analisis Masalah -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Analisis Masalah</label>
-                    
+
                     <!-- Textarea untuk input manual -->
                     <textarea name="analisis_masalah" rows="8"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -293,7 +292,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-200">
                             <thead class="bg-gray-50">
-                                 <tr>
+                                <tr>
                                     <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">No.
                                     </th>
                                     <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Unsur
@@ -304,7 +303,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                                     </th>
                                     <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">
                                         Penanggung Jawab</th>
-                                 </tr>
+                                </tr>
                             </thead>
                             <tbody id="rencanaTindakLanjutTable">
                                 <!-- Data akan diisi via JavaScript -->
@@ -320,13 +319,13 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                             <tr>
+                            <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Tahun
                                 </th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">IKM Unit
                                     Layanan</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Mutu</th>
-                             </tr>
+                            </tr>
                         </thead>
                         <tbody id="trenSkmTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -351,12 +350,12 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                             <tr>
+                            <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">No</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Unsur
                                 </th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">IKM</th>
-                             </tr>
+                            </tr>
                         </thead>
                         <tbody id="hasilSkmSebelumnyaTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -371,7 +370,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                             <tr>
+                            <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">No</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Rencana
                                     Tindak Lanjut</th>
@@ -381,7 +380,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                                     Tindak Lanjut</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">
                                     Dokumentasi Kegiatan</th>
-                             </tr>
+                            </tr>
                         </thead>
                         <tbody id="tindakLanjutSebelumnyaTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -449,7 +448,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         <div class="flex justify-end">
             <button type="submit"
                 class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark flex items-center gap-2">
-                <i class="fas fa-file-pdf mr-2"></i> Generate Laporan PDF
+                <i class="fas fa-file-pdf mr-2"></i> Membuat Laporan 
             </button>
         </div>
     </form>
@@ -581,49 +580,14 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         if (ikm >= 60) return 'D';
         return 'E';
     }
-
-    // Fungsi untuk format NIP
-    function formatNIP(input) {
-        if (!input) return;
-        
-        let value = input.value.replace(/\D/g, '');
-        
-        if (value.length > 0) {
-            // Format: XXXXXXXX XXXXXX X XXX
-            if (value.length > 8) {
-                value = value.substring(0, 8) + ' ' + value.substring(8);
-            }
-            if (value.length > 15) {
-                value = value.substring(0, 15) + ' ' + value.substring(15);
-            }
-            if (value.length > 18) {
-                value = value.substring(0, 18);
-            }
-        }
-        
-        input.value = value;
-        
-        // Hanya highlight jika user sudah mengisi tapi kurang dari 18 digit
-        const nipValue = input.value.replace(/\D/g, '');
-        if (nipValue.length > 0 && nipValue.length < 18) {
-            input.style.borderColor = '#f87171';
-            input.style.backgroundColor = '#fef2f2';
-        } else {
-            input.style.borderColor = '#d1d5db';
-            input.style.backgroundColor = '#ffffff';
-        }
-    }
-
-    // Fungsi untuk validasi NIP pada form submit
+    // Fungsi untuk validasi NIP (opsional, hanya cek tidak kosong)
     function validateNIP() {
         const nipInput = document.getElementById('nipInput');
         if (!nipInput) return true;
-        
-        const nipValue = nipInput.value.replace(/\D/g, '');
-        if (nipValue.length !== 18) {
-            alert('❌ NIP harus 18 digit! Silakan periksa kembali NIP Penandatangan.');
-            nipInput.style.borderColor = '#f87171';
-            nipInput.style.backgroundColor = '#fef2f2';
+
+        const nipValue = nipInput.value.trim();
+        if (nipValue === '') {
+            alert('❌ NIP harus diisi!');
             nipInput.focus();
             return false;
         }

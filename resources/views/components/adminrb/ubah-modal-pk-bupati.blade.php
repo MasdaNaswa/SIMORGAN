@@ -38,23 +38,18 @@
                         <div class="grid grid-cols-1 gap-4 mb-4">
                             <div>
                                 <label for="editSasaranStrategis" class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis</label>
-                                <select id="editSasaranStrategis" name="sasaranStrategis" required onchange="updateEditIndikator()" 
-                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
-                                    <option value="">Pilih Sasaran Strategis</option>
-                                    @foreach($sasaranOptions as $key => $value)
-                                        <option value="{{ $key }}">{{ $value }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" id="editSasaranStrategis" name="sasaranStrategis" required 
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan sasaran strategis">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 mb-4">
                             <div>
                                 <label for="editIndikatorKinerja" class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja</label>
-                                <select id="editIndikatorKinerja" name="indikatorKinerja" required 
-                                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
-                                    <option value="">Pilih Sasaran Strategis terlebih dahulu</option>
-                                </select>
+                                <input type="text" id="editIndikatorKinerja" name="indikatorKinerja" required 
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan indikator kinerja">
                             </div>
                         </div>
 
@@ -72,7 +67,7 @@
                         </div>
                     </div>
 
-                    <!-- Rencana Aksi dan Anggaran per Triwulan -->
+                    <!-- Rencana Aksi dan Anggaran per Triwulan (sama seperti sebelumnya) -->
                     <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-blue-500">
                         <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
                             <i class="fas fa-chart-line text-blue-600"></i>
@@ -203,23 +198,5 @@ function openEditTab(event, tabId) {
 
     event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
     event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
-}
-
-// Fungsi untuk update indikator
-function updateEditIndikator() {
-    const sasaranSelect = document.getElementById('editSasaranStrategis');
-    const indikatorSelect = document.getElementById('editIndikatorKinerja');
-    const selectedSasaran = sasaranSelect.value;      
-
-    indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
-
-    if (selectedSasaran && indikatorData && indikatorData[selectedSasaran]) {
-        indikatorData[selectedSasaran].forEach((indikator) => {
-            const option = document.createElement("option");
-            option.value = indikator;
-            option.textContent = indikator;
-            indikatorSelect.appendChild(option);
-        });
-    }
 }
 </script>

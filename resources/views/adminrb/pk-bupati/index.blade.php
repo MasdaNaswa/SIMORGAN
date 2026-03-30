@@ -250,9 +250,6 @@
                 indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
             }
 
-            const sasaranSelect = document.getElementById('sasaranStrategis');
-            if (sasaranSelect) sasaranSelect.value = '';
-
             const tahunFilter = document.getElementById('yearFilter');
             const semesterFilter = document.getElementById('semesterFilter');
 
@@ -281,7 +278,7 @@
             openModal('addModal');
             
             // Set nomor otomatis setelah modal terbuka
-            setTimeout(setAutoNumber, 200);
+            setTimeout(setAutoNumber, 500);
         }
 
         function openFormTab(evt, tabId) {
@@ -293,25 +290,6 @@
             });
             evt.currentTarget.classList.remove('bg-gray-100');
             evt.currentTarget.classList.add('bg-gray-200');
-        }
-
-        function updateIndikator() {
-            const sasaranSelect = document.getElementById("sasaranStrategis");
-            const indikatorSelect = document.getElementById("indikatorKinerja");
-            const selectedSasaran = sasaranSelect.value;
-
-            const indikatorMap = @json($indikatorData);
-
-            indikatorSelect.innerHTML = '<option value="">Pilih Indikator Kinerja</option>';
-
-            if (selectedSasaran && indikatorMap[selectedSasaran]) {
-                indikatorMap[selectedSasaran].forEach((indikator) => {
-                    const option = document.createElement("option");
-                    option.value = indikator;
-                    option.textContent = indikator;
-                    indikatorSelect.appendChild(option);
-                });
-            }
         }
 
         function openDetailTab(event, tabId) {
@@ -403,25 +381,8 @@
                     setValue('editSatuan', data.satuan);
                     setValue('editProgram', data.program || '');
                     setValue('editAnalisisEvaluasi', data.analisisEvaluasi || '');
-
-                    const sasaranSelect = document.getElementById('editSasaranStrategis');
-                    if (sasaranSelect && data.sasaranKey) {
-                        sasaranSelect.value = data.sasaranKey;
-                        sasaranSelect.dispatchEvent(new Event('change'));
-                    }
-
-                    setTimeout(() => {
-                        const indikatorSelect = document.getElementById('editIndikatorKinerja');
-                        if (indikatorSelect && data.indikatorKinerja) {
-                            for (let i = 0; i < indikatorSelect.options.length; i++) {
-                                if (indikatorSelect.options[i].text === data.indikatorKinerja) {
-                                    indikatorSelect.selectedIndex = i;
-                                    break;
-                                }
-                            }
-                        }
-                    }, 500);
-
+                    setValue('editSasaranStrategis', data.sasaranStrategis); 
+                    setValue('editIndikatorKinerja', data.indikatorKinerja); 
                     setValue('editTargetTW1', data.targetTW1 || '');
                     setValue('editRealisasiTW1', data.realisasiTW1 || '');
                     setValue('editPaguAnggaranTW1', data.paguAnggaranTW1 || '');

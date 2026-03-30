@@ -95,6 +95,7 @@
                                     <option value="OPD">OPD</option>
                                     <option value="Laporan">Laporan</option>
                                     <option value="Surat Keputusan">Surat Keputusan</option>
+                                    <option value="Dan Lain-Lain">Dan Lain-Lain</option>
                                 </select>
                             </div>
                             <div class="form-group">

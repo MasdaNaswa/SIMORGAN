@@ -14,6 +14,8 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" id="editId" name="id">
+                    <input type="hidden" name="tahun" id="editTahun" value="{{ $tahun ?? date('Y') }}">
+                    <input type="hidden" name="semester" id="editSemester" value="{{ $semester ?? '1' }}">
 
                     <!-- Informasi Dasar -->
                     <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-amber-500">
@@ -32,47 +34,37 @@
 
                         <div class="grid grid-cols-1 gap-4 mb-4">
                             <div>
-                                <label for="editSasaranStrategis"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis</label>
-                                <select id="editSasaranStrategis" name="sasaranStrategis" required
-                                    onchange="updateEditIndikator()"
-                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
-                                    <option value="">Pilih Sasaran Strategis</option>
-                                    <?php foreach ($sasaranOptions as $key => $value): ?>
-                                    <option value="<?= $key ?>"><?= $value ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <label for="editSasaranStrategis" class="block text-sm font-medium text-gray-700 mb-1">Sasaran Strategis</label>
+                                <input type="text" id="editSasaranStrategis" name="sasaranStrategis" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan sasaran strategis">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 mb-4">
                             <div>
-                                <label for="editIndikatorKinerja"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja</label>
-                                <select id="editIndikatorKinerja" name="indikatorKinerja" required
-                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
-                                    <option value="">Pilih Sasaran Strategis terlebih dahulu</option>
-                                </select>
+                                <label for="editIndikatorKinerja" class="block text-sm font-medium text-gray-700 mb-1">Indikator Kinerja</label>
+                                <input type="text" id="editIndikatorKinerja" name="indikatorKinerja" required
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="Masukkan indikator kinerja">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="editTarget2025" class="block text-sm font-medium text-gray-700 mb-1">Target
-                                    2025</label>
+                                <label for="editTarget2025" class="block text-sm font-medium text-gray-700 mb-1">Target 2025</label>
                                 <input type="text" id="editTarget2025" name="target2025" required
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
                             <div>
-                                <label for="editSatuan"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Satuan</label>
+                                <label for="editSatuan" class="block text-sm font-medium text-gray-700 mb-1">Satuan</label>
                                 <input type="text" id="editSatuan" name="satuan" required
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Rencana Aksi dan Anggaran per Triwulan - DIPERBAIKI MENGGUNAKAN TAB -->
+                    <!-- Rencana Aksi dan Anggaran per Triwulan -->
                     <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-blue-500">
                         <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
                             <i class="fas fa-chart-line text-blue-600"></i>
@@ -260,7 +252,6 @@
                         </h4>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <!-- Kolom Kiri: Program -->
                             <div>
                                 <label for="editProgram"
                                     class="block text-sm font-medium text-gray-700 mb-1">Program</label>
@@ -268,21 +259,35 @@
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                             </div>
 
-                            <!-- Kolom Kanan: Penanggung Jawab -->
                             <div>
                                 <label for="editPenanggungJawab"
                                     class="block text-sm font-medium text-gray-700 mb-1">Penanggung Jawab</label>
                                 <select id="editPenanggungJawab" name="penanggungJawab" required
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                     <option value="">Pilih Penanggung Jawab</option>
-                                    <?php foreach ($penanggungJawabOptions as $option): ?>
-                                    <option value="<?= $option ?>"><?= $option ?></option>
-                                    <?php endforeach; ?>
+                                    <option value="Dinas Penanaman Modal dan Pelayanan Satu Pintu">Dinas Penanaman Modal dan Pelayanan Satu Pintu</option>
+                                    <option value="Dinas Pangan dan Pertanian">Dinas Pangan dan Pertanian</option>
+                                    <option value="Dinas Perikanan">Dinas Perikanan</option>
+                                    <option value="Badan Pendapatan Daerah">Badan Pendapatan Daerah</option>
+                                    <option value="Dinas Pekerjaan Umum dan Penataan Ruang">Dinas Pekerjaan Umum dan Penataan Ruang</option>
+                                    <option value="Dinas Perhubungan">Dinas Perhubungan</option>
+                                    <option value="Dinas Kesehatan">Dinas Kesehatan</option>
+                                    <option value="Dinas Pendidikan dan Kebudayaan">Dinas Pendidikan dan Kebudayaan</option>
+                                    <option value="Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak">Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak</option>
+                                    <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
+                                    <option value="Dinas Sosial">Dinas Sosial</option>
+                                    <option value="Dinas Tenaga Kerja dan Periindustrian">Dinas Tenaga Kerja dan Periindustrian</option>
+                                    <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
+                                    <option value="Bagian Tata Pembangunan">Bagian Tata Pembangunan</option>
+                                    <option value="Bagian Organisasi">Bagian Organisasi</option>
+                                    <option value="Baperlitbang Kabupaten Karimun">Baperlitbang Kabupaten Karimun</option>
+                                    <option value="Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu">Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu</option>
+                                    <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan Pencatatan Sipil</option>
+                                    <option value="RSUD M.SANI">RSUD M.SANI</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Analisis Evaluasi (tetap satu baris penuh) -->
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="editAnalisisEvaluasi"
@@ -316,58 +321,25 @@
 <script>
     // Fungsi untuk membuka tab di modal edit
     function openEditTab(event, tabId) {
-        // Sembunyikan semua tab content
         var tabContents = document.getElementsByClassName("tabcontent-edit");
         for (var i = 0; i < tabContents.length; i++) {
             tabContents[i].classList.add('hidden');
         }
 
-        // Hapus class active dari semua tab links
         var tabLinks = document.getElementsByClassName("tablinks-edit");
         for (var i = 0; i < tabLinks.length; i++) {
             tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
             tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
         }
 
-        // Tampilkan tab yang dipilih
         document.getElementById(tabId).classList.remove('hidden');
 
-        // Set class active pada tab yang diklik
         event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
         event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-amber-600', 'text-amber-700');
-    }
-
-    // Fungsi untuk membuka tab di modal detail
-    function openDetailTab(event, tabId) {
-        // Sembunyikan semua tab content
-        var tabContents = document.getElementsByClassName("tabcontent");
-        for (var i = 0; i < tabContents.length; i++) {
-            tabContents[i].classList.add('hidden');
-        }
-
-        // Hapus class active dari semua tab links
-        var tabLinks = document.getElementsByClassName("tablinks");
-        for (var i = 0; i < tabLinks.length; i++) {
-            tabLinks[i].classList.remove('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
-            tabLinks[i].classList.add('bg-gray-100', 'text-gray-700');
-        }
-
-        // Tampilkan tab yang dipilih
-        document.getElementById(tabId).classList.remove('hidden');
-
-        // Set class active pada tab yang diklik
-        event.currentTarget.classList.remove('bg-gray-100', 'text-gray-700');
-        event.currentTarget.classList.add('active', 'bg-white', 'border-b-2', 'border-green-600', 'text-green-700');
     }
 
     // Fungsi untuk menutup modal
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
-    }
-
-    // Fungsi untuk update indikator (anda perlu mengimplementasikan ini sesuai kebutuhan)
-    function updateEditIndikator() {
-        // Implementasi untuk mengisi dropdown indikator berdasarkan sasaran strategis yang dipilih
-        console.log('Update indikator based on selected sasaran strategis');
     }
 </script>

@@ -31,12 +31,12 @@ class PelayananPublikController extends Controller
 
         // Hanya ambil laporan kategori (upload manual)
         $laporans = Laporan::where('id_user', auth()->id())
-            ->whereNotIn('kategori', ['SKM', 'Petajab', 'Anjab & ABK', 'Evajab'])
+            ->whereNotIn('kategori', ['Laporan SKM', 'Petajab', 'Anjab & ABK', 'Evajab'])
             ->orderBy('tanggal_upload', 'desc')
             ->paginate(10);
 
         // Ambil juga laporan SKM untuk tab terpisah
-        $skmLaporans = Laporan::where('kategori', 'SKM')
+        $skmLaporans = Laporan::where('kategori', 'Laporan SKM')
             ->where('id_user', auth()->id())
             ->orderBy('tanggal_upload', 'desc')
             ->paginate(10, ['*'], 'skm_page');
@@ -45,7 +45,7 @@ class PelayananPublikController extends Controller
         $activeTab = session('active_tab', 'template');
 
         // Cek apakah ada laporan yang berstatus "Revisi"
-        $hasRevision = Laporan::where('kategori', 'SKM')
+        $hasRevision = Laporan::where('kategori', 'Laporan SKM')
             ->where('id_user', auth()->id())
             ->where('status', 'Revisi')
             ->exists();
@@ -125,7 +125,7 @@ class PelayananPublikController extends Controller
         $laporan = Laporan::findOrFail($id);
 
         // BLOKIR KHUSUS SKM (GENERATED)
-        if ($laporan->kategori === 'SKM') {
+        if ($laporan->kategori === 'Laporan SKM') {
             return redirect()->back()
                 ->with('error', 'Laporan SKM yang digenerate tidak dapat dihapus.');
         }
@@ -149,7 +149,7 @@ class PelayananPublikController extends Controller
         $laporan = Laporan::findOrFail($id);
 
         // Pastikan ini kategori SKM
-        if ($laporan->kategori !== 'SKM') {
+        if ($laporan->kategori !== 'Laporan SKM') {
             return redirect()->back()->with('error', 'Ini bukan laporan SKM.');
         }
 
@@ -601,7 +601,7 @@ class PelayananPublikController extends Controller
             $laporan = Laporan::create([
                 'id_user' => $user->id_user,
                 'judul' => "Laporan SKM Triwulan {$validated['triwulan']} Tahun {$validated['tahun']} - {$user->nama_opd}",
-                'kategori' => 'SKM',
+                'kategori' => 'Laporan SKM',
                 'file_path' => $filePath,
                 'tanggal_upload' => now(),
                 'status' => 'Diproses',

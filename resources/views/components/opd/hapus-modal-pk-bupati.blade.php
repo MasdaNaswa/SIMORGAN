@@ -16,6 +16,7 @@
         <form id="hapusForm" method="POST" action="">
             @csrf
             @method('DELETE')
+            <input type="hidden" id="hapusId" name="id">
             
             <!-- Footer -->
             <div class="flex justify-end gap-3 mt-6">

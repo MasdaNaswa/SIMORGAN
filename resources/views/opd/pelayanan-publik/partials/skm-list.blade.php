@@ -1,8 +1,6 @@
-{{-- resources/views/opd/pelayanan-publik/partials/skm-list.blade.php --}}
-
 <div class="bg-white rounded-lg shadow-sm p-6">
     <h2 class="text-lg font-medium mb-6 pb-3 border-b border-gray-200 flex items-center gap-2">
-        <i class="fas fa-history text-primary"></i> Laporan SKM yang Telah Digenerate
+        <i class="fas fa-history text-primary"></i> Laporan SKM yang Telah Dibuat
     </h2>
 
     <!-- Notifikasi -->

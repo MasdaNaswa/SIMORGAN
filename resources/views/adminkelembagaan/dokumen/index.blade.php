@@ -3,172 +3,239 @@
 @section('title', 'SIMORGAN')
 
 @section('content')
-    <div class="flex flex-col min-h-screen bg-[#F8FAFC]">
-
+    <div class="flex flex-col min-h-screen bg-gray-50">
         <!-- Header -->
         <header class="bg-white shadow sticky top-0 z-30">
             <div class="flex justify-between items-center py-4 px-6 md:px-8">
                 <h1 class="text-xl md:text-2xl font-semibold flex items-center gap-2">
-                    <i class="material-icons text-blue-600">list</i>
-                    <span class="hidden sm:inline">Semua Laporan OPD</span>
+                    <i class="material-icons text-blue-600">assignment</i>
+                    <span class="hidden sm:inline">Manajemen Dokumen Kelembagaan</span>
                 </h1>
             </div>
         </header>
 
-        <!-- Konten Utama -->
+        <!-- Main Content -->
         <main class="flex-1 px-4 md:px-8 py-6">
-            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200 mt-4">
-                <!-- Table Header -->
-                <div
-                    class="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-800">Daftar Laporan OPD</h2>
+            <!-- Flash Message -->
+            @if(session('success'))
+                <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-r shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check-circle text-green-500 text-lg"></i>
+                        <p class="text-green-700 text-sm">{{ session('success') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-exclamation-circle text-red-500 text-lg"></i>
+                        <p class="text-red-700 text-sm">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Card Container -->
+            <div class="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden">
+                <!-- TABS KATEGORI LAPORAN -->
+                <div class="border-b border-gray-100 bg-gray-50">
+                    <div class="px-4 overflow-x-auto">
+                        <nav class="flex flex-nowrap min-w-full gap-1 py-2">
+                            @php
+                                $categories = [
+                                    'semua' => ['label' => 'Semua Laporan', 'color' => 'gray'],
+                                    'Petajab' => ['label' => 'Peta Jabatan', 'color' => 'purple'],
+                                    'Anjab & ABK' => ['label' => 'Anjab & ABK', 'color' => 'blue'],
+                                    'Evaluasi Jabatan' => ['label' => 'Evaluasi Jabatan', 'color' => 'green'],
+                                ];
+                            @endphp
+                            
+                            @foreach($categories as $key => $cat)
+                                @php
+                                    // Hitung jumlah per kategori
+                                    $count = \App\Models\Laporan::whereIn('kategori', ['Petajab', 'Anjab & ABK', 'Evaluasi Jabatan']);
+                                    if ($key !== 'semua') {
+                                        $count = $count->where('kategori', $key);
+                                    }
+                                    $countValue = $count->count();
+                                    
+                                    $colorClasses = [
+                                        'purple' => ['active' => 'border-purple-600 text-purple-700 bg-purple-50', 'inactive' => 'border-transparent text-gray-500 hover:text-purple-600 hover:border-purple-300'],
+                                        'blue' => ['active' => 'border-blue-600 text-blue-700 bg-blue-50', 'inactive' => 'border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-300'],
+                                        'green' => ['active' => 'border-green-600 text-green-700 bg-green-50', 'inactive' => 'border-transparent text-gray-500 hover:text-green-600 hover:border-green-300'],
+                                        'gray' => ['active' => 'border-gray-600 text-gray-700 bg-gray-50', 'inactive' => 'border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300']
+                                    ];
+                                    $classes = ($selectedKategori ?? 'semua') == $key ? $colorClasses[$cat['color']]['active'] : $colorClasses[$cat['color']]['inactive'];
+                                @endphp
+                                <a href="{{ route('adminkelembagaan.dokumen.index', ['kategori' => $key]) }}"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-lg transition-all duration-200 border {{ $classes }}">
+                                    <span>{{ $cat['label'] }}</span>
+                                    @if($countValue > 0)
+                                        <span class="ml-1 px-2 py-0.5 text-xs font-medium rounded-full 
+                                            {{ ($selectedKategori ?? 'semua') == $key ? 'bg-white/50 text-gray-700' : 'bg-gray-100 text-gray-600' }}">
+                                            {{ $countValue }}
+                                        </span>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </nav>
+                    </div>
                 </div>
 
-                <!-- Table -->
+                <!-- Table Container -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    No</th>
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Nama OPD</th>
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Nama Dokumen</th>
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Kategori
-                                </th>
-
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Tanggal Upload</th>
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Status</th>
-                                <th
-                                    class="py-3 px-4 font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Catatan</th>
-                                <th
-                                    class="py-3 px-4 text-center font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
-                                    Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @forelse($dokumen as $index => $item)
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="py-3 px-4 font-medium text-gray-900">
-                                        {{ ($dokumen->currentPage() - 1) * $dokumen->perPage() + $index + 1 }}
-                                    </td>
-
-                                    <td class="py-3 px-4">{{ $item->user->nama_opd ?? '-' }}</td>
-                                    <td class="py-3 px-4">{{ $item->judul }}</td>
-                                    <td class="py-3 px-4">{{ $item->kategori }}</td>
-                                    <td class="py-3 px-4">{{ \Carbon\Carbon::parse($item->tanggal_upload)->format('d M Y') }}
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <span
-    class="px-2 py-1 rounded text-white
-        {{ $item->status == 'Disetujui' ? 'bg-green-600' : ($item->status == 'Revisi' ? 'bg-yellow-500' : ($item->status == 'Diproses' ? 'bg-red-500' : '')) }}">
-    {{ $item->status ?? 'Belum diperiksa' }}
-</span>
-                                    </td>
-                                    <td class="py-3 px-4">{{ $item->catatan ?? '-' }}</td>
-                                    <td class="py-3 px-4 text-center">
-                                        <div class="flex justify-center items-center gap-3">
-                                            <!-- Delete Icon -->
-                                            <a href="javascript:void(0);" class="text-red-600 hover:text-red-800"
-                                                title="Hapus Dokumen" onclick="hapusDokumenModal({{ $item->id_laporan }})">
-                                                <i class="fas fa-trash text-sm"></i>
-                                            </a>
-                                            <!-- Preview Icon -->
-                                            <a href="{{ route('adminkelembagaan.dokumen.preview', $item->judul) }}"
-                                                class="text-blue-600 hover:text-blue-800" title="Preview Dokumen">
-                                                <i class="fas fa-eye text-lg"></i>
-                                            </a>
-
-                                            <!-- Update Status & Catatan Icon -->
-                                            <a href="javascript:void(0);" class="text-green-600 hover:text-green-800"
-                                                title="Update Status & Catatan"
-                                                onclick="openStatusModal({{ $item->id_laporan }}, '{{ $item->status ?? '' }}', '{{ $item->catatan ?? '' }}')">
-                                                <i class="fas fa-edit text-lg"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                {{-- Include Modal Hapus --}}
-                                @include('components.adminkelembagaan.hapus-modal-dokumen', ['item' => $item])
-
-                            @empty
+                    @if($dokumen->count() > 0)
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <td colspan="7" class="text-center p-4 text-gray-500">Belum ada dokumen dari OPD</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    <!-- Pagination -->
-                    @if ($dokumen->total() > $dokumen->perPage())
-                        <div class="mt-6 flex justify-center">
-                            <nav class="inline-flex items-center space-x-1">
-                                {{-- Previous Page Link --}}
-                                @if ($dokumen->onFirstPage())
-                                    <span
-                                        class="px-3 py-2 text-gray-400 bg-gray-200 rounded-l-lg cursor-not-allowed select-none">Prev</span>
-                                @else
-                                    <a href="{{ $dokumen->previousPageUrl() }}"
-                                        class="px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-l-lg hover:bg-blue-50 hover:text-blue-600 transition">
-                                        Prev
-                                    </a>
-                                @endif
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">No</th>
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">Nama OPD</th>
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">Nama Dokumen</th>
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">Kategori</th>
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">Tanggal Upload</th>
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">Status</th>
+                                    <th class="py-4 px-4 text-left font-semibold text-gray-600 text-xs uppercase tracking-wider">Catatan Admin</th>
+                                    <th class="py-4 px-4 text-center font-semibold text-gray-600 text-xs uppercase tracking-wider">Aksi</th>
+                                 </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                @forelse($dokumen as $index => $item)
+                                    <tr class="hover:bg-blue-50 transition-colors duration-150">
+                                        <td class="py-3.5 px-4 font-medium text-gray-500">
+                                            {{ ($dokumen->currentPage() - 1) * $dokumen->perPage() + $index + 1 }}
+                                         </td>
+                                        <td class="py-3.5 px-4">
+                                            <span class="font-medium text-gray-700">{{ $item->user->nama_opd ?? '-' }}</span>
+                                         </td>
+                                        <td class="py-3.5 px-4">
+                                            <a href="{{ route('adminkelembagaan.dokumen.preview', $item->judul) }}" target="_blank"
+                                                class="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1">
+                                                <i class="fas fa-file-pdf text-red-500 text-sm"></i>
+                                                <span class="truncate max-w-[200px]">{{ $item->judul }}</span>
+                                            </a>
+                                         </td>
+                                        <td class="py-3.5 px-4">
+                                            @php
+                                                $badgeColors = [
+                                                    'Petajab' => 'bg-purple-100 text-purple-700',
+                                                    'Anjab & ABK' => 'bg-blue-100 text-blue-700',
+                                                    'Evaluasi Jabatan' => 'bg-green-100 text-green-700',
+                                                ];
+                                                $badgeClass = $badgeColors[$item->kategori] ?? 'bg-gray-100 text-gray-700';
+                                            @endphp
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $badgeClass }}">
+                                                {{ $item->kategori }}
+                                            </span>
+                                         </td>
+                                        <td class="py-3.5 px-4 text-gray-500">
+                                            <span>{{ \Carbon\Carbon::parse($item->tanggal_upload)->translatedFormat('d M Y') }}</span>
+                                         </td>
+                                        <td class="py-3.5 px-4">
+                                            @php
+                                                $statusClasses = [
+                                                    'Disetujui' => 'bg-green-100 text-green-700',
+                                                    'Revisi' => 'bg-yellow-100 text-yellow-700',
+                                                    'Diproses' => 'bg-blue-100 text-blue-700',
+                                                    'Ditolak' => 'bg-red-100 text-red-700',
+                                                ];
+                                                $statusClass = $statusClasses[$item->status] ?? 'bg-gray-100 text-gray-700';
+                                            @endphp
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $statusClass }}">
+                                                {{ $item->status ?? 'Diproses' }}
+                                            </span>
+                                         </td>
+                                        <td class="py-3.5 px-4 max-w-xs">
+                                            @if($item->catatan)
+                                                <div class="relative group">
+                                                    <div class="flex items-center gap-1 text-gray-500 text-xs truncate">
+                                                        <span class="truncate">{{ $item->catatan }}</span>
+                                                    </div>
+                                                    <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-10">
+                                                        <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 max-w-xs shadow-lg">
+                                                            {{ $item->catatan }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <span class="text-gray-400 text-xs">-</span>
+                                            @endif
+                                         </td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            <div class="flex justify-center items-center gap-2">
+                                                <!-- Preview -->
+                                                <a href="{{ route('adminkelembagaan.dokumen.preview', $item->judul) }}" target="_blank"
+                                                    class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-all duration-200 hover:scale-105"
+                                                    title="Preview">
+                                                    <i class="fas fa-eye text-sm"></i>
+                                                </a>
 
-                                {{-- Pagination Elements --}}
-                                @foreach ($dokumen->getUrlRange(1, $dokumen->lastPage()) as $page => $url)
-                                    @if ($page == $dokumen->currentPage())
-                                        <span
-                                            class="px-3 py-2 bg-blue-600 text-white border border-blue-600 rounded transition">{{ $page }}</span>
-                                    @elseif($page == 1 || $page == $dokumen->lastPage() || ($page >= $dokumen->currentPage() - 1 && $page <= $dokumen->currentPage() + 1))
-                                        <a href="{{ $url }}"
-                                            class="px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-blue-50 hover:text-blue-600 transition">{{ $page }}</a>
-                                    @elseif($page == $dokumen->currentPage() - 2 || $page == $dokumen->currentPage() + 2)
-                                        <span class="px-3 py-2 text-gray-400 select-none">...</span>
-                                    @endif
+                                                <!-- Update Status / Catatan -->
+                                                <button onclick="openStatusModal({{ $item->id_laporan }}, '{{ $item->status ?? '' }}', '{{ addslashes($item->catatan ?? '') }}')"
+                                                    class="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center hover:bg-green-100 transition-all duration-200 hover:scale-105"
+                                                    title="Update Status & Catatan">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </button>
+
+                                                <!-- Hapus -->
+                                                <button onclick="openHapusModal({{ $item->id_laporan }})"
+                                                    class="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-100 transition-all duration-200 hover:scale-105"
+                                                    title="Hapus">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Include Modals -->
+                                            @include('components.adminkelembagaan.hapus-modal-dokumen', ['item' => $item])
+                                         </td>
+                                     </tr>
                                 @endforeach
-
-                                {{-- Next Page Link --}}
-                                @if ($dokumen->hasMorePages())
-                                    <a href="{{ $dokumen->nextPageUrl() }}"
-                                        class="px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-blue-50 hover:text-blue-600 transition">
-                                        Next
-                                    </a>
-                                @else
-                                    <span
-                                        class="px-3 py-2 text-gray-400 bg-gray-200 rounded-r-lg cursor-not-allowed select-none">Next</span>
-                                @endif
-                            </nav>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Pagination -->
+                        @if ($dokumen->total() > $dokumen->perPage())
+                            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                                {{ $dokumen->links() }}
+                            </div>
+                        @endif
+                    @else
+                        <!-- Empty State -->
+                        <div class="text-center py-16 px-4">
+                            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-folder-open text-gray-400 text-4xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-700 mb-1">Belum ada dokumen</h3>
+                            <p class="text-gray-500 text-sm">Belum ada dokumen dari OPD untuk kategori ini</p>
                         </div>
                     @endif
                 </div>
-
             </div>
         </main>
 
-        {{-- Footer --}}
         @include('components.footer')
-
     </div>
 
-    {{-- Include Modal Ubah Status --}}
+    {{-- Modal Ubah Status --}}
     @include('components.adminkelembagaan.ubah-modal-dokumen')
 
-@endsection
-
-@push('scripts')
     <script>
-        function hapusDokumenModal(id) {
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function openHapusModal(id) {
             const modal = document.getElementById(`hapusDokumenModal${id}`);
             if (modal) {
                 modal.classList.remove('hidden');
@@ -188,12 +255,9 @@
             const modal = document.getElementById('statusModal');
             const form = document.getElementById('statusForm');
 
-            // Set form action ke route update yang benar
-            form.action = `/adminkelembagaan/dokumen/${id}`; // pastikan prefix sesuai route
-
-            // Set nilai input status & catatan
-            document.getElementById('statusInput').value = status ? status.toLowerCase() : '';
-            document.getElementById('catatanInput').value = catatan ?? '';
+            form.action = `/adminkelembagaan/dokumen/${id}`;
+            document.getElementById('statusInput').value = status || '';
+            document.getElementById('catatanInput').value = catatan || '';
 
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -204,6 +268,5 @@
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
-
     </script>
-@endpush
+@endsection

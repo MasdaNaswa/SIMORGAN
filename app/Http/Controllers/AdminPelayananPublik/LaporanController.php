@@ -10,40 +10,81 @@ use App\Models\Laporan;
 
 class LaporanController extends Controller
 {
-    public function index()
+    // Daftar kategori yang akan ditampilkan sebagai tab
+    private $kategoriTabs = [
+        'Semua' => 'Semua Laporan',
+        'Laporan FKP' => 'Laporan FKP',
+        'SOP' => 'SOP',
+        'Probis' => 'Probis',
+        'SK Tim Kerja' => 'SK Tim Kerja',
+        'Kode Etik' => 'Kode Etik',
+        'Inovasi OPD' => 'Inovasi OPD',
+        'Tindak Lanjut FKP' => 'Tindak Lanjut FKP',
+        'Laporan SKM' => 'Laporan SKM',
+        'Data Lain Lainnya' => 'Data Lain Lainnya'
+    ];
+
+    public function index(Request $request)
     {
-        // Ambil semua kategori & template (untuk tampilan dropdown/menu)
-        $kategories = Kategori::orderBy('nama_kategori')->get();
-        $templates = Template_Laporan::with('kategori')->get();
+        // Ambil kategori yang dipilih dari tab (default: semua)
+        $selectedKategori = $request->get('kategori', 'semua');
 
-        // Ambil semua laporan, termasuk relasi user dan skmReport
-        $laporans = Laporan::with(['user', 'skmReport'])
-            ->whereNotIn('kategori', ['Petajab', 'Anjab & ABK', 'Evajab']) // kecuali kategori internal
-            ->orderBy('tanggal_upload', 'desc')
-            ->paginate(10);
+        // Query laporan
+        $query = Laporan::with(['user', 'skmReport'])
+            ->whereNotIn('kategori', ['Petajab', 'Anjab & ABK', 'Evajab'])
+            ->orderBy('tanggal_upload', 'desc');
 
+        // Filter berdasarkan kategori jika dipilih dan bukan 'semua'
+        if ($selectedKategori !== 'semua') {
+            if ($selectedKategori === 'Lainnya') {
+                // Kategori "Lainnya" adalah semua kategori yang tidak termasuk dalam daftar utama
+                $mainCategories = array_keys(array_slice($this->kategoriTabs, 1, -1)); // exclude 'semua' dan 'Lainnya'
+                $query->whereNotIn('kategori', $mainCategories);
+            } else {
+                $query->where('kategori', $selectedKategori);
+            }
+        }
 
+        $laporans = $query->paginate(10);
 
-        // Decode JSON anggota_tim & rencana_tindak_lanjut untuk SKM
+        // Decode JSON untuk SKM
         foreach ($laporans as $laporan) {
-            if ($laporan->kategori === 'SKM' && $laporan->skmReport) {
+            if ($laporan->kategori === 'Laporan SKM' && $laporan->skmReport) {
                 $laporan->skmReport->anggota_tim = json_decode($laporan->skmReport->anggota_tim, true) ?? [];
                 $laporan->skmReport->rencana_tindak_lanjut = json_decode($laporan->skmReport->rencana_tindak_lanjut, true) ?? [];
             }
         }
 
+        // Hitung jumlah laporan per kategori untuk badge
+        $countPerKategori = [];
+        foreach ($this->kategoriTabs as $key => $label) {
+            if ($key === 'semua') {
+                $countPerKategori[$key] = Laporan::whereNotIn('kategori', ['Petajab', 'Anjab & ABK', 'Evajab'])->count();
+            } elseif ($key === 'Lainnya') {
+                $mainCategories = array_keys(array_slice($this->kategoriTabs, 1, -1));
+                $countPerKategori[$key] = Laporan::whereNotIn('kategori', $mainCategories)
+                    ->whereNotIn('kategori', ['Petajab', 'Anjab & ABK', 'Evajab'])
+                    ->count();
+            } else {
+                $countPerKategori[$key] = Laporan::where('kategori', $key)
+                    ->whereNotIn('kategori', ['Petajab', 'Anjab & ABK', 'Evajab'])
+                    ->count();
+            }
+        }
+
         return view('adminpelayananpublik.laporan.index', compact(
-            'kategories',
-            'templates',
-            'laporans'
+            'laporans',
+            'selectedKategori',
+            'countPerKategori'
         ));
     }
 
+    // Method lainnya tetap sama...
     public function detail($id)
     {
         $laporan = Laporan::with(['user', 'skmReport'])->findOrFail($id);
 
-        if ($laporan->kategori === 'SKM' && $laporan->skmReport) {
+        if ($laporan->kategori === 'Laporan SKM' && $laporan->skmReport) {
             $laporan->skmReport->anggota_tim = json_decode($laporan->skmReport->anggota_tim, true) ?? [];
             $laporan->skmReport->rencana_tindak_lanjut = json_decode($laporan->skmReport->rencana_tindak_lanjut, true) ?? [];
         }
@@ -70,15 +111,16 @@ class LaporanController extends Controller
 
         $laporan->save();
 
-        return redirect()->back()->with('success', "Status laporan berhasil diperbarui.");
+        $kategori = request()->get('kategori', 'semua');
+        return redirect()->route('adminpelayananpublik.laporan.index', ['kategori' => $kategori])
+            ->with('success', "Status laporan berhasil diperbarui.");
     }
 
     public function hapus($id)
     {
         $laporan = Laporan::findOrFail($id);
 
-        // Tentukan path file
-        if ($laporan->kategori === 'SKM') {
+        if ($laporan->kategori === 'Laporan SKM') {
             $filePath = storage_path('app/public/laporan/skm/' . basename($laporan->file_path));
         } else {
             $filePath = storage_path('app/public/laporan/' . $laporan->file_path);
@@ -90,7 +132,8 @@ class LaporanController extends Controller
 
         $laporan->delete();
 
-        return redirect()->route('adminpelayananpublik.laporan.index')
+        $kategori = request()->get('kategori', 'semua');
+        return redirect()->route('adminpelayananpublik.laporan.index', ['kategori' => $kategori])
             ->with('success', 'Laporan berhasil dihapus.');
     }
 
@@ -98,7 +141,7 @@ class LaporanController extends Controller
     {
         $laporan = Laporan::with('skmReport')->findOrFail($id);
 
-        if ($laporan->kategori === 'SKM' && $laporan->skmReport) {
+        if ($laporan->kategori === 'Laporan SKM' && $laporan->skmReport) {
             $laporan->skmReport->anggota_tim = json_decode($laporan->skmReport->anggota_tim, true) ?? [];
             $laporan->skmReport->rencana_tindak_lanjut = json_decode($laporan->skmReport->rencana_tindak_lanjut, true) ?? [];
         }
@@ -125,7 +168,8 @@ class LaporanController extends Controller
 
         $laporan->save();
 
-        return redirect()->route('adminpelayananpublik.laporan.index')
+        $kategori = request()->get('kategori', 'semua');
+        return redirect()->route('adminpelayananpublik.laporan.index', ['kategori' => $kategori])
             ->with('success', 'Laporan berhasil diperbarui.');
     }
 
@@ -133,7 +177,7 @@ class LaporanController extends Controller
     {
         $laporan = Laporan::findOrFail($id);
 
-        if ($laporan->kategori === 'SKM') {
+        if ($laporan->kategori === 'Laporan SKM') {
             $filePath = storage_path('app/public/laporan/skm/' . basename($laporan->file_path));
         } else {
             $filePath = storage_path('app/public/laporan/' . $laporan->file_path);
@@ -150,7 +194,7 @@ class LaporanController extends Controller
     {
         $laporan = Laporan::findOrFail($id);
 
-        if ($laporan->kategori === 'SKM') {
+        if ($laporan->kategori === 'Laporan SKM') {
             $filePath = storage_path('app/public/laporan/skm/' . basename($laporan->file_path));
         } else {
             $filePath = storage_path('app/public/laporan/' . $laporan->file_path);

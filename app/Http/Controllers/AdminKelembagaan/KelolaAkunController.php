@@ -8,7 +8,7 @@ use App\Models\Pengguna;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles; // TAMBAHKAN INI
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles; 
 
 // Gmail API
 use Google_Client;
@@ -17,13 +17,13 @@ use Google_Service_Gmail_Message;
 
 class KelolaAkunController extends Controller
 {
-    // Tampilkan daftar akun OPD
+    // Tampilkan daftar akun OPD dengan pagination
     public function index()
     {
         $akun = Pengguna::where('role', 'OPD')
             ->where('created_by', 'ADMIN_KELEMBAGAAN')
-            ->orderBy('created_at', 'desc') // TAMBAHKAN orderBy
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); // Pagination 10 data per halaman
 
         return view('adminkelembagaan.kelola-akun.index', compact('akun'));
     }

@@ -9,10 +9,12 @@ use App\Models\Laporan;
 
 class DokumenController extends Controller
 {
-    // Tampilkan semua dokumen OPD dengan urutan fix
-    public function index()
+    // Tampilkan semua dokumen OPD dengan filter kategori
+    public function index(Request $request)
     {
-        // Urutan OPD FIX sesuai daftar Masda
+        $selectedKategori = $request->get('kategori', 'semua');
+
+        // Urutan OPD FIX sesuai daftar
         $urutanOPD = [
             "Sekretariat Daerah",
             "Sekretariat DPRD",
@@ -61,18 +63,21 @@ class DokumenController extends Controller
             "Kecamatan Sugie Besar"
         ];
 
-        // Ambil semua laporan terkait kategori tertentu
-        $dokumen = Laporan::with('user')
-            ->whereIn('kategori', ['Anjab & ABK', 'Petajab', 'Evajab'])
-            ->get()
-            ->map(function ($item) {
-                if ($item->user && isset($item->user->nama_opd)) {
-                    // Bersihkan semua karakter non-printable / Unicode aneh
-                    $cleanName = preg_replace('/[\x00-\x1F\x7F\x{200B}\x{00A0}]/u', '', $item->user->nama_opd);
-                    $item->user->nama_opd = trim($cleanName);
-                }
-                return $item;
-            });
+        // Query berdasarkan kategori yang dipilih
+        $query = Laporan::with('user')
+            ->whereIn('kategori', ['Petajab', 'Anjab & ABK', 'Evaluasi Jabatan']);
+
+        if ($selectedKategori !== 'semua') {
+            $query->where('kategori', $selectedKategori);
+        }
+
+        $dokumen = $query->get()->map(function ($item) {
+            if ($item->user && isset($item->user->nama_opd)) {
+                $cleanName = preg_replace('/[\x00-\x1F\x7F\x{200B}\x{00A0}]/u', '', $item->user->nama_opd);
+                $item->user->nama_opd = trim($cleanName);
+            }
+            return $item;
+        });
 
         // Urutkan sesuai $urutanOPD
         $dokumen = $dokumen->sortBy(function ($item) use ($urutanOPD) {
@@ -83,17 +88,18 @@ class DokumenController extends Controller
 
         // Pagination manual 10 per halaman
         $perPage = 10;
-        $page = request()->get('page', 1);
+        $page = $request->get('page', 1);
         $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
             $dokumen->forPage($page, $perPage),
             $dokumen->count(),
             $perPage,
             $page,
-            ['path' => request()->url()]
+            ['path' => $request->url(), 'query' => $request->query()]
         );
 
         return view('adminkelembagaan.dokumen.index', [
-            'dokumen' => $paginated
+            'dokumen' => $paginated,
+            'selectedKategori' => $selectedKategori
         ]);
     }
 
@@ -101,15 +107,16 @@ class DokumenController extends Controller
     public function destroy($id)
     {
         $dokumen = Laporan::findOrFail($id);
+        
+        // Hapus file dari storage
         $filePath = storage_path('app/public/laporan/' . $dokumen->file_path);
-
         if (file_exists($filePath)) {
             unlink($filePath);
         }
 
         $dokumen->delete();
 
-        return back()->with('success', 'Dokumen berhasil dihapus.');
+        return back();
     }
 
     // Update status & catatan dokumen
@@ -122,27 +129,33 @@ class DokumenController extends Controller
 
         $dokumen = Laporan::findOrFail($id);
         $dokumen->status = $request->status;
-        $dokumen->catatan = $request->catatan;
+        
+        if ($request->status === 'Revisi') {
+            $dokumen->catatan = $request->catatan;
+        } else {
+            $dokumen->catatan = null;
+        }
+        
         $dokumen->save();
 
-        return back()->with('success', 'Status dan catatan berhasil diperbarui.');
+        return back();
     }
+    
+    // Preview dokumen
     public function preview($judul)
-{
-    $laporan = Laporan::where('judul', $judul)->firstOrFail();
+    {
+        $laporan = Laporan::where('judul', $judul)->firstOrFail();
 
-    $filePath = 'laporan/' . $laporan->file_path;
+        $filePath = 'laporan/' . $laporan->file_path;
 
-    if (!Storage::disk('public')->exists($filePath)) {
-        abort(404, 'File tidak ditemukan');
+        if (!Storage::disk('public')->exists($filePath)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        $fullPath = Storage::disk('public')->path($filePath);
+
+        return response()->file($fullPath, [
+            "Content-Disposition" => "inline; filename=\"{$laporan->file_path}\""
+        ]);
     }
-
-    $fullPath = Storage::disk('public')->path($filePath);
-
-    return response()->file($fullPath, [
-        "Content-Disposition" => "inline; filename=\"{$laporan->file_path}\""
-    ]);
-}
-
-
 }

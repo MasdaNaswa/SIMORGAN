@@ -39,12 +39,12 @@
                                 <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Email</th>
                                 <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Role</th>
                                 <th class="py-3 px-4 text-center font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Aksi</th>
-                              </tr>
+                               </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @forelse($akun as $index => $item)
                                 <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="py-3 px-4 font-medium text-gray-900 text-sm">{{ $index + 1 }}</td>
+                                    <td class="py-3 px-4 font-medium text-gray-900 text-sm">{{ $akun->firstItem() + $index }} </td>
                                     <td class="py-3 px-4 text-sm">{{ $item->nama_opd }}</td>
                                     <td class="py-3 px-4 text-sm">{{ $item->email }}</td>
                                     <td class="py-3 px-4 text-sm">
@@ -72,6 +72,54 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Info Footer dan Pagination -->
+                @if($akun->count() > 0)
+                    <div class="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600">
+                        <div>
+                            Menampilkan
+                            <span class="font-semibold">{{ $akun->firstItem() }}</span>
+                            -
+                            <span class="font-semibold">{{ $akun->lastItem() }}</span>
+                            dari
+                            <span class="font-semibold">{{ $akun->total() }}</span>
+                            entri
+                        </div>
+
+                        <div class="flex gap-2 mt-2 sm:mt-0">
+                            @if($akun->onFirstPage())
+                                <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            @else
+                                <a href="{{ $akun->previousPageUrl() }}"
+                                    class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                                    Sebelumnya
+                                </a>
+                            @endif
+
+                            @foreach($akun->getUrlRange(max(1, $akun->currentPage() - 2), min($akun->lastPage(), $akun->currentPage() + 2)) as $page => $url)
+                                @if($page == $akun->currentPage())
+                                    <span class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">{{ $page }}</span>
+                                @else
+                                    <a href="{{ $url }}"
+                                        class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">{{ $page }}</a>
+                                @endif
+                            @endforeach
+
+                            @if($akun->hasMorePages())
+                                <a href="{{ $akun->nextPageUrl() }}"
+                                    class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                                    Selanjutnya
+                                </a>
+                            @else
+                                <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded-md text-sm cursor-not-allowed">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
         </main>
 

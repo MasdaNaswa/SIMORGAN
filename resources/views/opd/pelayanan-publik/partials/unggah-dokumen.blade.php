@@ -8,7 +8,7 @@
         <i class="fas fa-cloud-upload-alt text-primary text-4xl mb-4"></i>
         <h3 class="font-medium mb-2">Seret file ke sini atau klik untuk memilih</h3>
         <p class="text-gray-500 mb-1">Format: .doc, .docx, .pdf</p>
-        <p class="text-gray-500">Maksimal 2MB</p>
+        <p class="text-gray-500">Maksimal 10MB</p>
     </div>
 
     {{-- Recent Documents --}}

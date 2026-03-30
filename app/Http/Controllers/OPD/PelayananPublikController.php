@@ -64,7 +64,7 @@ class PelayananPublikController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'laporan' => 'required|file|mimes:doc,docx,pdf|max:2048',
+            'laporan' => 'required|file|mimes:doc,docx,pdf|max:10240',
             'kategori' => 'required|exists:kategori,id_kategori'
         ]);
 

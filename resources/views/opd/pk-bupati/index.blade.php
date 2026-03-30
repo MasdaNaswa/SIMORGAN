@@ -1,7 +1,7 @@
 {{-- resources/views/opd/pk-bupati/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'PK Bupati - OPD')
+@section('title', 'SIMORGAN')
 
 @section('content')
 <div class="flex flex-col min-h-screen">

@@ -1,7 +1,6 @@
 @extends('layouts.adminpelayananpublik')
 
-@section('title', 'Dashboard Admin Pelayanan Publik')
-@section('page-title', 'Dashboard')
+@section('title', 'SIMORGAN')
 
 @section('menu-dashboard', 'text-blue-600 font-bold')
 

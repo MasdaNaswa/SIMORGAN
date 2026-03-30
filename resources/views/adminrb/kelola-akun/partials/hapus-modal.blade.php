@@ -1,7 +1,5 @@
 <div id="hapusModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-
     <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-
         <!-- Header -->
         <div class="flex justify-between items-center border-b pb-3 mb-4">
             <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -24,6 +22,7 @@
                 Batal
             </button>
 
+            {{-- Hapus onsubmit dari form --}}
             <form id="deleteForm" method="POST">
                 @csrf
                 @method('DELETE')
@@ -31,8 +30,6 @@
                     Hapus
                 </button>
             </form>
-
         </div>
-
     </div>
 </div>

@@ -1,6 +1,6 @@
 @extends('layouts.adminpelayananpublik')
 
-@section('title', 'Kelola Template Laporan')
+@section('title', 'SIMORGAN')
 
 @section('content')
 <div class="flex flex-col min-h-screen bg-[#F8FAFC]">

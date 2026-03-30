@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show loading
             const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
             this.disabled = true;
             
             try {

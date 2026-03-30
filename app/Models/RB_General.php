@@ -47,6 +47,7 @@ class RB_General extends Model
         'catatan_evaluasi',
         'catatan_perbaikan',
         'unit_kerja',
+        'opd_penginput',
         'pelaksana'
     ];
 }

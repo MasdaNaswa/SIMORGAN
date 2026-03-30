@@ -138,8 +138,9 @@
                                         class="block text-sm font-medium text-gray-700 mb-1">
                                         TW{{ $tw }} - Target
                                     </label>
-                                    <input type="text" id="edit_tw{{ $tw }}_target" name="tw{{ $tw }}_target"
-                                        maxlength="255" placeholder="Masukkan target TW{{ $tw }}"
+                                    <input type="text" id="edit_tw{{ $tw }}_target" name="tw{{ $tw }}_target" {{--
+                                        PERBAIKAN: gunakan tw1_target, bukan renaksi_tw1_target --}} maxlength="255"
+                                        placeholder="Masukkan target TW{{ $tw }}"
                                         class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500" />
                                 </div>
                                 <div>
@@ -267,11 +268,10 @@
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="edit_rumus" class="block text-sm font-medium text-gray-700 mb-1">
-                                    RUMUS 
+                                    RUMUS
                                 </label>
-                                <input type="text" id="edit_rumus" name="rumus" 
-                                    placeholder=""
-                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500 font-mono">     
+                                <input type="text" id="edit_rumus" name="rumus" placeholder=""
+                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500 font-mono">
                             </div>
                         </div>
                     </div>

@@ -25,6 +25,29 @@ class KelolaAkunController extends Controller
         return view('adminpelayananpublik.kelola-akun.index', compact('akun'));
     }
 
+    // CEK EMAIL
+    public function checkEmail(Request $request)
+    {
+        $email = $request->get('email');
+        
+        $existingUser = Pengguna::where('email', $email)->first();
+        
+        if ($existingUser) {
+            return response()->json([
+                'exists' => true,
+                'data' => [
+                    'nama_opd' => $existingUser->nama_opd,
+                    'email' => $existingUser->email,
+                    'role' => $existingUser->role,
+                    'created_by' => $existingUser->created_by,
+                    'created_at' => $existingUser->created_at ? $existingUser->created_at->format('d/m/Y H:i') : '-',
+                ]
+            ]);
+        }
+        
+        return response()->json(['exists' => false]);
+    }
+
     // Tambah akun OPD baru
     public function store(Request $request)
     {
@@ -56,9 +79,15 @@ class KelolaAkunController extends Controller
         ]);
 
         // Kirim email password
-        $this->sendPasswordEmail(Auth::user(), $akunBaru->email, $akunBaru->nama_opd, $passwordPlain);
+        try {
+            $this->sendPasswordEmail(Auth::user(), $akunBaru->email, $akunBaru->nama_opd, $passwordPlain);
+        } catch (\Exception $e) {
+            // Email gagal dikirim, tapi tetap lanjutkan
+        }
 
-        return back()->with('success', "Akun OPD berhasil ditambahkan dan email dikirim.");
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     // Hapus akun OPD
@@ -67,7 +96,9 @@ class KelolaAkunController extends Controller
         $akun = Pengguna::findOrFail($id);
         $akun->delete();
 
-        return back()->with('success', 'Akun OPD berhasil dihapus.');
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     // =====================================================
@@ -102,7 +133,8 @@ class KelolaAkunController extends Controller
                  Akun Anda telah dibuat.<br>
                  <strong>Email:</strong> {$userEmail}<br>
                  <strong>Password:</strong> {$passwordPlain}<br>
-                 Silakan login dan ubah password Anda.";
+                 Silakan login dan ubah password Anda.<br><br>
+                 Terima kasih.";
 
         $rawMessage = "From: {$admin->email}\r\n";
         $rawMessage .= "To: {$userEmail}\r\n";

@@ -1,8 +1,6 @@
 @extends('layouts.adminkelembagaan')
 
-@section('title', 'Hasil Survei Kematangan Kelembagaan')
-@section('page-title', 'Hasil Survei Kematangan Kelembagaan')
-@section('menu-kematangan', 'text-blue-600 font-bold')
+@section('title', 'SIMORGAN')
 
 @section('content')
     <div class="flex flex-col min-h-screen bg-[#F8FAFC]">

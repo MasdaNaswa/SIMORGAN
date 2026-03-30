@@ -1,7 +1,6 @@
 @extends('layouts.adminrb')
 
-@section('title', 'Dashboard Admin RB')
-@section('page-title', 'Dashboard')
+@section('title', 'SIMORGAN')
 
 @section('menu-dashboard', 'text-blue-600 font-bold')
 

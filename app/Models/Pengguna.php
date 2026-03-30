@@ -20,6 +20,7 @@ class Pengguna extends Authenticatable
         'password',
         'role',
         'created_by',
+        'unit_kerja',
     ];
 
     protected $hidden = [
@@ -28,4 +29,40 @@ class Pengguna extends Authenticatable
     ];
 
     public $timestamps = true;
+
+    /**
+     * Cek apakah user adalah Inspektorat
+     */
+    public function isInspektorat()
+    {
+        return $this->unit_kerja === 'Inspektorat' || 
+               str_contains(strtolower($this->unit_kerja), 'inspektorat');
+    }
+
+    /**
+     * Cek apakah user bisa mengedit data
+     */
+    public function canEditData()
+    {
+        // Semua OPD bisa edit kecuali Inspektorat
+        return !$this->isInspektorat();
+    }
+
+    /**
+     * Cek apakah user bisa menambah data
+     */
+    public function canAddData()
+    {
+        // Semua OPD bisa tambah kecuali Inspektorat
+        return !$this->isInspektorat();
+    }
+
+    /**
+     * Cek apakah user bisa menghapus data
+     */
+    public function canDeleteData()
+    {
+        // Semua OPD bisa hapus kecuali Inspektorat
+        return !$this->isInspektorat();
+    }
 }

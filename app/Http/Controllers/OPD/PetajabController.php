@@ -35,7 +35,7 @@ class PetajabController extends Controller
         $file = $request->file('laporan');
 
         if (!$file || !$file->isValid()) {
-            return back()->with('error', 'File tidak valid atau gagal diunggah.');
+            return back();
         }
 
         // Nama file unik
@@ -57,10 +57,10 @@ class PetajabController extends Controller
             'kategori' => 'Petajab',
             'file_path' => $filename,
             'tanggal_upload' => now(),
-            'status' => 'Diproses         ',
+            'status' => 'Diproses',
         ]);
 
-        return back()->with('success', 'Laporan Peta Jabatan berhasil diunggah.');
+        return back();
     }
 
     /**
@@ -72,7 +72,7 @@ class PetajabController extends Controller
         $path = storage_path('app/public/laporan/' . $laporan->file_path);
 
         if (!file_exists($path)) {
-            return back()->with('error', 'File tidak ditemukan di server.');
+            return back();
         }
 
         return response()->download(
@@ -97,6 +97,6 @@ class PetajabController extends Controller
         // Hapus data dari database
         $laporan->delete();
 
-        return back()->with('success', 'Laporan Peta Jabatan berhasil dihapus.');
+        return back();
     }
 }

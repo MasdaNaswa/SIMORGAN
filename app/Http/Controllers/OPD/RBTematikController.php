@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/OPD/RBTematikController.php
 
 namespace App\Http\Controllers\OPD;
 
@@ -56,11 +55,9 @@ class RBTematikController extends Controller
             'currentYear',
             'selectedYear',
             'years',
-            // ============== TAMBAHAN: Kirim ke view ==============
             'canAccess',
             'accessMessage',
             'akses'
-            // ============== END TAMBAHAN ==============
         ));
     }
 
@@ -69,7 +66,6 @@ class RBTematikController extends Controller
      */
     public function store(Request $request)
     {
-        // ============== TAMBAHAN: Cek akses SEBELUM menyimpan ==============
         $akses = AksesRb::where('jenis_rb', 'RB Tematik')->first();
         if (!$akses || !$akses->isAccessible()) {
             return response()->json([
@@ -77,14 +73,12 @@ class RBTematikController extends Controller
                 'message' => 'Akses ditutup. Tidak dapat menambah data baru.'
             ], 403);
         }
-        // ============== END TAMBAHAN ==============
 
         try {
             DB::beginTransaction();
 
             Log::info('Store RB Tematik - Request data:', $request->all());
 
-            // Validasi data sesuai struktur database
             $validator = Validator::make($request->all(), [
                 'tahun' => 'required|integer|min:2000|max:' . (date('Y') + 5),
                 'permasalahan' => 'required|string',
@@ -129,52 +123,48 @@ class RBTematikController extends Controller
 
             $validated = $validator->validated();
 
-            // Hitung total anggaran dari triwulan
             $anggaran_total = 0;
             $anggaran_total += $this->cleanRupiah($validated['tw1_rp'] ?? 0);
             $anggaran_total += $this->cleanRupiah($validated['tw2_rp'] ?? 0);
             $anggaran_total += $this->cleanRupiah($validated['tw3_rp'] ?? 0);
             $anggaran_total += $this->cleanRupiah($validated['tw4_rp'] ?? 0);
 
-            // Jika anggaran_tahun tidak diisi, gunakan total dari triwulan
             $anggaran_tahun = $validated['anggaran_tahun'] ?? $anggaran_total;
             if (empty($anggaran_tahun)) {
                 $anggaran_tahun = $anggaran_total;
             }
 
-            // Buat data baru
             $rbTematik = RB_Tematik::create([
                 'tahun' => $request->tahun ?? date('Y'),
                 'permasalahan' => $validated['permasalahan'],
-                'sasaran_tematik' => $validated['sasaran_tematik'],
-                'indikator' => $validated['indikator'],
-                'target' => $validated['target'],
-                'satuan' => $validated['satuan'],
-                'target_tahun' => $validated['target_tahun'],
+                'sasaran_tematik' => $validated['sasaran_tematik'] ?? null,
+                'indikator' => $validated['indikator'] ?? null,
+                'target' => $validated['target'] ?? null,
+                'satuan' => $validated['satuan'] ?? null,
+                'target_tahun' => $validated['target_tahun'] ?? null,
                 'anggaran_tahun' => $this->cleanRupiah($anggaran_tahun),
-                'anggaran_total' => $anggaran_total,
-                'renaksi_tw1_target' => $validated['tw1_target'],
-                'realisasi_renaksi_tw1_target' => $validated['realisasi_tw1_target'],
+                'renaksi_tw1_target' => $validated['tw1_target'] ?? null,
+                'realisasi_renaksi_tw1_target' => $validated['realisasi_tw1_target'] ?? null,
                 'renaksi_tw1_rp' => $this->cleanRupiah($validated['tw1_rp'] ?? 0),
                 'realisasi_renaksi_tw1_rp' => $this->cleanRupiah($validated['realisasi_tw1_rp'] ?? 0),
-                'renaksi_tw2_target' => $validated['tw2_target'],
-                'realisasi_renaksi_tw2_target' => $validated['realisasi_tw2_target'],
+                'renaksi_tw2_target' => $validated['tw2_target'] ?? null,
+                'realisasi_renaksi_tw2_target' => $validated['realisasi_tw2_target'] ?? null,
                 'renaksi_tw2_rp' => $this->cleanRupiah($validated['tw2_rp'] ?? 0),
                 'realisasi_renaksi_tw2_rp' => $this->cleanRupiah($validated['realisasi_tw2_rp'] ?? 0),
-                'renaksi_tw3_target' => $validated['tw3_target'],
-                'realisasi_renaksi_tw3_target' => $validated['realisasi_tw3_target'],
+                'renaksi_tw3_target' => $validated['tw3_target'] ?? null,
+                'realisasi_renaksi_tw3_target' => $validated['realisasi_tw3_target'] ?? null,
                 'renaksi_tw3_rp' => $this->cleanRupiah($validated['tw3_rp'] ?? 0),
                 'realisasi_renaksi_tw3_rp' => $this->cleanRupiah($validated['realisasi_tw3_rp'] ?? 0),
-                'renaksi_tw4_target' => $validated['tw4_target'],
-                'realisasi_renaksi_tw4_target' => $validated['realisasi_tw4_target'],
+                'renaksi_tw4_target' => $validated['tw4_target'] ?? null,
+                'realisasi_renaksi_tw4_target' => $validated['realisasi_tw4_target'] ?? null,
                 'renaksi_tw4_rp' => $this->cleanRupiah($validated['tw4_rp'] ?? 0),
                 'realisasi_renaksi_tw4_rp' => $this->cleanRupiah($validated['realisasi_tw4_rp'] ?? 0),
-                'rumus' => $validated['rumus'],
-                'rencana_aksi' => $validated['rencana_aksi'],
-                'satuan_output' => $validated['satuan_output'],
-                'indikator_output' => $validated['indikator_output'],
-                'koordinator' => $validated['koordinator'],
-                'pelaksana' => $validated['pelaksana'],
+                'rumus' => $validated['rumus'] ?? null,
+                'rencana_aksi' => $validated['rencana_aksi'] ?? null,
+                'satuan_output' => $validated['satuan_output'] ?? null,
+                'indikator_output' => $validated['indikator_output'] ?? null,
+                'koordinator' => $validated['koordinator'] ?? null,
+                'pelaksana' => $validated['pelaksana'] ?? null,
             ]);
 
             DB::commit();
@@ -245,10 +235,10 @@ class RBTematikController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * PERBAIKAN: Menggunakan nama field yang sesuai dengan form
      */
     public function update(Request $request, $id)
     {
-        // ============== TAMBAHAN: Cek akses SEBELUM update ==============
         $akses = AksesRb::where('jenis_rb', 'RB Tematik')->first();
         if (!$akses || !$akses->isAccessible()) {
             return response()->json([
@@ -256,7 +246,6 @@ class RBTematikController extends Controller
                 'message' => 'Akses ditutup. Tidak dapat mengubah data.'
             ], 403);
         }
-        // ============== END TAMBAHAN ==============
 
         try {
             DB::beginTransaction();
@@ -265,7 +254,7 @@ class RBTematikController extends Controller
 
             $rbTematik = RB_Tematik::findOrFail($id);
 
-            // Validasi data sesuai struktur database
+            // Validasi data - PERBAIKAN: menggunakan nama field yang sama dengan form
             $validator = Validator::make($request->all(), [
                 'permasalahan' => 'required|string',
                 'sasaran_tematik' => 'nullable|string|max:100',
@@ -322,38 +311,41 @@ class RBTematikController extends Controller
                 $anggaran_tahun = $anggaran_total;
             }
 
-            // Update data
+            // PERBAIKAN: Mapping field dari form ke database
             $rbTematik->update([
                 'permasalahan' => $validated['permasalahan'],
-                'sasaran_tematik' => $validated['sasaran_tematik'],
-                'indikator' => $validated['indikator'],
-                'target' => $validated['target'],
-                'satuan' => $validated['satuan'],
-                'target_tahun' => $validated['target_tahun'],
+                'sasaran_tematik' => $validated['sasaran_tematik'] ?? null,
+                'indikator' => $validated['indikator'] ?? null,
+                'target' => $validated['target'] ?? null,
+                'satuan' => $validated['satuan'] ?? null,
+                'target_tahun' => $validated['target_tahun'] ?? null,
                 'anggaran_tahun' => $this->cleanRupiah($anggaran_tahun),
-                'anggaran_total' => $anggaran_total,
-                'renaksi_tw1_target' => $validated['tw1_target'],
-                'realisasi_renaksi_tw1_target' => $validated['realisasi_tw1_target'],
+                // Mapping: tw1_target -> renaksi_tw1_target
+                'renaksi_tw1_target' => $validated['tw1_target'] ?? null,
+                'realisasi_renaksi_tw1_target' => $validated['realisasi_tw1_target'] ?? null,
                 'renaksi_tw1_rp' => $this->cleanRupiah($validated['tw1_rp'] ?? 0),
                 'realisasi_renaksi_tw1_rp' => $this->cleanRupiah($validated['realisasi_tw1_rp'] ?? 0),
-                'renaksi_tw2_target' => $validated['tw2_target'],
-                'realisasi_renaksi_tw2_target' => $validated['realisasi_tw2_target'],
+                // Mapping: tw2_target -> renaksi_tw2_target
+                'renaksi_tw2_target' => $validated['tw2_target'] ?? null,
+                'realisasi_renaksi_tw2_target' => $validated['realisasi_tw2_target'] ?? null,
                 'renaksi_tw2_rp' => $this->cleanRupiah($validated['tw2_rp'] ?? 0),
                 'realisasi_renaksi_tw2_rp' => $this->cleanRupiah($validated['realisasi_tw2_rp'] ?? 0),
-                'renaksi_tw3_target' => $validated['tw3_target'],
-                'realisasi_renaksi_tw3_target' => $validated['realisasi_tw3_target'],
+                // Mapping: tw3_target -> renaksi_tw3_target
+                'renaksi_tw3_target' => $validated['tw3_target'] ?? null,
+                'realisasi_renaksi_tw3_target' => $validated['realisasi_tw3_target'] ?? null,
                 'renaksi_tw3_rp' => $this->cleanRupiah($validated['tw3_rp'] ?? 0),
                 'realisasi_renaksi_tw3_rp' => $this->cleanRupiah($validated['realisasi_tw3_rp'] ?? 0),
-                'renaksi_tw4_target' => $validated['tw4_target'],
-                'realisasi_renaksi_tw4_target' => $validated['realisasi_tw4_target'],
+                // Mapping: tw4_target -> renaksi_tw4_target
+                'renaksi_tw4_target' => $validated['tw4_target'] ?? null,
+                'realisasi_renaksi_tw4_target' => $validated['realisasi_tw4_target'] ?? null,
                 'renaksi_tw4_rp' => $this->cleanRupiah($validated['tw4_rp'] ?? 0),
                 'realisasi_renaksi_tw4_rp' => $this->cleanRupiah($validated['realisasi_tw4_rp'] ?? 0),
-                'rumus' => $validated['rumus'],
-                'rencana_aksi' => $validated['rencana_aksi'],
-                'satuan_output' => $validated['satuan_output'],
-                'indikator_output' => $validated['indikator_output'],
-                'koordinator' => $validated['koordinator'],
-                'pelaksana' => $validated['pelaksana'],
+                'rumus' => $validated['rumus'] ?? null,
+                'rencana_aksi' => $validated['rencana_aksi'] ?? null,
+                'satuan_output' => $validated['satuan_output'] ?? null,
+                'indikator_output' => $validated['indikator_output'] ?? null,
+                'koordinator' => $validated['koordinator'] ?? null,
+                'pelaksana' => $validated['pelaksana'] ?? null,
             ]);
 
             DB::commit();
@@ -381,7 +373,6 @@ class RBTematikController extends Controller
      */
     public function destroy($id)
     {
-        // ============== TAMBAHAN: Cek akses SEBELUM hapus ==============
         $akses = AksesRb::where('jenis_rb', 'RB Tematik')->first();
         if (!$akses || !$akses->isAccessible()) {
             return response()->json([
@@ -389,7 +380,6 @@ class RBTematikController extends Controller
                 'message' => 'Akses ditutup. Tidak dapat menghapus data.'
             ], 403);
         }
-        // ============== END TAMBAHAN ==============
 
         try {
             DB::beginTransaction();

@@ -16,21 +16,19 @@
         <form id="hapusForm" method="POST" action="">
             @csrf
             @method('DELETE')
-            <input type="hidden" id="hapusId" value="">
             
             <!-- Footer -->
             <div class="flex justify-end gap-3 mt-6">
-                <button type="button" id="hapusItem" 
+                <button type="button" 
                     onclick="closeModal('hapusModal')" 
-                    class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    class="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400 transition font-medium">
                     Batal
                 </button>
                 <button type="submit" 
-                    class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                    class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition font-medium">
                     Hapus
                 </button>
             </div>
         </form>
     </div>
 </div>
-

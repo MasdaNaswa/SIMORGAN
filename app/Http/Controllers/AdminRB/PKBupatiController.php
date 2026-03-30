@@ -117,6 +117,148 @@ class PKBupatiController extends Controller
         ));
     }
 
+     public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'no' => 'required|integer|min:1|max:999',
+            'sasaranStrategis' => 'required|string',
+            'indikatorKinerja' => 'required|string',
+            'target2025' => 'required|string',
+            'satuan' => 'required|string|max:100',
+
+            // Triwulan 1
+            'targetTW1' => 'nullable|string|max:255',
+            'realisasiTW1' => 'nullable|string|max:255',
+            'paguAnggaranTW1' => 'nullable|string|max:255',
+            'realisasiAnggaranTW1' => 'nullable|string|max:255',
+
+            // Triwulan 2
+            'targetTW2' => 'nullable|string|max:255',
+            'realisasiTW2' => 'nullable|string|max:255',
+            'paguAnggaranTW2' => 'nullable|string|max:255',
+            'realisasiAnggaranTW2' => 'nullable|string|max:255',
+
+            // Triwulan 3
+            'targetTW3' => 'nullable|string|max:255',
+            'realisasiTW3' => 'nullable|string|max:255',
+            'paguAnggaranTW3' => 'nullable|string|max:255',
+            'realisasiAnggaranTW3' => 'nullable|string|max:255',
+
+            // Triwulan 4
+            'targetTW4' => 'nullable|string|max:255',
+            'realisasiTW4' => 'nullable|string|max:255',
+            'paguAnggaranTW4' => 'nullable|string|max:255',
+            'realisasiAnggaranTW4' => 'nullable|string|max:255',
+
+            // Program dan Analisis
+            'program' => 'nullable|string|max:1000',
+            'analisisEvaluasi' => 'nullable|string|max:2000',
+            'penanggungJawab' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Dapatkan tahun dan semester dari request (gunakan dari filter yang aktif)
+            $tahun = $request->input('tahun', date('Y'));
+            $semester = $request->input('semester', 'I');
+
+            // Data untuk dropdown sasaran strategis
+            $sasaranOptions = [
+                1 => "1. Meningkatnya Investasi Daerah",
+                2 => "2. Berkembangnya Sektor Ekonomi Dominan",
+                3 => "3. Meningkatnya Pendapatan Asli Daerah",
+                4 => "4. Meningkatnya Akses Kebutuhan Insfrastruktur Dasar Masyarakat Yang Merata",
+                5 => "5. Terwujudnya Prasarana Penghubung yang Optimal",
+                6 => "6. Meningkatnya Derajat Kesehatan Masyarakat",
+                7 => "7. Meningkatnya Derajat Pendidikan Masyarakat",
+                8 => "8. Terwujudnya Kesetaraan Gender",
+                9 => "9. Terwujudnya Pengendalian Penduduk",
+                10 => "10. Meningkatnya Peran Pemuda Dalam Pembangunan",
+                11 => "11. Meningkatnya Peran Serta Masyarakat Dalam Pelestarian Nilai Budaya Daerah",
+                12 => "12. Meningkatnya Kesejahteraan Sosial",
+                13 => "13. Mendorong Perluasan Dan Kesempatan Kerja Bagi Tenaga Kerja di Daerah",
+                14 => "14. Meningkatnya Pengelolaan dan Kelestarian Lingkungan Hidup",
+                15 => "15. Meningkatnya Kualitas Udara, Tanah dan Air",
+                16 => "16. Terwujudnya Birokrasi Yang Profesional, Bersih dan Akuntabel",
+                17 => "17. Meningkatnya Kualitas Pelayanan Publik"
+            ];
+
+            // Dapatkan teks lengkap sasaran strategis berdasarkan key
+            $sasaranText = $sasaranOptions[$request->sasaranStrategis] ?? $request->sasaranStrategis;
+
+            // Cek duplikasi nomor
+            $exists = PK_Bupati::where('no', $request->no)
+                ->where('tahun', $tahun)
+                ->where('semester', $semester)
+                ->exists();
+
+            if ($exists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nomor urut sudah digunakan untuk tahun dan semester ini'
+                ], 422);
+            }
+
+            $data = [
+                'no' => $request->no,
+                'tahun' => $tahun,
+                'semester' => $semester,
+                'sasaran_strategis' => $sasaranText,
+                'indikator_kinerja' => $request->indikatorKinerja,
+                'target_2025' => $request->target2025,
+                'satuan' => $request->satuan,
+                'target_tw1' => $request->targetTW1,
+                'realisasi_tw1' => $request->realisasiTW1,
+                'target_tw2' => $request->targetTW2,
+                'realisasi_tw2' => $request->realisasiTW2,
+                'target_tw3' => $request->targetTW3,
+                'realisasi_tw3' => $request->realisasiTW3,
+                'target_tw4' => $request->targetTW4,
+                'realisasi_tw4' => $request->realisasiTW4,
+                'pagu_anggaran_tw1' => $request->paguAnggaranTW1,
+                'realisasi_anggaran_tw1' => $request->realisasiAnggaranTW1,
+                'pagu_anggaran_tw2' => $request->paguAnggaranTW2,
+                'realisasi_anggaran_tw2' => $request->realisasiAnggaranTW2,
+                'pagu_anggaran_tw3' => $request->paguAnggaranTW3,
+                'realisasi_anggaran_tw3' => $request->realisasiAnggaranTW3,
+                'pagu_anggaran_tw4' => $request->paguAnggaranTW4,
+                'realisasi_anggaran_tw4' => $request->realisasiAnggaranTW4,
+                'program' => $request->program,
+                'penjelasan_analisis' => $request->analisisEvaluasi,
+                'penanggung_jawab' => $request->penanggungJawab,
+            ];
+
+            $pkBupati = PK_Bupati::create($data);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil ditambahkan',
+                'data' => $pkBupati
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error store PK Bupati (Admin): ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     /**
      * Display the specified resource.
      */
@@ -635,7 +777,7 @@ class PKBupatiController extends Controller
 
         // Set headers untuk download
         $semesterText = $semester == '1' ? 'I' : 'II';
-        $filename = 'PK_BUPATI_SEMESTER_' . $semesterText . '_TAHUN_' . $year . '.xlsx';
+        $filename = 'PK BUPATI SEMESTER ' . $semesterText . ' TAHUN ' . $year . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -675,7 +817,7 @@ class PKBupatiController extends Controller
         ]);
 
         $semesterText = $semester == '1' ? 'I' : 'II';
-        $filename = 'PK_BUPATI_SEMESTER_' . $semesterText . '_TAHUN_' . $year . '.pdf';
+        $filename = 'PK BUPATI SEMESTER ' . $semesterText . ' TAHUN ' . $year . '.pdf';
 
         return $pdf->download($filename);
     }

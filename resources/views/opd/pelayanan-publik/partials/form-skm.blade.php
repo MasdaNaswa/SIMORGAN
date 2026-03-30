@@ -183,7 +183,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                            <tr>
+                             <tr>
                                 <th class="border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700">No.</th>
                                 <th class="border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700">Jenis
                                     Layanan</th>
@@ -209,7 +209,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                                 </th>
                                 <th class="border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700">IKM Per
                                     Jenis Layanan</th>
-                            </tr>
+                             </tr>
                         </thead>
                         <tbody id="jenisLayananTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -293,7 +293,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-200">
                             <thead class="bg-gray-50">
-                                <tr>
+                                 <tr>
                                     <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">No.
                                     </th>
                                     <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Unsur
@@ -304,7 +304,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                                     </th>
                                     <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">
                                         Penanggung Jawab</th>
-                                </tr>
+                                 </tr>
                             </thead>
                             <tbody id="rencanaTindakLanjutTable">
                                 <!-- Data akan diisi via JavaScript -->
@@ -320,13 +320,13 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                            <tr>
+                             <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Tahun
                                 </th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">IKM Unit
                                     Layanan</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Mutu</th>
-                            </tr>
+                             </tr>
                         </thead>
                         <tbody id="trenSkmTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -351,12 +351,12 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                            <tr>
+                             <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">No</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Unsur
                                 </th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">IKM</th>
-                            </tr>
+                             </tr>
                         </thead>
                         <tbody id="hasilSkmSebelumnyaTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -371,7 +371,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <div class="overflow-x-auto">
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-50">
-                            <tr>
+                             <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">No</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">Rencana
                                     Tindak Lanjut</th>
@@ -381,7 +381,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                                     Tindak Lanjut</th>
                                 <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">
                                     Dokumentasi Kegiatan</th>
-                            </tr>
+                             </tr>
                         </thead>
                         <tbody id="tindakLanjutSebelumnyaTable">
                             <!-- Data akan diisi via JavaScript -->
@@ -582,7 +582,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         return 'E';
     }
 
-    // Fungsi untuk format NIP (diperbaiki)
+    // Fungsi untuk format NIP
     function formatNIP(input) {
         if (!input) return;
         
@@ -614,21 +614,6 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         }
     }
 
-    // Fungsi untuk highlight NIP (diperbaiki - hanya saat submit)
-    function highlightNIP() {
-        const nipInput = document.getElementById('nipInput');
-        if (nipInput) {
-            const nipValue = nipInput.value.replace(/\D/g, '');
-            if (nipValue.length !== 18) {
-                nipInput.style.borderColor = '#f87171';
-                nipInput.style.backgroundColor = '#fef2f2';
-                nipInput.focus();
-                return false;
-            }
-        }
-        return true;
-    }
-
     // Fungsi untuk validasi NIP pada form submit
     function validateNIP() {
         const nipInput = document.getElementById('nipInput');
@@ -645,40 +630,12 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         return true;
     }
 
-    // Fungsi untuk menampilkan notifikasi
-    function showToast(message, type = 'success') {
-        // Hapus toast sebelumnya jika ada
-        const existingToast = document.querySelector('.toast-notification');
-        if (existingToast) {
-            existingToast.remove();
-        }
-        
-        const toast = document.createElement('div');
-        toast.className = `toast-notification fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
-            type === 'success' ? 'bg-green-500 text-white' : 
-            type === 'error' ? 'bg-red-500 text-white' : 
-            'bg-blue-500 text-white'
-        }`;
-        toast.textContent = message;
-        toast.style.zIndex = '9999';
-        
-        document.body.appendChild(toast);
-        
-        // Hapus toast setelah 3 detik
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
-
     // ==================== FUNGSI PENGISIAN TABEL ====================
 
     // Fungsi untuk mengisi tabel analisis responden
     function fillAnalisisRespondenTable() {
         const tableBody = document.getElementById('analisisRespondenTable');
-        if (!tableBody) {
-            console.error('Tabel analisis responden tidak ditemukan');
-            return;
-        }
+        if (!tableBody) return;
 
         tableBody.innerHTML = '';
 
@@ -689,27 +646,27 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <input type="text" name="analisis_responden[${index}][no]" 
                        value="${item.no}" 
                        class="w-12 text-center border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="text" name="analisis_responden[${index}][karakteristik]" 
                        value="${item.karakteristik}" 
                        class="w-full border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="text" name="analisis_responden[${index}][indikator]" 
                        value="${item.indikator}" 
                        class="w-full border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="number" name="analisis_responden[${index}][jumlah]" 
                        value="${item.jumlah}" 
                        class="w-24 text-center border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="number" step="0.1" name="analisis_responden[${index}][persentase]" 
                        value="${item.persentase}" 
                        class="w-24 text-center border-none bg-transparent">
-            </td>
+             </td>
         `;
             tableBody.appendChild(row);
         });
@@ -720,10 +677,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         const tableBody = document.getElementById('jenisLayananTable');
         const tableFooter = document.getElementById('jenisLayananFooter');
 
-        if (!tableBody) {
-            console.error('Tabel jenis layanan tidak ditemukan');
-            return;
-        }
+        if (!tableBody) return;
 
         tableBody.innerHTML = '';
         tableFooter.innerHTML = '';
@@ -731,14 +685,13 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         jenisLayananData.forEach((item, index) => {
             const row = document.createElement('tr');
 
-            // Buat input untuk setiap nilai unsur
             const nilaiInputs = item.nilai.map((nilai, i) => `
             <td class="border border-gray-300 px-2 py-1">
                 <input type="number" step="0.1" 
                        name="jenis_layanan[${index}][nilai][${i}]" 
                        value="${nilai}" 
                        class="w-16 text-center border-none bg-transparent">
-            </td>
+             </td>
         `).join('');
 
             row.innerHTML = `
@@ -746,47 +699,46 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <input type="text" name="jenis_layanan[${index}][no]" 
                        value="${item.no}" 
                        class="w-8 text-center border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-2 py-1">
                 <input type="text" name="jenis_layanan[${index}][jenis_layanan]" 
                        value="${item.jenis_layanan}" 
                        class="w-full border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-2 py-1">
                 <input type="number" name="jenis_layanan[${index}][jumlah_responden]" 
                        value="${item.jumlah_responden}" 
                        class="w-24 text-center border-none bg-transparent">
-            </td>
+             </td>
             ${nilaiInputs}
             <td class="border border-gray-300 px-2 py-1">
                 <input type="number" step="0.01" 
                        name="jenis_layanan[${index}][ikm_per_jenis]" 
                        value="${item.ikm_per_jenis}" 
                        class="w-24 text-center border-none bg-transparent">
-            </td>
+             </td>
         `;
             tableBody.appendChild(row);
         });
 
-        // Tambah footer untuk rerata (hanya placeholder, tidak ada perhitungan otomatis)
         const footerRow = document.createElement('tr');
         footerRow.innerHTML = `
         <td colspan="2" class="border border-gray-300 px-2 py-1 font-medium text-center">
             Rerata IKM Per Unsur
-        </td>
+         </td>
         <td class="border border-gray-300 px-2 py-1"></td>
         ${unsurSkm.map((_, i) => `
             <td class="border border-gray-300 px-2 py-1">
                 <input type="number" step="0.1" id="rerata_unsur_${i}" 
                        name="rerata_ikm[${i}]" 
                        class="w-16 text-center border-none bg-transparent">
-            </td>
+             </td>
         `).join('')}
         <td class="border border-gray-300 px-2 py-1">
             <input type="number" step="0.01" id="ikm_unit_layanan_display" 
                    name="ikm_unit_layanan_display" 
                    class="w-24 text-center border-none bg-transparent">
-        </td>
+         </td>
     `;
         tableFooter.appendChild(footerRow);
     }
@@ -794,10 +746,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
     // Fungsi untuk mengisi tabel tren SKM
     function fillTrenSkmTable() {
         const tableBody = document.getElementById('trenSkmTable');
-        if (!tableBody) {
-            console.error('Tabel tren SKM tidak ditemukan');
-            return;
-        }
+        if (!tableBody) return;
 
         tableBody.innerHTML = '';
 
@@ -808,17 +757,17 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <input type="number" name="tren_skm[${index}][tahun]" 
                        value="${item.tahun}" 
                        class="w-24 text-center border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="number" step="0.01" name="tren_skm[${index}][ikm]" 
                        value="${item.ikm}" 
                        class="w-32 text-center border-none bg-transparent">
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="text" name="tren_skm[${index}][mutu]" 
                        value="${item.mutu}" 
                        class="w-16 text-center border-none bg-transparent">
-            </td>
+             </td>
         `;
             tableBody.appendChild(row);
         });
@@ -827,10 +776,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
     // Fungsi untuk mengisi tabel hasil SKM sebelumnya
     function fillHasilSkmSebelumnyaTable() {
         const tableBody = document.getElementById('hasilSkmSebelumnyaTable');
-        if (!tableBody) {
-            console.error('Tabel hasil SKM sebelumnya tidak ditemukan');
-            return;
-        }
+        if (!tableBody) return;
 
         tableBody.innerHTML = '';
 
@@ -841,16 +787,16 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
                 <input type="text" name="hasil_skm_sebelumnya[${index}][no]" 
                        value="${item.no}" 
                        class="w-12 text-center border-none bg-transparent" readonly>
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="text" name="hasil_skm_sebelumnya[${index}][unsur]" 
                        value="${item.unsur}" 
                        class="w-full border-none bg-transparent" readonly>
-            </td>
+             </td>
             <td class="border border-gray-300 px-3 py-2">
                 <input type="number" step="0.01" name="hasil_skm_sebelumnya[${index}][ikm]" 
                        class="w-24 text-center border-none bg-transparent">
-            </td>
+             </td>
         `;
             tableBody.appendChild(row);
         });
@@ -860,7 +806,6 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
 
     // Fungsi untuk mendapatkan nilai dan unsur terendah
     function getUnsurTerendah() {
-        // Cari nilai rerata dari input rerata_unsur
         let nilaiRerata = [];
         let hasValidData = false;
 
@@ -874,17 +819,14 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
             }
         }
 
-        // Jika tidak ada nilai valid di input rerata, gunakan default
         if (!hasValidData || nilaiRerata.every(val => val === 0)) {
             nilaiRerata = [...defaultNilaiUnsur];
         }
 
-        // Cari indeks nilai terendah
         const nilaiNumber = nilaiRerata.map(val => parseFloat(val));
         const minValue = Math.min(...nilaiNumber);
         const minIndex = nilaiNumber.indexOf(minValue);
 
-        // Cari nilai terendah kedua
         const nilaiTanpaTerendah = [...nilaiNumber];
         nilaiTanpaTerendah[minIndex] = Infinity;
         const secondMinValue = Math.min(...nilaiTanpaTerendah);
@@ -911,7 +853,6 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
             deskripsiMasalah2
         } = getUnsurTerendah();
 
-        // Format unsur untuk tampilan dalam teks
         const formatUnsurUntukTeks = (unsur) => {
             const mapping = {
                 'Persyaratan': 'persyaratan layanan',
@@ -930,20 +871,15 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         const unsur1 = formatUnsurUntukTeks(unsurTerendah);
         const unsur2 = formatUnsurUntukTeks(unsurTerendahKedua);
 
-        // Template lengkap sesuai permintaan
         const template = `Dari hasil analisis data SKM, kami mengidentifikasi bahwa aspek ${unsur1} dan ${unsur2} merupakan dua isu yang paling sering disorot oleh masyarakat. Secara kuantitatif, kedua dimensi ini memiliki nilai yang masih dapat ditingkatkan. ${unsurTerendah} mendapatkan nilai terendah yaitu ${nilaiTerendah}. Selanjutnya ${formatUnsurUntukTeks(unsurTerendahKedua)} mendapatkan nilai ${nilaiTerendahKedua} adalah nilai terendah kedua.
 
 Sementara, secara kualitatif dari kritik dan saran, kami menerima banyak masukan yang menyatakan bahwa ${deskripsiMasalah1}. Selain itu, terdapat keluhan mengenai ${deskripsiMasalah2}.
 
 Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang tidak hanya ditujukan untuk meningkatkan nilai SKM secara angka, tetapi lebih penting lagi, untuk menjawab permasalahan nyata yang dirasakan oleh masyarakat. Fokus utama kami adalah melakukan penyederhanaan persyaratan layanan, meningkatkan keterampilan komunikasi petugas, serta memperbaiki alur pelayanan agar lebih mudah dipahami dan diakses oleh pengguna. Berdasarkan hasil analisis tersebut, berikut rencana tindak lanjut yang telah Kami susun untuk perbaikan layanan kedepan:`;
 
-        // Masukkan template ke textarea
         const inputAnalisis = document.getElementById('inputAnalisisMasalah');
         if (inputAnalisis) {
             inputAnalisis.value = template;
-            showToast('Template analisis masalah berhasil diisi!', 'success');
-        } else {
-            showToast('Gagal mengisi template. Textarea tidak ditemukan.', 'error');
         }
     }
 
@@ -952,7 +888,6 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
         const inputAnalisis = document.getElementById('inputAnalisisMasalah');
         if (inputAnalisis) {
             inputAnalisis.value = '';
-            showToast('Analisis masalah berhasil direset!', 'info');
         }
     }
 
@@ -976,10 +911,7 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
     // Fungsi untuk menambah baris rencana tindak lanjut
     function addRencanaTindakLanjutRow() {
         const tableBody = document.getElementById('rencanaTindakLanjutTable');
-        if (!tableBody) {
-            console.error('Tabel rencana tindak lanjut tidak ditemukan');
-            return;
-        }
+        if (!tableBody) return;
 
         const index = tableBody.children.length;
 
@@ -991,7 +923,7 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="text" name="rencana_tindak_lanjut[${index}][no]" 
                    value="${index + 1}" 
                    class="w-12 text-center border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <select name="rencana_tindak_lanjut[${index}][unsur]" 
                     class="w-full border-none bg-transparent unsur-select"
@@ -1008,31 +940,29 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
                 <option value="Aduan">Aduan</option>
                 <option value="Sarpras">Sarpras</option>
             </select>
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <textarea name="rencana_tindak_lanjut[${index}][rencana]" 
                       rows="3" class="w-full border-none bg-transparent" 
                       placeholder="Deskripsi rencana tindak lanjut..."></textarea>
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="rencana_tindak_lanjut[${index}][waktu]" 
                    class="w-32 border-none bg-transparent" 
                    placeholder="Contoh: Maret 2025">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="rencana_tindak_lanjut[${index}][penanggung_jawab]" 
                    class="w-full border-none bg-transparent" 
                    placeholder="Nama penanggung jawab">
-        </td>
+         </td>
     `;
         tableBody.appendChild(row);
 
-        // Otomatis isi RTL berdasarkan unsur yang dipilih (default: unsur terendah pertama)
         const selectElement = row.querySelector('.unsur-select');
         if (selectElement) {
             isiRTLByUnsur(selectElement);
         }
-        
     }
 
     // ==================== FUNGSI TAMBAH BARIS ====================
@@ -1049,26 +979,25 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="analisis_responden[${index}][no]" 
                    class="w-12 text-center border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="analisis_responden[${index}][karakteristik]" 
                    class="w-full border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="analisis_responden[${index}][indikator]" 
                    class="w-full border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="number" name="analisis_responden[${index}][jumlah]" 
                    class="w-24 text-center border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="number" step="0.1" name="analisis_responden[${index}][persentase]" 
                    class="w-24 text-center border-none bg-transparent">
-        </td>
+         </td>
     `;
         tableBody.appendChild(row);
-        showToast('Baris analisis responden berhasil ditambahkan!', 'success');
     }
 
     // Fungsi untuk menambah baris jenis layanan
@@ -1080,13 +1009,12 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
 
         const row = document.createElement('tr');
 
-        // Buat input untuk setiap unsur
         const nilaiInputs = Array(9).fill(0).map((_, i) => `
         <td class="border border-gray-300 px-2 py-1">
             <input type="number" step="0.1" 
                    name="jenis_layanan[${index}][nilai][${i}]" 
                    class="w-16 text-center border-none bg-transparent">
-        </td>
+         </td>
     `).join('');
 
         row.innerHTML = `
@@ -1094,25 +1022,24 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="text" name="jenis_layanan[${index}][no]" 
                    value="${index + 1}" 
                    class="w-8 text-center border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-2 py-1">
             <input type="text" name="jenis_layanan[${index}][jenis_layanan]" 
                    class="w-full border-none bg-transparent" 
                    placeholder="Nama Layanan">
-        </td>
+         </td>
         <td class="border border-gray-300 px-2 py-1">
             <input type="number" name="jenis_layanan[${index}][jumlah_responden]" 
                    class="w-24 text-center border-none bg-transparent">
-        </td>
+         </td>
         ${nilaiInputs}
         <td class="border border-gray-300 px-2 py-1">
             <input type="number" step="0.01" 
                    name="jenis_layanan[${index}][ikm_per_jenis]" 
                    class="w-24 text-center border-none bg-transparent">
-        </td>
+         </td>
     `;
         tableBody.appendChild(row);
-        showToast('Baris jenis layanan berhasil ditambahkan!', 'success');
     }
 
     // Fungsi untuk menambah baris tren SKM
@@ -1129,18 +1056,17 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="number" name="tren_skm[${index}][tahun]" 
                    value="${currentYear - 4 + index}" 
                    class="w-24 text-center border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="number" step="0.01" name="tren_skm[${index}][ikm]" 
                class="w-32 text-center border-none bg-transparent">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="tren_skm[${index}][mutu]" 
                    class="w-16 text-center border-none bg-transparent">
-        </td>
+         </td>
     `;
         tableBody.appendChild(row);
-        showToast('Baris tren SKM berhasil ditambahkan!', 'success');
     }
 
     // Fungsi untuk menambah baris tindak lanjut sebelumnya
@@ -1158,32 +1084,31 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="text" name="tindak_lanjut_sebelumnya[${index}][no]" 
                    value="${no}.${subNo}" 
                    class="w-12 text-center border-none bg-transparent" readonly>
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="tindak_lanjut_sebelumnya[${index}][rencana]" 
                    class="w-full border-none bg-transparent" 
                    placeholder="Nama kegiatan">
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <select name="tindak_lanjut_sebelumnya[${index}][status]" 
                     class="w-full border-none bg-transparent">
                 <option value="Sudah">Sudah</option>
                 <option value="Belum">Belum</option>
             </select>
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <textarea name="tindak_lanjut_sebelumnya[${index}][deskripsi]" 
                       rows="2" class="w-full border-none bg-transparent" 
                       placeholder="Deskripsi tindak lanjut"></textarea>
-        </td>
+         </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="file" name="tindak_lanjut_sebelumnya[${index}][dokumentasi]" 
                    accept=".jpg,.jpeg,.png" 
                    class="w-full border-none bg-transparent">
-        </td>
+         </td>
     `;
         tableBody.appendChild(row);
-        showToast('Baris tindak lanjut sebelumnya berhasil ditambahkan!', 'success');
     }
 
     // Fungsi untuk menambah input dokumentasi
@@ -1217,26 +1142,17 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
 
     // ==================== INISIALISASI ====================
 
-    // Event listener untuk update template saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('🔄 Memuat form SKM Lengkap...');
-
-        // Isi tabel dengan data
         fillAnalisisRespondenTable();
         fillJenisLayananTable();
         fillTrenSkmTable();
         fillHasilSkmSebelumnyaTable();
 
-        // Tambah 2 foto dokumentasi default
         addDokumentasiInput();
         addDokumentasiInput();
 
-        // Tambah 2 baris RTL default untuk unsur terendah
         setTimeout(() => {
-            // Baris pertama untuk unsur terendah
             addRencanaTindakLanjutRow();
-
-            // Baris kedua untuk unsur terendah kedua
             addRencanaTindakLanjutRow();
             const selects = document.querySelectorAll('.unsur-select');
             if (selects.length >= 2) {
@@ -1246,23 +1162,14 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             }
         }, 500);
 
-        // HAPUS pemanggilan highlightNIP() saat halaman dimuat
-        // Tidak perlu memanggil highlightNIP() saat halaman pertama kali dimuat
-
-        // Event listener untuk form submit - validasi NIP
         const form = document.getElementById('skmFormComplete');
         if (form) {
             form.addEventListener('submit', function (e) {
-                // Validasi NIP hanya saat form disubmit
                 if (!validateNIP()) {
                     e.preventDefault();
                     return false;
                 }
-                
-                // Validasi lain bisa ditambahkan di sini jika perlu
-                showToast('Form sedang diproses, harap tunggu...', 'info');
             });
         }
-        
     });
 </script>

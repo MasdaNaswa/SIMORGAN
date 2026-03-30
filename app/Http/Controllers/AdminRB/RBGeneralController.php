@@ -4,7 +4,10 @@ namespace App\Http\Controllers\AdminRB;
 
 use App\Http\Controllers\Controller;
 use App\Models\RB_General;
+use App\Models\AksesRb;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\Log; 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -14,23 +17,86 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 class RBGeneralController extends Controller
 {
     /**
-     * Tampilkan daftar RB General (dari semua sumber)
+     * Tampilkan daftar RB General (Admin RB bisa CRUD)
      */
     public function index()
     {
         $selectedYear = request()->get('year', date('Y'));
 
-        // Ambil SEMUA data dari database berdasarkan tahun
+        // Ambil data
         $rbData = RB_General::where('tahun', $selectedYear)
             ->orderBy('unit_kerja')
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        // Group data berdasarkan unit kerja untuk tampilan yang lebih rapi
-        $groupedData = $rbData->groupBy('unit_kerja');
+        return view('adminrb.rb-general.index', compact(
+            'rbData', 
+            'selectedYear',
+        ));
+    }
 
-        return view('adminrb.rb-general.index', compact('rbData', 'groupedData', 'selectedYear'));
+    /**
+     * Simpan data baru (Admin RB)
+     */
+    /**
+     * Simpan data baru (Admin RB)
+     * TIDAK ADA PENGECEKAN AKSES - ADMIN BISA TAMBAH KAPAN SAJA
+     */
+    public function store(Request $request)
+    {
+        try {
+            Log::info('=== ADMIN RB STORE RB GENERAL ===');
+            Log::info('User: ' . auth()->user()->name);
+            Log::info('User Role: ' . auth()->user()->role);
+            
+            // TIDAK ADA PENGECEKAN AKSES - ADMIN BISA TAMBAH KAPAN SAJA
+            
+            // Ambil semua data dari request
+            $data = $request->all();
+            
+            // Bersihkan format rupiah
+            $rupiahFields = [
+                'tw1_rp', 'tw2_rp', 'tw3_rp', 'tw4_rp',
+                'realisasi_tw1_rp', 'realisasi_tw2_rp', 'realisasi_tw3_rp', 'realisasi_tw4_rp',
+                'anggaran_tahun'
+            ];
+            
+            foreach ($rupiahFields as $field) {
+                if (isset($data[$field])) {
+                    $data[$field] = $this->cleanRupiah($data[$field]);
+                }
+            }
+            
+            // Pastikan tahun ada
+            if (empty($data['tahun'])) {
+                $data['tahun'] = date('Y');
+            }
+            
+            // Hapus field yang tidak diperlukan
+            unset($data['_token']);
+            unset($data['_method']);
+            
+            // INSERT LANGSUNG MENGGUNAKAN QUERY BUILDER (BYPASS SEMUA VALIDASI)
+            $id = DB::table('rb_general')->insertGetId($data);
+            
+            Log::info('Data RB General berhasil disimpan dengan ID: ' . $id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data RB General berhasil ditambahkan',
+                'id' => $id
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error store RB General: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambah data: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -146,51 +212,45 @@ class RBGeneralController extends Controller
     }
 
     /**
-     * Update data
+     * Update data (Admin RB)
      */
     public function update(Request $request, $id)
     {
         try {
-            $validated = $request->validate([
-                'sasaran_strategi' => 'required|string',
-                'indikator_capaian' => 'required|string',
-                'target' => 'required|string',
-                'satuan' => 'required|string',
-                'target_tahun' => 'nullable|string',
-                'rencana_aksi' => 'required|string',
-                'satuan_output' => 'nullable|string',
-                'indikator_output' => 'nullable|string',
-                'renaksi_tw1_target' => 'nullable|string',
-                'tw1_rp' => 'nullable|string',
-                'renaksi_tw2_target' => 'nullable|string',
-                'tw2_rp' => 'nullable|string',
-                'renaksi_tw3_target' => 'nullable|string',
-                'tw3_rp' => 'nullable|string',
-                'renaksi_tw4_target' => 'nullable|string',
-                'tw4_rp' => 'nullable|string',
-                'realisasi_tw1_target' => 'nullable|string',
-                'realisasi_tw1_rp' => 'nullable|string',
-                'realisasi_tw2_target' => 'nullable|string',
-                'realisasi_tw2_rp' => 'nullable|string',
-                'realisasi_tw3_target' => 'nullable|string',
-                'realisasi_tw3_rp' => 'nullable|string',
-                'realisasi_tw4_target' => 'nullable|string',
-                'realisasi_tw4_rp' => 'nullable|string',
-                'anggaran_tahun' => 'nullable|  string',
-                'rumus' => 'nullable|string',
-                'catatan_evaluasi' => 'nullable|string',
-                'catatan_perbaikan' => 'nullable|string',
-                'unit_kerja' => 'required|string',
-                'pelaksana' => 'nullable|string',
-            ]);
-
-            $rb = RB_General::findOrFail($id);
-            $rb->update($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data RB General berhasil diupdate'
-            ]);
+            // Ambil semua data dari request
+            $data = $request->all();
+            
+            // Bersihkan format rupiah
+            $rupiahFields = [
+                'tw1_rp', 'tw2_rp', 'tw3_rp', 'tw4_rp',
+                'realisasi_tw1_rp', 'realisasi_tw2_rp', 'realisasi_tw3_rp', 'realisasi_tw4_rp',
+                'anggaran_tahun'
+            ];
+            
+            foreach ($rupiahFields as $field) {
+                if (isset($data[$field])) {
+                    $data[$field] = $this->cleanRupiah($data[$field]);
+                }
+            }
+            
+            // Hapus field yang tidak diperlukan
+            unset($data['_token']);
+            unset($data['_method']);
+            
+            // Update langsung menggunakan Query Builder
+            $updated = DB::table('rb_general')->where('id', $id)->update($data);
+            
+            if ($updated) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data RB General berhasil diupdate'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada perubahan data'
+                ], 400);
+            }
 
         } catch (\Exception $e) {
             return response()->json([
@@ -201,18 +261,24 @@ class RBGeneralController extends Controller
     }
 
     /**
-     * Hapus data
+     * Hapus data (Admin RB)
      */
     public function destroy($id)
     {
         try {
-            $rb = RB_General::findOrFail($id);
-            $rb->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data RB General berhasil dihapus'
-            ]);
+            $deleted = DB::table('rb_general')->where('id', $id)->delete();
+            
+            if ($deleted) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data RB General berhasil dihapus'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak ditemukan'
+                ], 404);
+            }
 
         } catch (\Exception $e) {
             return response()->json([
@@ -235,83 +301,75 @@ class RBGeneralController extends Controller
             return (float) $value;
         }
 
-        // Remove 'Rp ' prefix, dots, and non-numeric characters
         $value = str_replace('Rp ', '', $value);
         $value = str_replace('.', '', $value);
         return (float) preg_replace('/[^0-9]/', '', $value);
     }
 
     /**
-     * Export data ke Excel - Format sesuai gambar dengan warna #2F75B5 dan #DDEBF7
+     * Export data ke Excel
      */
     public function exportExcel(Request $request)
     {
         $year = $request->get('year', date('Y'));
 
-        // Ambil data RB General berdasarkan tahun
         $rbData = RB_General::where('tahun', $year)
             ->orderBy('unit_kerja')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Buat spreadsheet baru
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('RA RB General');
 
-        // Set column widths sesuai dengan struktur
-        $sheet->getColumnDimension('A')->setWidth(5);   // NO
-        $sheet->getColumnDimension('B')->setWidth(30);  // SASARAN STRATEGI
-        $sheet->getColumnDimension('C')->setWidth(30);  // INDIKATOR CAPAIAN
-        $sheet->getColumnDimension('D')->setWidth(10);  // TARGET
-        $sheet->getColumnDimension('E')->setWidth(10);  // SATUAN
-        $sheet->getColumnDimension('F')->setWidth(25);  // Rencana Aksi
-        $sheet->getColumnDimension('G')->setWidth(15);  // SATUAN OUTPUT
-        $sheet->getColumnDimension('H')->setWidth(20);  // INDIKATOR OUTPUT
-        $sheet->getColumnDimension('I')->setWidth(15);  // Target Tahun
-        $sheet->getColumnDimension('J')->setWidth(15);  // Anggaran Tahun
+        // Set column widths
+        $sheet->getColumnDimension('A')->setWidth(5);
+        $sheet->getColumnDimension('B')->setWidth(30);
+        $sheet->getColumnDimension('C')->setWidth(30);
+        $sheet->getColumnDimension('D')->setWidth(10);
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->getColumnDimension('F')->setWidth(25);
+        $sheet->getColumnDimension('G')->setWidth(15);
+        $sheet->getColumnDimension('H')->setWidth(20);
+        $sheet->getColumnDimension('I')->setWidth(15);
+        $sheet->getColumnDimension('J')->setWidth(15);
+        $sheet->getColumnDimension('K')->setWidth(12);
+        $sheet->getColumnDimension('L')->setWidth(10);
+        $sheet->getColumnDimension('M')->setWidth(12);
+        $sheet->getColumnDimension('N')->setWidth(12);
+        $sheet->getColumnDimension('O')->setWidth(10);
+        $sheet->getColumnDimension('P')->setWidth(12);
+        $sheet->getColumnDimension('Q')->setWidth(12);
+        $sheet->getColumnDimension('R')->setWidth(10);
+        $sheet->getColumnDimension('S')->setWidth(12);
+        $sheet->getColumnDimension('T')->setWidth(12);
+        $sheet->getColumnDimension('U')->setWidth(10);
+        $sheet->getColumnDimension('V')->setWidth(12);
+        $sheet->getColumnDimension('W')->setWidth(12);
+        $sheet->getColumnDimension('X')->setWidth(10);
+        $sheet->getColumnDimension('Y')->setWidth(12);
+        $sheet->getColumnDimension('Z')->setWidth(12);
+        $sheet->getColumnDimension('AA')->setWidth(10);
+        $sheet->getColumnDimension('AB')->setWidth(12);
+        $sheet->getColumnDimension('AC')->setWidth(12);
+        $sheet->getColumnDimension('AD')->setWidth(10);
+        $sheet->getColumnDimension('AE')->setWidth(12);
+        $sheet->getColumnDimension('AF')->setWidth(12);
+        $sheet->getColumnDimension('AG')->setWidth(10);
+        $sheet->getColumnDimension('AH')->setWidth(12);
+        $sheet->getColumnDimension('AI')->setWidth(25);
+        $sheet->getColumnDimension('AJ')->setWidth(20);
+        $sheet->getColumnDimension('AK')->setWidth(20);
+        $sheet->getColumnDimension('AL')->setWidth(25);
+        $sheet->getColumnDimension('AM')->setWidth(20);
+        $sheet->getColumnDimension('AN')->setWidth(20);
 
-        // Kolom untuk Renaksi (TW1 - TW4)
-        $sheet->getColumnDimension('K')->setWidth(12);  // TW1 (merged dengan L untuk label TW1)
-        $sheet->getColumnDimension('L')->setWidth(10);  // Target
-        $sheet->getColumnDimension('M')->setWidth(12);  // Rp
-        $sheet->getColumnDimension('N')->setWidth(12);  // TW2 (merged dengan O untuk label TW2)
-        $sheet->getColumnDimension('O')->setWidth(10);  // Target
-        $sheet->getColumnDimension('P')->setWidth(12);  // Rp
-        $sheet->getColumnDimension('Q')->setWidth(12);  // TW3 (merged dengan R untuk label TW3)
-        $sheet->getColumnDimension('R')->setWidth(10);  // Target
-        $sheet->getColumnDimension('S')->setWidth(12);  // Rp
-        $sheet->getColumnDimension('T')->setWidth(12);  // TW4 (merged dengan U untuk label TW4)
-        $sheet->getColumnDimension('U')->setWidth(10);  // Target
-        $sheet->getColumnDimension('V')->setWidth(12);  // Rp
-
-        // Kolom untuk Realisasi (TW1 - TW4)
-        $sheet->getColumnDimension('W')->setWidth(12);  // TW1 (merged dengan X untuk label TW1)
-        $sheet->getColumnDimension('X')->setWidth(10);  // Target
-        $sheet->getColumnDimension('Y')->setWidth(12);  // Rp
-        $sheet->getColumnDimension('Z')->setWidth(12);  // TW2 (merged dengan AA untuk label TW2)
-        $sheet->getColumnDimension('AA')->setWidth(10); // Target
-        $sheet->getColumnDimension('AB')->setWidth(12); // Rp
-        $sheet->getColumnDimension('AC')->setWidth(12); // TW3 (merged dengan AD untuk label TW3)
-        $sheet->getColumnDimension('AD')->setWidth(10); // Target
-        $sheet->getColumnDimension('AE')->setWidth(12); // Rp
-        $sheet->getColumnDimension('AF')->setWidth(12); // TW4 (merged dengan AG untuk label TW4)
-        $sheet->getColumnDimension('AG')->setWidth(10); // Target
-        $sheet->getColumnDimension('AH')->setWidth(12); // Rp
-
-        $sheet->getColumnDimension('AI')->setWidth(25); // RUMUS
-        $sheet->getColumnDimension('AJ')->setWidth(20); // CATATAN EVALUASI
-        $sheet->getColumnDimension('AK')->setWidth(20); // CATATAN PERBAIKAN
-        $sheet->getColumnDimension('AL')->setWidth(25); // UNIT KERJA/SATUAN KERJA PELAKSANAAN
-        $sheet->getColumnDimension('AM')->setWidth(20); // KOORDINATOR
-        $sheet->getColumnDimension('AN')->setWidth(20); // PELAKSANA
-
-        // Style untuk header dengan warna #2F75B5
+        // Style untuk header
         $headerStyle = [
             'font' => [
                 'bold' => true,
                 'size' => 10,
-                'color' => ['rgb' => 'FFFFFF'], // Teks putih
+                'color' => ['rgb' => 'FFFFFF'],
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -320,7 +378,7 @@ class RBGeneralController extends Controller
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '2F75B5'], // Biru tua
+                'startColor' => ['rgb' => '2F75B5'],
             ],
             'borders' => [
                 'allBorders' => [
@@ -330,14 +388,14 @@ class RBGeneralController extends Controller
             ],
         ];
 
-        // Style untuk data dengan warna background #DDEBF7
+        // Style untuk data
         $dataStyle = [
             'font' => [
                 'size' => 9,
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'DDEBF7'], // Biru muda
+                'startColor' => ['rgb' => 'DDEBF7'],
             ],
             'borders' => [
                 'allBorders' => [
@@ -351,7 +409,7 @@ class RBGeneralController extends Controller
             ],
         ];
 
-        // Baris 1: Judul Utama
+        // Baris 1: Judul
         $sheet->mergeCells('A1:AN1');
         $sheet->setCellValue('A1', 'RENCANA AKSI RB GENERAL TAHUN ' . $year);
         $sheet->getStyle('A1')->applyFromArray([
@@ -360,10 +418,9 @@ class RBGeneralController extends Controller
         ]);
         $sheet->getRowDimension(1)->setRowHeight(25);
 
-        // Baris 2: Kosong
         $sheet->getRowDimension(2)->setRowHeight(10);
 
-        // ==================== HEADER BARIS 3 ====================
+        // Header baris 3
         $sheet->setCellValue('A3', 'NO');
         $sheet->setCellValue('B3', 'SASARAN STRATEGI');
         $sheet->setCellValue('C3', 'INDIKATOR CAPAIAN SASARAN STRATEGI DAN IMPLEMENTASI KEBIJAKAN PERCEPATAN');
@@ -374,22 +431,17 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('G3', 'OUT PUT');
         $sheet->setCellValue('I3', 'Target Tahun ' . $year);
         $sheet->setCellValue('J3', 'Anggaran Tahun ' . $year);
-
-        // Renaksi Tahun (header utama)
         $sheet->mergeCells('K3:V3');
         $sheet->setCellValue('K3', 'Renaksi Tahun ' . $year);
-
-        // Realisasi Renaksi Tahun (header utama)
         $sheet->mergeCells('W3:AH3');
         $sheet->setCellValue('W3', 'Realisasi Renaksi Tahun ' . $year);
-
         $sheet->setCellValue('AI3', 'RUMUS');
         $sheet->setCellValue('AJ3', 'CATATAN EVALUASI');
         $sheet->setCellValue('AK3', 'CATATAN PERBAIKAN');
         $sheet->mergeCells('AL3:AN3');
         $sheet->setCellValue('AL3', 'UNIT KERJA / SATUAN KERJA PELAKSANAAN');
 
-        // ==================== HEADER BARIS 4 ====================
+        // Header baris 4
         $sheet->setCellValue('A4', '');
         $sheet->setCellValue('B4', '');
         $sheet->setCellValue('C4', '');
@@ -400,8 +452,6 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('H4', 'INDIKATOR');
         $sheet->setCellValue('I4', '');
         $sheet->setCellValue('J4', '');
-
-        // Renaksi TW1 - TW4 (label di baris 4)
         $sheet->mergeCells('K4:L4');
         $sheet->setCellValue('K4', 'TW1');
         $sheet->mergeCells('M4:O4');
@@ -410,8 +460,6 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('P4', 'TW3');
         $sheet->mergeCells('S4:U4');
         $sheet->setCellValue('S4', 'TW4');
-
-        // Realisasi TW1 - TW4 (label di baris 4)
         $sheet->mergeCells('W4:X4');
         $sheet->setCellValue('W4', 'TW1');
         $sheet->mergeCells('Y4:AA4');
@@ -420,7 +468,6 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('AB4', 'TW3');
         $sheet->mergeCells('AE4:AG4');
         $sheet->setCellValue('AE4', 'TW4');
-
         $sheet->setCellValue('AI4', '');
         $sheet->setCellValue('AJ4', '');
         $sheet->setCellValue('AK4', '');
@@ -428,7 +475,7 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('AM4', 'PELAKSANA');
         $sheet->setCellValue('AN4', '');
 
-        // ==================== HEADER BARIS 5 ====================
+        // Header baris 5
         $sheet->setCellValue('K5', 'Target');
         $sheet->setCellValue('L5', 'Rp');
         $sheet->setCellValue('M5', 'Target');
@@ -441,7 +488,6 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('T5', 'Rp');
         $sheet->setCellValue('U5', 'Target');
         $sheet->setCellValue('V5', 'Rp');
-
         $sheet->setCellValue('W5', 'Target');
         $sheet->setCellValue('X5', 'Rp');
         $sheet->setCellValue('Y5', 'Target');
@@ -455,29 +501,29 @@ class RBGeneralController extends Controller
         $sheet->setCellValue('AG5', 'Target');
         $sheet->setCellValue('AH5', 'Rp');
 
-        // Merge cells yang diperlukan
-        $sheet->mergeCells('A3:A5');      // NO
-        $sheet->mergeCells('B3:B5');      // SASARAN STRATEGI
-        $sheet->mergeCells('C3:C5');      // INDIKATOR CAPAIAN
-        $sheet->mergeCells('D3:D5');      // TARGET
-        $sheet->mergeCells('E3:E5');      // SATUAN
-        $sheet->mergeCells('F3:F5');      // Rencana Aksi
-        $sheet->mergeCells('G3:H3');      // OUT PUT (baris 3)
-        $sheet->mergeCells('G4:G5');      // SATUAN
-        $sheet->mergeCells('H4:H5');      // INDIKATOR
-        $sheet->mergeCells('I3:I5');      // Target Tahun
-        $sheet->mergeCells('J3:J5');      // Anggaran Tahun
-        $sheet->mergeCells('K3:V3');      // Renaksi Tahun (baris 3)
-        $sheet->mergeCells('W3:AH3');     // Realisasi Renaksi Tahun (baris 3)
-        $sheet->mergeCells('AI3:AI5');    // RUMUS
-        $sheet->mergeCells('AJ3:AJ5');    // CATATAN EVALUASI
-        $sheet->mergeCells('AK3:AK5');    // CATATAN PERBAIKAN
-        $sheet->mergeCells('AL3:AN3');    // UNIT KERJA / SATUAN KERJA PELAKSANAAN (baris 3)
-        $sheet->mergeCells('AL4:AL5');    // KOORDINATOR
-        $sheet->mergeCells('AM4:AM5');    // PELAKSANA
-        $sheet->mergeCells('AN4:AN5');    // Kosong di bawah merge AL3:AN3
+        // Merge cells
+        $sheet->mergeCells('A3:A5');
+        $sheet->mergeCells('B3:B5');
+        $sheet->mergeCells('C3:C5');
+        $sheet->mergeCells('D3:D5');
+        $sheet->mergeCells('E3:E5');
+        $sheet->mergeCells('F3:F5');
+        $sheet->mergeCells('G3:H3');
+        $sheet->mergeCells('G4:G5');
+        $sheet->mergeCells('H4:H5');
+        $sheet->mergeCells('I3:I5');
+        $sheet->mergeCells('J3:J5');
+        $sheet->mergeCells('K3:V3');
+        $sheet->mergeCells('W3:AH3');
+        $sheet->mergeCells('AI3:AI5');
+        $sheet->mergeCells('AJ3:AJ5');
+        $sheet->mergeCells('AK3:AK5');
+        $sheet->mergeCells('AL3:AN3');
+        $sheet->mergeCells('AL4:AL5');
+        $sheet->mergeCells('AM4:AM5');
+        $sheet->mergeCells('AN4:AN5');
 
-        // Apply style ke header (A3:AN5) dengan warna #2F75B5
+        // Apply style ke header
         $sheet->getStyle('A3:AN5')->applyFromArray($headerStyle);
 
         // Data mulai dari baris 6
@@ -486,13 +532,11 @@ class RBGeneralController extends Controller
         $currentSasaran = '';
 
         foreach ($rbData as $item) {
-            // Cek apakah sasaran strategi baru
             $isNewSasaran = ($currentSasaran != $item->sasaran_strategi);
             if ($isNewSasaran) {
                 $currentSasaran = $item->sasaran_strategi;
             }
 
-            // Bersihkan nilai anggaran
             $anggaranTahun = $this->cleanRupiah($item->anggaran_tahun);
             $tw1Rp = $this->cleanRupiah($item->tw1_rp);
             $tw2Rp = $this->cleanRupiah($item->tw2_rp);
@@ -503,7 +547,6 @@ class RBGeneralController extends Controller
             $realisasiTw3Rp = $this->cleanRupiah($item->realisasi_tw3_rp);
             $realisasiTw4Rp = $this->cleanRupiah($item->realisasi_tw4_rp);
 
-            // Set nilai ke sheet
             $sheet->setCellValue('A' . $row, $isNewSasaran ? $no++ : '');
             $sheet->setCellValue('B' . $row, $isNewSasaran ? $item->sasaran_strategi : '');
             $sheet->setCellValue('C' . $row, $item->indikator_capaian);
@@ -514,39 +557,22 @@ class RBGeneralController extends Controller
             $sheet->setCellValue('H' . $row, $item->indikator_output);
             $sheet->setCellValue('I' . $row, $item->target_tahun);
             $sheet->setCellValue('J' . $row, $anggaranTahun ? number_format($anggaranTahun, 0, ',', '.') : '');
-
-            // Renaksi TW1
             $sheet->setCellValue('K' . $row, $item->renaksi_tw1_target);
             $sheet->setCellValue('L' . $row, $tw1Rp ? number_format($tw1Rp, 0, ',', '.') : '');
-
-            // Renaksi TW2
             $sheet->setCellValue('M' . $row, $item->renaksi_tw2_target);
             $sheet->setCellValue('N' . $row, $tw2Rp ? number_format($tw2Rp, 0, ',', '.') : '');
-
-            // Renaksi TW3
             $sheet->setCellValue('O' . $row, $item->renaksi_tw3_target);
             $sheet->setCellValue('P' . $row, $tw3Rp ? number_format($tw3Rp, 0, ',', '.') : '');
-
-            // Renaksi TW4
             $sheet->setCellValue('Q' . $row, $item->renaksi_tw4_target);
             $sheet->setCellValue('R' . $row, $tw4Rp ? number_format($tw4Rp, 0, ',', '.') : '');
-
-            // Realisasi TW1
             $sheet->setCellValue('S' . $row, $item->realisasi_tw1_target);
             $sheet->setCellValue('T' . $row, $realisasiTw1Rp ? number_format($realisasiTw1Rp, 0, ',', '.') : '');
-
-            // Realisasi TW2
             $sheet->setCellValue('U' . $row, $item->realisasi_tw2_target);
             $sheet->setCellValue('V' . $row, $realisasiTw2Rp ? number_format($realisasiTw2Rp, 0, ',', '.') : '');
-
-            // Realisasi TW3
             $sheet->setCellValue('W' . $row, $item->realisasi_tw3_target);
             $sheet->setCellValue('X' . $row, $realisasiTw3Rp ? number_format($realisasiTw3Rp, 0, ',', '.') : '');
-
-            // Realisasi TW4
             $sheet->setCellValue('Y' . $row, $item->realisasi_tw4_target);
             $sheet->setCellValue('Z' . $row, $realisasiTw4Rp ? number_format($realisasiTw4Rp, 0, ',', '.') : '');
-
             $sheet->setCellValue('AA' . $row, $item->rumus);
             $sheet->setCellValue('AB' . $row, $item->catatan_evaluasi);
             $sheet->setCellValue('AC' . $row, $item->catatan_perbaikan);
@@ -556,15 +582,11 @@ class RBGeneralController extends Controller
             $row++;
         }
 
-        // Apply style ke data (A6:AE6) dengan warna background #DDEBF7
         if ($row > 6) {
             $sheet->getStyle('A6:AE' . ($row - 1))->applyFromArray($dataStyle);
         }
 
-        // Buat file Excel
         $writer = new Xlsx($spreadsheet);
-
-        // Set headers untuk download
         $filename = 'RAD RB GENERAL ' . $year . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -574,6 +596,7 @@ class RBGeneralController extends Controller
         $writer->save('php://output');
         exit;
     }
+
     /**
      * Export data ke PDF
      */
@@ -585,222 +608,184 @@ class RBGeneralController extends Controller
         $html = $this->generatePdfHtml($rbData, $year);
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
+        $pdf->setPaper('legal', 'landscape');
 
-        // Ukuran landscape
-        $pdf->setPaper('legal',    'landscape');
-
-        return $pdf->download('RAD RB GENERAL '  . $year . '.pdf');
+        return $pdf->download('RAD RB GENERAL ' . $year . '.pdf');
     }
 
     /**
- * Generate HTML untuk PDF 
- */
-/**
- * Generate HTML untuk PDF 
- */
-private function generatePdfHtml($rbData, $year)
-{
-    $html = '
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>RA RB General ' . $year . '</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 7px;
-                line-height: 1.2;
-                margin: 2px;
-            }
-            table { 
-                border-collapse: collapse; 
-                width: 100%; 
-                table-layout: fixed;
-            }
-            th, td { 
-                border: 1px solid #000; 
-                padding: 2px; 
-                vertical-align: middle; 
-                word-break: break-word;
-                line-height: 1.2;
-            }
-            th { 
-                background-color: #2F75B5 !important; 
-                color: #FFFFFF !important; 
-                font-weight: bold; 
-                text-align: center; 
-                vertical-align: middle;
-            }
-            td { 
-                background-color: #DDEBF7 !important; 
-            }
-            .text-center { 
-                text-align: center; 
-            }
-            .text-right { 
-                text-align: right; 
-            }
-            .title { 
-                font-size: 12px; 
-                font-weight: bold; 
-                text-align: center; 
-                margin-bottom: 5px; 
-            }
-        </style>
-    </head>
-    <body>
-        <div class="title">RENCANA AKSI RB GENERAL TAHUN ' . $year . '</div>
-        
-        <table>';
-
-    // HEADER - BARIS 1
-    $html .= '
-            <thead>
-                <tr>
-                    <th rowspan="3" width="2%">NO</th>
-                    <th rowspan="3" width="8%">SASARAN STRATEGI</th>
-                    <th rowspan="3" width="12%">INDIKATOR CAPAIAN</th>
-                    <th rowspan="3" width="2%">TARGET</th>
-                    <th rowspan="3" width="2%">SATUAN</th>
-                    <th rowspan="3" width="8%">Rencana Aksi</th>
-                    <th colspan="2" width="5%">OUT PUT</th>
-                    <th rowspan="3" width="3%">Target Tahun ' . $year . '</th>
-                    <th rowspan="3" width="4%">Anggaran Tahun ' . $year . '</th>
-                    <th colspan="8" width="16%">Renaksi Tahun ' . $year . '</th>
-                    <th colspan="8" width="16%">Realisasi Renaksi Tahun ' . $year . '</th>
-                    <th rowspan="3" width="4%">RUMUS</th>
-                    <th rowspan="3" width="4%">CATATAN EVALUASI</th>
-                    <th rowspan="3" width="4%">CATATAN PERBAIKAN</th>
-                    <th colspan="2" width="6%">UNIT KERJA / PELAKSANA</th>
-                </tr>';
-
-    // HEADER - BARIS 2
-    $html .= '
-                <tr>
-                    <th rowspan="2" width="2.5%">SATUAN</th>
-                    <th rowspan="2" width="2.5%">INDIKATOR</th>
-                    
-                    <!-- Renaksi TW1 - TW4 -->
-                    <th colspan="2" width="4%">TW1</th>
-                    <th colspan="2" width="4%">TW2</th>
-                    <th colspan="2" width="4%">TW3</th>
-                    <th colspan="2" width="4%">TW4</th>
-                    
-                    <!-- Realisasi TW1 - TW4 -->
-                    <th colspan="2" width="4%">TW1</th>
-                    <th colspan="2" width="4%">TW2</th>
-                    <th colspan="2" width="4%">TW3</th>
-                    <th colspan="2" width="4%">TW4</th>
-                    
-                    <th rowspan="2" width="3%">KOORDINATOR</th>
-                    <th rowspan="2" width="3%">PELAKSANA</th>
-                </tr>';
-
-    // HEADER - BARIS 3
-    $html .= '
-                <tr>
-                    <!-- Renaksi Target dan Rp (8 kolom) -->
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    
-                    <!-- Realisasi Target dan Rp (8 kolom) -->
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                    <th width="2%">Target</th>
-                    <th width="2%">Rp</th>
-                </tr>
-            </thead>
-            <tbody>';
-
-    $no = 1;
-    $currentSasaran = '';
-
-    foreach ($rbData as $item) {
-        $isNewSasaran = ($currentSasaran != $item->sasaran_strategi);
-        if ($isNewSasaran) {
-            $currentSasaran = $item->sasaran_strategi;
-        }
-
-        // Bersihkan nilai
-        $anggaranTahun = $this->cleanRupiah($item->anggaran_tahun);
-        $tw1Rp = $this->cleanRupiah($item->tw1_rp);
-        $tw2Rp = $this->cleanRupiah($item->tw2_rp);
-        $tw3Rp = $this->cleanRupiah($item->tw3_rp);
-        $tw4Rp = $this->cleanRupiah($item->tw4_rp);
-        $realisasiTw1Rp = $this->cleanRupiah($item->realisasi_tw1_rp);
-        $realisasiTw2Rp = $this->cleanRupiah($item->realisasi_tw2_rp);
-        $realisasiTw3Rp = $this->cleanRupiah($item->realisasi_tw3_rp);
-        $realisasiTw4Rp = $this->cleanRupiah($item->realisasi_tw4_rp);
+     * Generate HTML untuk PDF
+     */
+    private function generatePdfHtml($rbData, $year)
+    {
+        $html = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>RA RB General ' . $year . '</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 7px;
+                    line-height: 1.2;
+                    margin: 2px;
+                }
+                table { 
+                    border-collapse: collapse; 
+                    width: 100%; 
+                    table-layout: fixed;
+                }
+                th, td { 
+                    border: 1px solid #000; 
+                    padding: 2px; 
+                    vertical-align: middle; 
+                    word-break: break-word;
+                    line-height: 1.2;
+                }
+                th { 
+                    background-color: #2F75B5 !important; 
+                    color: #FFFFFF !important; 
+                    font-weight: bold; 
+                    text-align: center; 
+                    vertical-align: middle;
+                }
+                td { 
+                    background-color: #DDEBF7 !important; 
+                }
+                .text-center { 
+                    text-align: center; 
+                }
+                .text-right { 
+                    text-align: right; 
+                }
+                .title { 
+                    font-size: 12px; 
+                    font-weight: bold; 
+                    text-align: center; 
+                    margin-bottom: 5px; 
+                }
+            </style>
+        </head>
+        <body>
+            <div class="title">RENCANA AKSI RB GENERAL TAHUN ' . $year . '</div>
+            
+            <table>';
 
         $html .= '
-                <tr>
-                    <td class="text-center">' . ($isNewSasaran ? $no++ : '') . '</td>
-                    <td>' . ($isNewSasaran ? htmlspecialchars($item->sasaran_strategi) : '') . '</td>
-                    <td>' . htmlspecialchars($item->indikator_capaian) . '</td>
-                    <td class="text-center">' . htmlspecialchars($item->target) . '</td>
-                    <td class="text-center">' . htmlspecialchars($item->satuan) . '</td>
-                    <td>' . htmlspecialchars($item->rencana_aksi) . '</td>
-                    <td>' . htmlspecialchars($item->satuan_output) . '</td>
-                    <td>' . htmlspecialchars($item->indikator_output) . '</td>
-                    <td class="text-center">' . htmlspecialchars($item->target_tahun) . '</td>
-                    <td class="text-right">' . ($anggaranTahun ? number_format($anggaranTahun, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Renaksi TW1 -->
-                    <td class="text-center">' . htmlspecialchars($item->renaksi_tw1_target) . '</td>
-                    <td class="text-right">' . ($tw1Rp ? number_format($tw1Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Renaksi TW2 -->
-                    <td class="text-center">' . htmlspecialchars($item->renaksi_tw2_target) . '</td>
-                    <td class="text-right">' . ($tw2Rp ? number_format($tw2Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Renaksi TW3 -->
-                    <td class="text-center">' . htmlspecialchars($item->renaksi_tw3_target) . '</td>
-                    <td class="text-right">' . ($tw3Rp ? number_format($tw3Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Renaksi TW4 -->
-                    <td class="text-center">' . htmlspecialchars($item->renaksi_tw4_target) . '</td>
-                    <td class="text-right">' . ($tw4Rp ? number_format($tw4Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Realisasi TW1 -->
-                    <td class="text-center">' . htmlspecialchars($item->realisasi_tw1_target) . '</td>
-                    <td class="text-right">' . ($realisasiTw1Rp ? number_format($realisasiTw1Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Realisasi TW2 -->
-                    <td class="text-center">' . htmlspecialchars($item->realisasi_tw2_target) . '</td>
-                    <td class="text-right">' . ($realisasiTw2Rp ? number_format($realisasiTw2Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Realisasi TW3 -->
-                    <td class="text-center">' . htmlspecialchars($item->realisasi_tw3_target) . '</td>
-                    <td class="text-right">' . ($realisasiTw3Rp ? number_format($realisasiTw3Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <!-- Realisasi TW4 -->
-                    <td class="text-center">' . htmlspecialchars($item->realisasi_tw4_target) . '</td>
-                    <td class="text-right">' . ($realisasiTw4Rp ? number_format($realisasiTw4Rp, 0, ',', '.') : '-') . '</td>
-                    
-                    <td>' . htmlspecialchars($item->rumus) . '</td>
-                    <td>' . htmlspecialchars($item->catatan_evaluasi) . '</td>
-                    <td>' . htmlspecialchars($item->catatan_perbaikan) . '</td>
-                    <td>' . htmlspecialchars($item->unit_kerja) . '</td>
-                    <td>' . htmlspecialchars($item->pelaksana) . '</td>
-                </tr>';
+                <thead>
+                    <tr>
+                        <th rowspan="3" width="2%">NO</th>
+                        <th rowspan="3" width="8%">SASARAN STRATEGI</th>
+                        <th rowspan="3" width="12%">INDIKATOR CAPAIAN</th>
+                        <th rowspan="3" width="2%">TARGET</th>
+                        <th rowspan="3" width="2%">SATUAN</th>
+                        <th rowspan="3" width="8%">Rencana Aksi</th>
+                        <th colspan="2" width="5%">OUT PUT</th>
+                        <th rowspan="3" width="3%">Target Tahun ' . $year . '</th>
+                        <th rowspan="3" width="4%">Anggaran Tahun ' . $year . '</th>
+                        <th colspan="8" width="16%">Renaksi Tahun ' . $year . '</th>
+                        <th colspan="8" width="16%">Realisasi Renaksi Tahun ' . $year . '</th>
+                        <th rowspan="3" width="4%">RUMUS</th>
+                        <th rowspan="3" width="4%">CATATAN EVALUASI</th>
+                        <th rowspan="3" width="4%">CATATAN PERBAIKAN</th>
+                        <th colspan="2" width="6%">UNIT KERJA / PELAKSANA</th>
+                    </tr>
+                    <tr>
+                        <th rowspan="2" width="2.5%">SATUAN</th>
+                        <th rowspan="2" width="2.5%">INDIKATOR</th>
+                        <th colspan="2" width="4%">TW1</th>
+                        <th colspan="2" width="4%">TW2</th>
+                        <th colspan="2" width="4%">TW3</th>
+                        <th colspan="2" width="4%">TW4</th>
+                        <th colspan="2" width="4%">TW1</th>
+                        <th colspan="2" width="4%">TW2</th>
+                        <th colspan="2" width="4%">TW3</th>
+                        <th colspan="2" width="4%">TW4</th>
+                        <th rowspan="2" width="3%">KOORDINATOR</th>
+                        <th rowspan="2" width="3%">PELAKSANA</th>
+                    </tr>
+                    <tr>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                        <th width="2%">Target</th>
+                        <th width="2%">Rp</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+        $no = 1;
+        $currentSasaran = '';
+
+        foreach ($rbData as $item) {
+            $isNewSasaran = ($currentSasaran != $item->sasaran_strategi);
+            if ($isNewSasaran) {
+                $currentSasaran = $item->sasaran_strategi;
+            }
+
+            $anggaranTahun = $this->cleanRupiah($item->anggaran_tahun);
+            $tw1Rp = $this->cleanRupiah($item->tw1_rp);
+            $tw2Rp = $this->cleanRupiah($item->tw2_rp);
+            $tw3Rp = $this->cleanRupiah($item->tw3_rp);
+            $tw4Rp = $this->cleanRupiah($item->tw4_rp);
+            $realisasiTw1Rp = $this->cleanRupiah($item->realisasi_tw1_rp);
+            $realisasiTw2Rp = $this->cleanRupiah($item->realisasi_tw2_rp);
+            $realisasiTw3Rp = $this->cleanRupiah($item->realisasi_tw3_rp);
+            $realisasiTw4Rp = $this->cleanRupiah($item->realisasi_tw4_rp);
+
+            $html .= '
+                    <tr>
+                        <td class="text-center">' . ($isNewSasaran ? $no++ : '') . '</td>
+                        <td>' . ($isNewSasaran ? htmlspecialchars($item->sasaran_strategi) : '') . '</td>
+                        <td>' . htmlspecialchars($item->indikator_capaian) . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->target) . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->satuan) . '</td>
+                        <td>' . htmlspecialchars($item->rencana_aksi) . '</td>
+                        <td>' . htmlspecialchars($item->satuan_output) . '</td>
+                        <td>' . htmlspecialchars($item->indikator_output) . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->target_tahun) . '</td>
+                        <td class="text-right">' . ($anggaranTahun ? number_format($anggaranTahun, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->renaksi_tw1_target) . '</td>
+                        <td class="text-right">' . ($tw1Rp ? number_format($tw1Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->renaksi_tw2_target) . '</td>
+                        <td class="text-right">' . ($tw2Rp ? number_format($tw2Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->renaksi_tw3_target) . '</td>
+                        <td class="text-right">' . ($tw3Rp ? number_format($tw3Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->renaksi_tw4_target) . '</td>
+                        <td class="text-right">' . ($tw4Rp ? number_format($tw4Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->realisasi_tw1_target) . '</td>
+                        <td class="text-right">' . ($realisasiTw1Rp ? number_format($realisasiTw1Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->realisasi_tw2_target) . '</td>
+                        <td class="text-right">' . ($realisasiTw2Rp ? number_format($realisasiTw2Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->realisasi_tw3_target) . '</td>
+                        <td class="text-right">' . ($realisasiTw3Rp ? number_format($realisasiTw3Rp, 0, ',', '.') : '-') . '</td>
+                        <td class="text-center">' . htmlspecialchars($item->realisasi_tw4_target) . '</td>
+                        <td class="text-right">' . ($realisasiTw4Rp ? number_format($realisasiTw4Rp, 0, ',', '.') : '-') . '</td>
+                        <td>' . htmlspecialchars($item->rumus) . '</td>
+                        <td>' . htmlspecialchars($item->catatan_evaluasi) . '</td>
+                        <td>' . htmlspecialchars($item->catatan_perbaikan) . '</td>
+                        <td>' . htmlspecialchars($item->unit_kerja) . '</td>
+                        <td>' . htmlspecialchars($item->pelaksana) . '</td>
+                    </tr>';
+        }
+
+        $html .= '
+                </tbody>
+            </table>
+        </body>
+        </html>';
+
+        return $html;
     }
-
-    $html .= '
-            </tbody>
-        </table>
-    </body>
-    </html>';
-
-    return $html;
-}
 }

@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/AdminRB/RBAksesController.php
 
 namespace App\Http\Controllers\AdminRB;
 

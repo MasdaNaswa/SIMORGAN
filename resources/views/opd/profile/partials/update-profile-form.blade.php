@@ -8,15 +8,15 @@
                 <input type="text" id="name" name="nama"
                     value="{{ $user->nama_opd }}" readonly
                     placeholder="Masukkan nama lengkap"
-                    class="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm transition-all duration-300 bg-gray-50 focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary/15 focus:bg-white">
+                    class="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm transition-all duration-300 bg-gray-50 focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary/15">
             </div>
 
             <div class="form-group mb-4">
                 <label for="email" class="font-medium text-slate-800 mb-2 block text-sm">Email</label>
                 <input type="email" id="email" name="email"
-                    value="{{ $user->email }}" 
+                    value="{{ $user->email }}" readonly
                     placeholder="Masukkan email"
-                    class="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm transition-all duration-300 bg-gray-50 focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary/15 focus:bg-white">
+                    class="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm transition-all duration-300 bg-gray-50 focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary/15">
             </div>
         </div>
 

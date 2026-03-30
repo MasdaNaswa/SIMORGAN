@@ -8,9 +8,6 @@
                     <i class="fas fa-edit mr-2"></i>
                     Ubah Rencana Aksi RB Tematik 
                 </h3>
-                <button onclick="closeModal('editModal')" class="text-white hover:text-gray-200">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
             </div>
 
             <!-- Modal Body dengan Form -->

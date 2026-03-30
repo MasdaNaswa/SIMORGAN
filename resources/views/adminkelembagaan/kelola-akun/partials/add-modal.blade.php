@@ -3,34 +3,52 @@
     <div class="flex justify-between items-center bg-green-600 text-white p-4 rounded-t-lg">
       <h3 class="text-lg font-semibold">Tambah Akun OPD</h3>
     </div>
-    <form action="{{ route('adminkelembagaan.kelola-akun.store') }}" method="POST" class="p-6 space-y-4">
+    <form id="formTambahAkun" method="POST" class="p-6 space-y-4">
       @csrf
       <div>
-        <label class="block text-sm font-medium text-gray-600">Nama OPD</label>
-        <input type="text" name="nama_opd" class="w-full p-2 border rounded-md" required>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nama OPD</label>
+        <input type="text" name="nama_opd" id="nama_opd"  placeholder="Masukkan nama OPD"
+          class="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500" required>
       </div>
+
       <div>
-        <label class="block text-sm font-medium text-gray-600">Email</label>
-        <input type="email" name="email" class="w-full p-2 border rounded-md" required>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input type="email" name="email" id="emailInput"  placeholder="Masukkan email"
+          class="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500" required>
+        <p id="emailError" class="text-red-500 text-xs mt-1 hidden"></p>
       </div>
+
       <div>
-        <label class="block text-sm font-medium text-gray-600">Password</label>
-        <input type="password" name="password" class="w-full p-2 border rounded-md" 
-               placeholder="Huruf besar, huruf kecil, angka, simbol" required>
-        <p class="text-xs text-gray-500 mt-1">
-          Password harus mengandung huruf besar, huruf kecil, angka, dan simbol.
-        </p>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
+        <div class="relative">
+          <input type="password" name="password" id="password"  placeholder="Masukkan kata sandi"
+            class="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500 pr-10" required>
+          <button type="button" id="togglePassword"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none">
+            <i id="passwordIcon" class="fas fa-eye-slash"></i>
+          </button>
+        </div>
+        <p id="passwordError" class="text-red-500 text-xs mt-1 hidden"></p>
+        <p class="text-gray-500 text-xs mt-1">Minimal 8 karakter, mengandung huruf besar, huruf kecil, angka, dan simbol
+          (@$!%*?&#)</p>
       </div>
+
       <div>
-        <label class="block text-sm font-medium text-gray-600">Role</label>
-        <select name="role" class="w-full p-2 border rounded-md">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+        <select name="role" id="roleSelect" class="w-full p-2 border rounded-md bg-gray-100" disabled>
           <option value="OPD">OPD</option>
         </select>
       </div>
+
       <div class="flex justify-end gap-2">
         <button type="button" onclick="closeModal('addOPDModal')"
-          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-gray-600">Batal</button>
-        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Tambah</button>
+          class="px-4 py-2 bg-gray-500 text-black rounded hover:bg-gray-600 transition">
+          Batal
+        </button>
+        <button type="button" id="btnTambahAkun"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+          Tambah
+        </button>
       </div>
     </form>
   </div>

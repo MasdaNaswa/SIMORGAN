@@ -18,7 +18,6 @@ use App\Http\Controllers\AdminRB\RBGeneralController as AdminRBRBGeneralControll
 use App\Http\Controllers\AdminRB\RBTematikController as AdminRBRBTematikController;
 use App\Http\Controllers\AdminRB\PKBupatiController as AdminRBPKBupatiController;
 use App\Http\Controllers\AdminRB\KelolaDataController;
-;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminRB\KelolaAkunController;
 use App\Http\Controllers\AdminPelayananPublik\KategoriController;
@@ -51,15 +50,11 @@ Route::get('/adminrb/dashboard', [AdminRBDashboardController::class, 'index'])->
 Route::get('/adminpelayananpublik/dashboard', [AdminPelayananPublikDashboardController::class, 'index'])->name('adminpelayananpublik.dashboard');
 
 // Admin Pelayanan Publik Kelola Akun Routes
-Route::prefix('adminpelayananpublik')->group(function () {
+Route::prefix('adminpelayananpublik')->middleware(['auth'])->group(function () {
     Route::get('/kelola-akun', [AdminPelayananPublikKelolaAkunController::class, 'index'])->name('adminpelayananpublik.kelola-akun.index');
-
-    // Tambahkan route store 
-    Route::post('/kelola-akun', [AdminPelayananPublikKelolaAkunController::class, 'store'])->name('akun.store');
-
-    // Optional: destroy
-    Route::delete('/kelola-akun/{id}', [AdminPelayananPublikKelolaAkunController::class, 'destroy'])->name('akun.destroy');
-    
+    Route::get('/kelola-akun/check-email', [AdminPelayananPublikKelolaAkunController::class, 'checkEmail'])->name('adminpelayananpublik.kelola-akun.check-email');
+    Route::post('/kelola-akun', [AdminPelayananPublikKelolaAkunController::class, 'store'])->name('adminpelayananpublik.kelola-akun.store');
+    Route::delete('/kelola-akun/{id}', [AdminPelayananPublikKelolaAkunController::class, 'destroy'])->name('adminpelayananpublik.kelola-akun.destroy');
 });
 
 // Kategori Laporan Admin Pelayanan Publik Routes
@@ -105,67 +100,48 @@ Route::prefix('adminrb')->group(function () {
 
     // Optional: update dan destroy
     Route::put('/kelola-akun/{id}', [KelolaAkunController::class, 'update'])->name('akun.update');
-    Route::delete('/kelola-akun/{id}', [KelolaAkunController::class, 'destroy'])->name('akun.destroy');
+    Route::delete('/kelola-akun/{id_user}', [KelolaAkunController::class, 'destroy'])->name('akun.destroy');
      Route::get('kelola-akun/check-email', [KelolaAkunController::class, 'checkEmail'])->name('kelola-akun.check-email');
 });
 
 // Admin RB General
 Route::prefix('adminrb')->name('adminrb.')->group(function () {
     // Route untuk index (halaman utama)
-    Route::get('/rb-general', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'index'])->name('rb-general.index');
-     Route::post('rb-general', [RBGeneralController::class, 'store'])->name('rb-general.store');
-    
-    // Route untuk AJAX
-    Route::get('/rb-general/{id}', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'show'])->name('rb-general.show');
-    Route::get('/rb-general/{id}/edit', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'edit'])->name('rb-general.edit');
-    Route::put('/rb-general/{id}', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'update'])->name('rb-general.update');
-    Route::delete('/rb-general/{id}', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'destroy'])->name('rb-general.destroy');
-    
-    // Route untuk Export
-    Route::get('/rb-general/export/excel', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'exportExcel'])->name('rb-general.export.excel');
-    Route::get('/rb-general/export/pdf', [App\Http\Controllers\AdminRB\RBGeneralController::class, 'exportPdf'])->name('rb-general.export.pdf');
+     Route::get('/rb-general', [AdminRBRBGeneralController::class, 'index'])->name('rb-general.index');
+    Route::post('/rb-general', [AdminRBRBGeneralController::class, 'store'])->name('rb-general.store');
+    Route::get('/rb-general/{id}', [AdminRBRBGeneralController::class, 'show'])->name('rb-general.show');
+    Route::get('/rb-general/{id}/edit', [AdminRBRBGeneralController::class, 'edit'])->name('rb-general.edit');
+    Route::put('/rb-general/{id}', [AdminRBRBGeneralController::class, 'update'])->name('rb-general.update');
+    Route::delete('/rb-general/{id}', [AdminRBRBGeneralController::class, 'destroy'])->name('rb-general.destroy');
+    Route::get('/rb-general/export/excel', [AdminRBRBGeneralController::class, 'exportExcel'])->name('rb-general.export.excel');
+    Route::get('/rb-general/export/pdf', [AdminRBRBGeneralController::class, 'exportPdf'])->name('rb-general.export.pdf');
 });
 
 // Admin RB Tematik
 Route::prefix('adminrb')->name('adminrb.')->group(function () {
     // Route untuk halaman utama
-    Route::get('/rb-tematik', [App\Http\Controllers\AdminRB\RBTematikController::class, 'index'])->name('rb-tematik.index');
-    
-    // Route untuk AJAX (show, edit)
-    Route::get('/rb-tematik/{id}', [App\Http\Controllers\AdminRB\RBTematikController::class, 'show'])->name('rb-tematik.show');
-    Route::get('/rb-tematik/{id}/edit', [App\Http\Controllers\AdminRB\RBTematikController::class, 'edit'])->name('rb-tematik.edit');
-    
-    // Route untuk update dan delete
-    Route::put('/rb-tematik/{id}', [App\Http\Controllers\AdminRB\RBTematikController::class, 'update'])->name('rb-tematik.update');
-    Route::delete('/rb-tematik/{id}', [App\Http\Controllers\AdminRB\RBTematikController::class, 'destroy'])->name('rb-tematik.destroy');
-    
-    // Route untuk export (optional)
-    Route::get('/rb-tematik/export/excel', [App\Http\Controllers\AdminRB\RBTematikController::class, 'exportExcel'])->name('rb-tematik.export.excel');
-    Route::get('/rb-tematik/export/pdf', [App\Http\Controllers\AdminRB\RBTematikController::class, 'exportPdf'])->name('rb-tematik.export.pdf');
+   Route::get('/rb-tematik', [AdminRBRBTematikController::class, 'index'])->name('rb-tematik.index');
+    Route::post('/rb-tematik', [AdminRBRBTematikController::class, 'store'])->name('rb-tematik.store');
+    Route::get('/rb-tematik/{id}', [AdminRBRBTematikController::class, 'show'])->name('rb-tematik.show');
+    Route::get('/rb-tematik/{id}/edit', [AdminRBRBTematikController::class, 'edit'])->name('rb-tematik.edit');
+    Route::put('/rb-tematik/{id}', [AdminRBRBTematikController::class, 'update'])->name('rb-tematik.update');
+    Route::delete('/rb-tematik/{id}', [AdminRBRBTematikController::class, 'destroy'])->name('rb-tematik.destroy');
+    Route::get('/rb-tematik/export/excel', [AdminRBRBTematikController::class, 'exportExcel'])->name('rb-tematik.export.excel');
+    Route::get('/rb-tematik/export/pdf', [AdminRBRBTematikController::class, 'exportPdf'])->name('rb-tematik.export.pdf');
 });
 
 // Admin PK Bupati
 Route::prefix('adminrb')->name('adminrb.')->group(function () {
     Route::get('/pk-bupati', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'index'])->name('pk-bupati.index');
+    Route::post('/pk-bupati', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'store'])->name('pk-bupati.store'); // TAMBAHKAN INI
     Route::get('/pk-bupati/{id}', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'show'])->name('pk-bupati.show');
     Route::get('/pk-bupati/{id}/edit', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'edit'])->name('pk-bupati.edit');
     Route::put('/pk-bupati/{id}', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'update'])->name('pk-bupati.update');
     Route::delete('/pk-bupati/{id}', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'destroy'])->name('pk-bupati.destroy');
     Route::get('/pk-bupati/export/pdf', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'exportPdf'])->name('pk-bupati.export.pdf');
-     Route::get('/pk-bupati/export/excel', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'exportExcel'])->name('pk-bupati.export.excel');
+    Route::get('/pk-bupati/export/excel', [App\Http\Controllers\AdminRB\PKBupatiController::class, 'exportExcel'])->name('pk-bupati.export.excel');
 });
 
-// Admin RB Kelola Data
-Route::prefix('adminrb')->group(function () {
-    Route::get('/kelola-data', [KelolaDataController::class, 'index'])->name('adminrb.kelola-data.index');
-
-    // Tambah route store
-    Route::post('/kelola-data', [KelolaDataController::class, 'store'])->name('sasaran.store');
-
-    // Optional: route edit, update, delete
-    Route::put('/kelola-data/{id}', [KelolaDataController::class, 'update'])->name('sasaran.update');
-    Route::delete('/kelola-data/{id}', [KelolaDataController::class, 'destroy'])->name('sasaran.destroy');
-});
 
 // Admin Kelembagaan Routes
 Route::middleware(['auth'])->prefix('adminkelembagaan')->name('adminkelembagaan.')->group(function () {
@@ -175,8 +151,10 @@ Route::middleware(['auth'])->prefix('adminkelembagaan')->name('adminkelembagaan.
         ->name('dashboard');
 
     // Kelola Akun
-    Route::get('/kelola-akun', [AdminKelembagaanKelolaAkunController::class, 'index'])
+   Route::get('/kelola-akun', [AdminKelembagaanKelolaAkunController::class, 'index'])
         ->name('kelola-akun.index');
+    Route::get('/kelola-akun/check-email', [AdminKelembagaanKelolaAkunController::class, 'checkEmail'])
+        ->name('kelola-akun.check-email');
     Route::post('/kelola-akun', [AdminKelembagaanKelolaAkunController::class, 'store'])
         ->name('kelola-akun.store');
     Route::delete('/kelola-akun/{id}', [AdminKelembagaanKelolaAkunController::class, 'destroy'])

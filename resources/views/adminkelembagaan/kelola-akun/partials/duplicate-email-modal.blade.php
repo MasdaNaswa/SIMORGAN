@@ -1,16 +1,14 @@
 <!-- Modal Peringatan Email Duplikat -->
-<div id="duplicateEmailModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[9999] p-4">
+<div id="duplicateEmailModal"
+    class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[9999] p-4">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
         <div class="bg-yellow-500 p-4 flex justify-between items-center">
             <h3 class="text-lg font-semibold text-white flex items-center gap-2">
                 <i class="fas fa-exclamation-triangle"></i>
                 Peringatan!
             </h3>
-            <button onclick="closeModal('duplicateEmailModal')" class="text-white hover:text-gray-200">
-                <i class="fas fa-times text-xl"></i>
-            </button>
         </div>
-        
+
         <div class="p-6">
             <div class="flex items-start gap-3">
                 <div class="flex-shrink-0">
@@ -21,12 +19,13 @@
                 <div>
                     <h4 class="text-base font-semibold text-gray-800 mb-2">Email Sudah Digunakan!</h4>
                     <p class="text-sm text-gray-600 mb-3" id="duplicateEmailMessage"></p>
-                    
+
                     <!-- Detail informasi akun yang sudah ada -->
                     <div class="bg-gray-50 rounded-lg p-3 mb-3 text-sm">
                         <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-200">
                             <span class="font-medium text-gray-700">Detail Akun yang Sudah Ada:</span>
-                            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full" id="existingAccountRole"></span>
+                            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full"
+                                id="existingAccountRole"></span>
                         </div>
                         <div class="space-y-1.5">
                             <div class="flex">
@@ -47,17 +46,17 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <p class="text-xs text-gray-500 italic">
+
+                    <p class="text-xs text-gray-800 italic">
                         * Gunakan email yang berbeda untuk membuat akun OPD baru.
                     </p>
                 </div>
             </div>
         </div>
-        
+
         <div class="bg-gray-50 px-6 py-3 flex justify-end gap-2">
-            <button type="button" onclick="closeModal('duplicateEmailModal')" 
-                class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm">
+            <button type="button" onclick="closeModal('duplicateEmailModal')"
+                class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 hover:border-gray-400 transition text-sm">
                 Tutup
             </button>
         </div>

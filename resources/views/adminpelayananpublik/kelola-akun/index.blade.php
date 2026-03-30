@@ -1,9 +1,8 @@
 @extends('layouts.adminpelayananpublik')
 
-@section('title', 'Dashboard Admin RB')
-@section('page-title', 'Dashboard')
+@section('title', 'SIMORGAN')
 
-@section('menu-dashboard', 'text-blue-600 font-bold')
+@section('menu-kelola-akun', 'text-blue-600 font-bold')
 
 @section('content')
     <div class="flex flex-col min-h-screen bg-[#F8FAFC]">
@@ -22,47 +21,25 @@
         <div class="px-4 md:px-6 py-4 flex justify-end">
             <button
                 class="flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300 text-sm md:text-base"
-                onclick="openModal('tambahModal')">
-                Tambah
+                onclick="openModal('addOPDModal')">
+                Tambah 
             </button>
         </div>
 
         <!-- Konten Utama -->
         <main class="flex-1 px-4 md:px-8 py-6">
             <!-- Table Container -->
-            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200 mt-4">
-                <div
-                    class="px-4 md:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-800">Daftar Akun OPD</h2>
-                    <div class="relative w-full sm:w-auto">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input type="text" placeholder="Cari..."
-                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 w-full text-sm">
-                    </div>
-                </div>
-
+            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">
-                                    No</th>
-                                <th
-                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">
-                                    Nama OPD</th>
-                                <th
-                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">
-                                    Email</th>
-                                <th
-                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">
-                                    Role</th>
-                                <th
-                                    class="py-3 px-4 text-center font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">
-                                    Aksi</th>
-                            </tr>
+                              <tr>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">No</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Nama OPD</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Email</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Role</th>
+                                <th class="py-3 px-4 text-center font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider border-b border-gray-200">Aksi</th>
+                              </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @forelse($akun as $index => $item)
@@ -70,10 +47,14 @@
                                     <td class="py-3 px-4 font-medium text-gray-900 text-sm">{{ $index + 1 }}</td>
                                     <td class="py-3 px-4 text-sm">{{ $item->nama_opd }}</td>
                                     <td class="py-3 px-4 text-sm">{{ $item->email }}</td>
-                                    <td class="py-3 px-4 text-sm">{{ ucfirst($item->role) }}</td>
+                                    <td class="py-3 px-4 text-sm">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                            {{ ucfirst($item->role) }}
+                                        </span>
+                                    </td>
                                     <td class="py-3 px-4">
                                         <div class="flex justify-center gap-2">
-                                            <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                                            <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition"
                                                 onclick="openHapus({{ $item->id_user }})">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </button>
@@ -82,7 +63,10 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-3 px-4 text-center text-gray-500">Belum ada data akun OPD</td>
+                                    <td colspan="5" class="py-8 px-4 text-center text-gray-500">
+                                        <i class="fas fa-inbox text-4xl mb-2 text-gray-300"></i>
+                                        <p>Belum ada data akun OPD</p>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -98,34 +82,188 @@
 
     {{-- Modals --}}
     @include('adminpelayananpublik.kelola-akun.partials.add-modal')
+    @include('adminpelayananpublik.kelola-akun.partials.duplicate-email-modal')
     @include('adminpelayananpublik.kelola-akun.partials.hapus-modal')
 
 @endsection
 
 @push('scripts')
-    <script>
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+<script>
+    let currentDeleteId = null;
+
+    // Fungsi Modal
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            // Reset form jika modal add ditutup
+            if (id === 'addOPDModal') {
+                const form = document.getElementById('formTambahAkun');
+                if (form) form.reset();
+                const emailError = document.getElementById('emailError');
+                const passwordError = document.getElementById('passwordError');
+                if (emailError) emailError.classList.add('hidden');
+                if (passwordError) passwordError.classList.add('hidden');
             }
         }
+    }
 
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
+    function openHapus(id) {
+        currentDeleteId = id;
+        openModal('hapusModal');
+    }
+
+    // Fungsi delete tanpa loading
+    async function confirmDelete() {
+        if (!currentDeleteId) {
+            alert('ID akun tidak ditemukan');
+            return;
+        }
+        
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            
+            const response = await fetch(`/adminpelayananpublik/kelola-akun/${currentDeleteId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || '{{ csrf_token() }}'
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                closeModal('hapusModal');
+                window.location.reload();
+            } else {
+                alert(result.message || 'Gagal menghapus akun');
             }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan: ' + (error.message || 'Gagal menghapus akun'));
         }
+    }
 
-        function openHapus(id) {
-            const form = document.getElementById('deleteForm');
-            form.action = `/adminpelayananpublik/kelola-akun/${id}`; // 🔥 INI KUNCI UTAMA
-            openModal('hapusModal');
+    // Fungsi cek email
+    async function cekEmailSebelumSubmit() {
+        const emailInput = document.getElementById('emailInput');
+        const email = emailInput ? emailInput.value.trim() : '';
+        
+        if (!email) {
+            alert('Masukkan email terlebih dahulu');
+            if (emailInput) emailInput.focus();
+            return;
         }
-    </script>
+        
+        try {
+            const response = await fetch(`/adminpelayananpublik/kelola-akun/check-email?email=${encodeURIComponent(email)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            });
 
+            const result = await response.json();
 
+            if (result.exists) {
+                showDuplicateModal(result.data);
+            } else {
+                submitForm();
+            }
+        } catch (error) {
+            console.error('Error checking email:', error);
+            alert('Terjadi kesalahan saat mengecek email');
+        }
+    }
+
+    // Fungsi submit form tanpa loading
+    async function submitForm() {
+        const form = document.getElementById('formTambahAkun');
+        
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        
+        if (emailError) emailError.classList.add('hidden');
+        if (passwordError) passwordError.classList.add('hidden');
+        
+        const formData = new FormData(form);
+        
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            
+            const response = await fetch('/adminpelayananpublik/kelola-akun', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || '{{ csrf_token() }}'
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                closeModal('addOPDModal');
+                window.location.reload();
+            } else {
+                if (result.errors) {
+                    if (result.errors.email && emailError) {
+                        emailError.textContent = result.errors.email[0];
+                        emailError.classList.remove('hidden');
+                    }
+                    if (result.errors.password && passwordError) {
+                        passwordError.textContent = result.errors.password[0];
+                        passwordError.classList.remove('hidden');
+                    }
+                } else {
+                    alert(result.message || 'Gagal menambah akun');
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan: ' + (error.message || 'Gagal menambah akun'));
+        }
+    }
+    
+    // Fungsi menampilkan modal duplikat email
+    function showDuplicateModal(data) {
+        const existingAccountName = document.getElementById('existingAccountName');
+        const existingAccountEmail = document.getElementById('existingAccountEmail');
+        const existingAccountCreatedBy = document.getElementById('existingAccountCreatedBy');
+        const existingAccountCreatedAt = document.getElementById('existingAccountCreatedAt');
+        const existingAccountRole = document.getElementById('existingAccountRole');
+        const duplicateEmailMessage = document.getElementById('duplicateEmailMessage');
+        
+        if (existingAccountName) existingAccountName.textContent = data.nama_opd || '-';
+        if (existingAccountEmail) existingAccountEmail.textContent = data.email || '-';
+        if (existingAccountCreatedBy) existingAccountCreatedBy.textContent = data.created_by || '-';
+        if (existingAccountCreatedAt) existingAccountCreatedAt.textContent = data.created_at || '-';
+        if (existingAccountRole) existingAccountRole.textContent = data.role || 'OPD';
+        if (duplicateEmailMessage) duplicateEmailMessage.innerHTML = `Email <strong>${data.email}</strong> sudah digunakan oleh akun lain.`;
+        
+        openModal('duplicateEmailModal');
+    }
+    
+    function closeDuplicateModal() {
+        closeModal('duplicateEmailModal');
+    }
+    
+    function continueSubmit() {
+        closeModal('duplicateEmailModal');
+        submitForm();
+    }
+</script>
 @endpush

@@ -1,7 +1,6 @@
 @extends('layouts.adminkelembagaan')
 
-@section('title', 'Dashboard Admin Kelembagaan')
-@section('page-title', 'Dashboard')
+@section('title', 'SIMORGAN')
 
 @section('menu-dashboard', 'text-blue-600 font-bold')
 

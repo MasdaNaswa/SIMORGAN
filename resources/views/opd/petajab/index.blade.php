@@ -1,7 +1,7 @@
 {{-- resources/views/kelembagaan/petajab.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Peta Jabatan')
+@section('title', 'SIMORGAN')
 
 @section('content')
     <div class="min-h-screen bg-[#F8FAFC] flex flex-col">
@@ -62,73 +62,68 @@
 
                 <ul class="space-y-4">
                     @forelse ($laporan as $item)
-                                    <li class="flex items-center justify-between p-4 border rounded hover:shadow-md transition">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-10 h-10 flex items-center justify-center rounded bg-blue-100 text-blue-600">
-                                                <i class="fas fa-file"></i>
-                                            </div>
-                                            <div>
-                                                <div class="font-medium">{{ $item->judul }}</div>
-                                                <div class="text-sm text-gray-500">
-                                                    Diunggah pada {{ \Carbon\Carbon::parse($item->tanggal_upload )->format('d-m-Y') }}
-                                                    - {{ $item->kategori }}
+                        <li class="flex items-center justify-between p-4 border rounded hover:shadow-md transition">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 flex items-center justify-center rounded bg-blue-100 text-blue-600">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">{{ $item->judul }}</div>
+                                    <div class="text-sm text-gray-500">
+                                        Diunggah pada {{ \Carbon\Carbon::parse($item->tanggal_upload )->format('d-m-Y') }}
+                                        - {{ $item->kategori }}
+                                    </div>
+
+                                    {{-- Catatan Admin --}}
+                                    @if($item->catatan)
+                                        @php
+                                            $maxLength = 30;
+                                            $fullCatatan = $item->catatan;
+                                            $shortCatatan = strlen($fullCatatan) > $maxLength
+                                                ? substr($fullCatatan, 0, $maxLength) . '...'
+                                                : $fullCatatan;
+                                        @endphp
+
+                                        <div class="relative inline-block group text-xs italic text-gray-700 cursor-pointer mt-1">
+                                            Catatan Admin: {{ $shortCatatan }}
+
+                                            @if(strlen($fullCatatan) > $maxLength)
+                                                <div
+                                                    class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 max-w-xs bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-normal break-words shadow-lg">
+                                                    {{ $fullCatatan }}
                                                 </div>
-
-
-                                                {{-- Catatan Admin --}}
-                                                @if($item->catatan)
-    @php
-        $maxLength = 30;
-        $fullCatatan = $item->catatan;
-        $shortCatatan = strlen($fullCatatan) > $maxLength
-            ? substr($fullCatatan, 0, $maxLength) . '...'
-            : $fullCatatan;
-    @endphp
-
-    <div class="relative inline-block group text-xs italic text-gray-700 cursor-pointer mt-1">
-        Catatan Admin: {{ $shortCatatan }}
-
-        @if(strlen($fullCatatan) > $maxLength)
-            <div
-                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 max-w-xs bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity z-50 whitespace-normal break-words shadow-lg">
-                {{ $fullCatatan }}
-            </div>
-        @endif
-    </div>
-@endif
-
-                                            </div>
+                                            @endif
                                         </div>
+                                    @endif
+                                </div>
+                            </div>
 
-                                        <div class="flex items-center gap-2">
-                                            <span
-                                                class="px-2 py-1 text-xs font-medium rounded
-                        {{ $item->status == 'Diproses' ? 'bg-yellow-100 text-yellow-700' : ($item->status == 'Disetujui' ? 'bg-green-100 text-green-600' : ($item->status == 'Direvisi' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700')) }}">
-                                                {{ $item->status }}
-                                            </span>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="px-2 py-1 text-xs font-medium rounded
+                                        {{ $item->status == 'Diproses' ? 'bg-yellow-100 text-yellow-700' : ($item->status == 'Disetujui' ? 'bg-green-100 text-green-600' : ($item->status == 'Direvisi' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700')) }}">
+                                    {{ $item->status }}
+                                </span>
 
+                                <a href="{{ route('petajab.download', $item->id_laporan) }}">
+                                    <i class="material-icons text-blue-600 cursor-pointer" title="Download">download</i>
+                                </a>
 
-                                            <a href="{{ route('petajab.download', $item->id_laporan) }}">
-                                                <i class="material-icons text-blue-600 cursor-pointer" title="Download">download</i>
-                                            </a>
-
-                                            <form action="{{ route('petajab.destroy', $item->id_laporan) }}" method="POST"
-                                                onsubmit="return confirm('Hapus?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button"
-                                                    onclick="openHapusModal({{ $item->id_laporan }}, '{{ route('petajab.destroy', $item->id_laporan) }}')">
-                                                    <i class="material-icons text-red-600 cursor-pointer" title="Hapus">delete</i>
-                                                </button>
-
-
-                                            </form>
-                                        </div>
-                                    </li>
+                                <form action="{{ route('petajab.destroy', $item->id_laporan) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button"
+                                        onclick="openHapusModal({{ $item->id_laporan }}, '{{ route('petajab.destroy', $item->id_laporan) }}')">
+                                        <i class="material-icons text-red-600 cursor-pointer" title="Hapus">delete</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
                     @empty
                         <p class="text-gray-500">Belum ada laporan diunggah.</p>
                     @endforelse
                 </ul>
+
                 <!-- Pagination -->
                 @if ($laporan->total() > $laporan->perPage())
                     <div class="mt-6 flex justify-center">
@@ -171,18 +166,19 @@
                     </div>
                 @endif
 
-
             </div>
 
         </div>
     </div>
 
     @include('components.footer')
+    
     {{-- Modal hapus --}}
     @include('components.opd.hapus-modal-petajab')
 
     {{-- Modal unggah --}}
     @include('components.opd.unggah-modal-petajab')
+    
     <script>
         // Fungsi buka/tutup modal
         function openModal(id) {
@@ -206,9 +202,8 @@
             const modal = document.getElementById('hapusModal');
             const form = document.getElementById('hapusForm');
 
-            form.action = url; // set action form hapus ke route yang benar
-
-            modal.classList.remove('hidden'); // tampilkan modal
+            form.action = url;
+            modal.classList.remove('hidden');
         }
     </script>
 @endsection

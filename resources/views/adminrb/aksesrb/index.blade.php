@@ -1,6 +1,6 @@
 @extends('layouts.adminrb')
 
-@section('title', 'Monitoring Bagor - Kontrol Akses RB')
+@section('title', 'SIMORGAN')
 
 @section('content')
     <div class="flex flex-col min-h-screen">

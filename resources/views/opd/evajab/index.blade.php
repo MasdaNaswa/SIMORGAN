@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Evaluasi Jabatan')
+@section('title', 'SIMORGAN')
 
 @section('content')
     <div class="min-h-screen bg-[#F8FAFC] flex flex-col">
@@ -179,58 +179,68 @@
     @include('components.opd.unggah-modal-evajab')
 
     <script>
-        // Upload simulation
-        const uploadArea = document.getElementById("uploadArea");
-        const fileInput = document.getElementById("fileInput");
+        // Upload 
+         const uploadArea = document.getElementById("uploadArea");
+    const fileInput = document.getElementById("fileInput");
 
-        uploadArea.addEventListener("click", () => fileInput.click());
+    uploadArea.addEventListener("click", () => fileInput.click());
 
-        fileInput.addEventListener("change", function () {
-            if (this.files.length > 0) {
-                alert(`File "${this.files[0].name}" berhasil diunggah (simulasi)`);
-            }
-        });
-
-        uploadArea.addEventListener("dragover", e => {
-            e.preventDefault();
-            uploadArea.classList.add("border-blue-600", "bg-blue-50");
-        });
-
-        uploadArea.addEventListener("dragleave", e => {
-            e.preventDefault();
-            uploadArea.classList.remove("border-blue-600", "bg-blue-50");
-        });
-
-        uploadArea.addEventListener("drop", e => {
-            e.preventDefault();
-            uploadArea.classList.remove("border-blue-600", "bg-blue-50");
-            if (e.dataTransfer.files.length > 0) {
-                alert(`File "${e.dataTransfer.files[0].name}" berhasil diunggah (simulasi)`);
-            }
-        });
-
-        // ✅ Tambahkan fungsi modal ini
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.remove('hidden');
-            }
+    fileInput.addEventListener("change", function () {
+        if (this.files.length > 0) {
+            
+            openModal('unggahModal');
         }
+    });
 
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.add('hidden');
-            }
-        }
-        function openHapusModal(id, actionUrl) {
-            const modal = document.getElementById('hapusModal');
-            const form = document.getElementById('hapusForm');
+    uploadArea.addEventListener("dragover", e => {
+        e.preventDefault();
+        uploadArea.classList.add("border-blue-600", "bg-blue-50");
+    });
 
-            if (modal && form) {
-                form.action = actionUrl; // set action form sesuai item
-                modal.classList.remove('hidden'); // tampilkan modal
+    uploadArea.addEventListener("dragleave", e => {
+        e.preventDefault();
+        uploadArea.classList.remove("border-blue-600", "bg-blue-50");
+    });
+
+    uploadArea.addEventListener("drop", e => {
+        e.preventDefault();
+        uploadArea.classList.remove("border-blue-600", "bg-blue-50");
+        if (e.dataTransfer.files.length > 0) {
+            // HAPUS ALERT
+            const fileInput = document.getElementById("fileInput");
+            if (fileInput) {
+                fileInput.files = e.dataTransfer.files;
             }
+            openModal('unggahModal');
         }
+    });
+
+    // Fungsi modal
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    }
+    
+    function openHapusModal(id, actionUrl) {
+        const modal = document.getElementById('hapusModal');
+        const form = document.getElementById('hapusForm');
+
+        if (modal && form) {
+            form.action = actionUrl;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
     </script>
 @endsection

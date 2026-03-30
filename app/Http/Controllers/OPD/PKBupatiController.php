@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/OPD/PKBupatiController.php
 
 namespace App\Http\Controllers\OPD;
 

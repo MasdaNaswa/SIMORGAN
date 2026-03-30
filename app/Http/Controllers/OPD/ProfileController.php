@@ -16,64 +16,35 @@ class ProfileController extends Controller
         return view('opd.profile.edit', compact('user'));
     }
 
-    public function update(Request $request)
-    {
-        $user = Auth::user();
-        $userId = $user->id_user;
-
-        $request->validate([
-            'nama'  => 'required|string|max:255',
-            'email' => 'required|email'
-        ]);
-
-        $emailExists = Pengguna::where('email', $request->email)
-            ->where('id_user', '!=', $userId)
-            ->exists();
-
-        if ($emailExists) {
-            return back()->withErrors(['email' => 'Email sudah digunakan'])->withInput();
-        }
-
-        $user->nama_opd  = $request->nama;
-        $user->email     = $request->email;
-        $user->save();
-
-        return back()->with('success', 'Profil berhasil diperbarui.');
-    }
-
     public function updatePassword(Request $request)
     {
         $user = Auth::user();
 
-        // Validasi password kuat: minimal 8 karakter, huruf besar, huruf kecil, angka, simbol
         $request->validate([
             'password_lama' => 'required',
             'password_baru' => [
                 'required',
                 'string',
                 'min:8',
-                'confirmed', // harus ada password_baru_confirmation
-                'regex:/[a-z]/',      // huruf kecil
-                'regex:/[A-Z]/',      // huruf besar
-                'regex:/[0-9]/',      // angka
-                'regex:/[@$!%*?&]/'   // simbol
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*?&]/'
             ]
-        ], [
-            'password_baru.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol'
         ]);
 
-        // cek password lama
+        // Cek password lama
         if (!Hash::check($request->password_lama, $user->password)) {
-            return back()->withErrors(['password_lama' => 'Password lama salah']);
+            return back();
         }
 
-        // update password
+        // Update password langsung di database
         $user->password = Hash::make($request->password_baru);
         $user->save();
 
-        // logout user dan redirect ke login
-        Auth::logout();
+        // Tidak logout, user tetap login dengan session yang sama
 
-        return redirect()->route('login')->with('success', 'Password berhasil diperbarui. Silakan login kembali.');
+        return back();
     }
 }

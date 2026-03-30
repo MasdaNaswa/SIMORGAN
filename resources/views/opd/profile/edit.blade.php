@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'BAGOR')
+@section('title', 'SIMORGAN')
 
 @section('content')
 <div class="flex flex-col min-h-screen">
@@ -22,7 +22,7 @@
             <div class="card bg-white rounded-xl shadow border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md">
                 <div class="tab-buttons flex border-b border-gray-200 mb-5">
                     <button class="tab-button py-3.5 px-6 bg-transparent border-none cursor-pointer font-medium text-slate-500 relative transition-all duration-300 flex items-center gap-2 text-base active" onclick="openTab('profile-tab', event)">
-                        <i class="fas fa-user text-lg"></i> Ubah Profil
+                        <i class="fas fa-user text-lg"></i>Profile
                     </button>
                     <button class="tab-button py-3.5 px-6 bg-transparent border-none cursor-pointer font-medium text-slate-500 relative transition-all duration-300 flex items-center gap-2 text-base" onclick="openTab('password-tab', event)">
                         <i class="fas fa-key text-lg"></i> Ubah Kata Sandi
@@ -45,15 +45,6 @@
 </div>
 
 <script>
-
-    document.getElementById('btnUbah').addEventListener('click', function () {
-
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(i => i.disabled = false);
-
-    this.style.display = 'none'; // sembunyikan tombol ubah setelah diklik
-});
-
     // Tab functionality
     function openTab(tabId, event) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -67,6 +58,6 @@
 <style>
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .tab-button.active { color: #1d4ed8; font-weight: 600; } /* primary color */
+    .tab-button.active { color: #1d4ed8; font-weight: 600; }
 </style>
 @endsection

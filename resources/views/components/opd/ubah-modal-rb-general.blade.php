@@ -14,11 +14,13 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" id="editId" name="id">
+                    <input type="hidden" id="editIsInspektorat" name="is_inspektorat" value="{{ $isInspektorat ?? false }}">
+                    <input type="hidden" id="editIsAdmin" name="is_admin" value="{{ Auth::user()->role === 'admin' ? 1 : 0 }}">
 
                     <!-- Bagian Header -->
                     <div class="text-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-lg font-bold text-amber-700">
-                            UBAH RENCANA AKSI RB GENERAL TAHUN {{  $selectedYear }}
+                            UBAH RENCANA AKSI RB GENERAL TAHUN {{ $selectedYear }}
                         </h2>
                     </div>
 
@@ -26,9 +28,12 @@
                     <div class="mb-6 p-6 bg-gray-50 rounded-lg border-l-4 border-amber-500">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div class="form-group">
-                                <label for="editNo" class="block text-sm font-medium text-gray-700 mb-1">NO</label>
-                                <input type="text" id="editNo" name="no"
-                                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                <label for="editNo" class="block text-sm font-medium text-gray-700 mb-1">
+                                    NO
+                                </label>
+                                <input type="text" id="editNo" name="no" readonly disabled
+                                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed select-none"
+                                    style="pointer-events: none; user-select: none;"
                                     placeholder="Masukkan nomor" />
                             </div>
                             <div class="form-group">
@@ -318,19 +323,30 @@
                             <i class="fas fa-clipboard-check text-amber-600"></i> Catatan Khusus Inspektorat
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="form-group">
-                                <label for="editCatatanEvaluasi"
-                                    class="block text-sm font-medium text-amber-700 mb-1">Catatan Evaluasi</label>
-                                <textarea id="editCatatanEvaluasi" name="catatan_evaluasi" rows="2"
-                                    class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800 focus:ring-amber-500 focus:border-amber-500"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="editCatatanPerbaikan"
-                                    class="block text-sm font-medium text-amber-700 mb-1">Catatan Perbaikan</label>
-                                <textarea id="editCatatanPerbaikan" name="catatan_perbaikan" rows="2"
-                                    class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800 focus:ring-amber-500 focus:border-amber-500"></textarea>
-                            </div>
-                        </div>
+    <div class="form-group">
+        <label for="editCatatanEvaluasi"
+            class="block text-sm font-medium text-amber-700 mb-1">Catatan Evaluasi</label>
+        <textarea id="editCatatanEvaluasi" name="catatan_evaluasi" rows="2"
+            class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800 focus:ring-amber-500 focus:border-amber-500 catatan-field"
+            {{-- Hanya Admin dan Inspektorat yang bisa edit --}}
+            @if(Auth::user()->role !== 'admin' && Auth::user()->unit_kerja !== 'Inspektorat Daerah')
+                readonly disabled
+                style="pointer-events: none; cursor: not-allowed; background-color: #fef3c7;"
+            @endif
+        ></textarea>
+    </div>
+    <div class="form-group">
+        <label for="editCatatanPerbaikan"
+            class="block text-sm font-medium text-amber-700 mb-1">Catatan Perbaikan</label>
+        <textarea id="editCatatanPerbaikan" name="catatan_perbaikan" rows="2"
+            class="w-full p-2 border border-amber-300 rounded-md bg-amber-100 text-amber-800 focus:ring-amber-500 focus:border-amber-500 catatan-field"
+            @if(Auth::user()->role !== 'admin' && Auth::user()->unit_kerja !== 'Inspektorat Daerah')
+                readonly disabled
+                style="pointer-events: none; cursor: not-allowed; background-color: #fef3c7;"
+            @endif
+        ></textarea>
+    </div>
+</div>
                     </div>
 
                     <!-- Unit Kerja -->
@@ -435,22 +451,107 @@
 </div>
 
 <script>
-    function toggleTriwulan(twNumber) {
-        const content = document.getElementById(`triwulanContent${twNumber}`);
-        const chevron = document.getElementById(`chevronTW${twNumber}`);
-
-        if (content && content.classList.contains('hidden')) {
-            content.classList.remove('hidden');
-            if (chevron) chevron.style.transform = 'rotate(90deg)';
-        } else if (content) {
-            content.classList.add('hidden');
-            if (chevron) chevron.style.transform = 'rotate(0deg)';
-        }
-    }
-
     // Fungsi untuk menutup modal
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
+    }
+
+    // Fungsi untuk mengatur akses edit berdasarkan role
+    function setEditAccess(isInspektorat, isAdmin) {
+        // Semua field selain NO dan catatan
+        const fields = [
+            'editSasaranStrategi', 'editIndikator', 'editTarget', 'editSatuan',
+            'editTargetTahun', 'editRencanaAksi', 'editSatuanOutput', 'editIndikatorOutput',
+            'editRenaksiTw1Target', 'editTw1Rp', 'editRenaksiTw2Target', 'editTw2Rp',
+            'editRenaksiTw3Target', 'editTw3Rp', 'editRenaksiTw4Target', 'editTw4Rp',
+            'editAnggaranTahun', 'editRealisasiTw1Target', 'editRealisasiTw1Rp',
+            'editRealisasiTw2Target', 'editRealisasiTw2Rp', 'editRealisasiTw3Target',
+            'editRealisasiTw3Rp', 'editRealisasiTw4Target', 'editRealisasiTw4Rp',
+            'editRumus', 'editUnitKerja', 'editPelaksana'
+        ];
+
+        // NO field - selalu tidak bisa diakses
+        const noField = document.getElementById('editNo');
+        if (noField) {
+            noField.disabled = true;
+            noField.readOnly = true;
+            noField.style.pointerEvents = 'none';
+            noField.style.userSelect = 'none';
+            noField.style.backgroundColor = '#f3f4f6';
+        }
+
+        // Catatan fields
+        const catatanFields = ['editCatatanEvaluasi', 'editCatatanPerbaikan'];
+
+        if (isAdmin === 1) {
+            // ADMIN RB: Semua field (selain NO) bisa diedit, catatan juga bisa diedit
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.disabled = false;
+                    field.readOnly = false;
+                    field.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    field.style.pointerEvents = 'auto';
+                }
+            });
+            catatanFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.disabled = false;
+                    field.readOnly = false;
+                    field.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    field.style.pointerEvents = 'auto';
+                    field.style.backgroundColor = '#fffbeb';
+                }
+            });
+        } else if (isInspektorat === true) {
+            // INSPEKTORAT: Hanya catatan yang bisa diedit
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.disabled = true;
+                    field.readOnly = true;
+                    field.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    field.style.pointerEvents = 'none';
+                }
+            });
+            catatanFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.disabled = false;
+                    field.readOnly = false;
+                    field.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    field.style.pointerEvents = 'auto';
+                    field.style.backgroundColor = '#fffbeb';
+                }
+            });
+            // Ubah judul modal untuk Inspektorat
+            const modalTitle = document.querySelector('#editModal h3');
+            if (modalTitle) {
+                modalTitle.innerHTML = '<i class="fas fa-pen"></i> Edit Catatan RB General (Mode Inspektorat)';
+            }
+        } else {
+            // OPD LAIN: Semua field (selain NO) bisa diedit, catatan tidak bisa diedit
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.disabled = false;
+                    field.readOnly = false;
+                    field.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    field.style.pointerEvents = 'auto';
+                }
+            });
+            catatanFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.disabled = true;
+                    field.readOnly = true;
+                    field.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    field.style.pointerEvents = 'none';
+                    field.style.backgroundColor = '#f3f4f6';
+                }
+            });
+        }
     }
 
     // Fungsi untuk membuka modal edit dengan data
@@ -458,7 +559,6 @@
         try {
             console.log('Membuka edit modal untuk ID:', id);
 
-            // Show loading
             openModal('editModal');
 
             const response = await fetch(`/rb-general/${id}/edit`);
@@ -469,13 +569,6 @@
             if (result.success) {
                 const data = result.data;
 
-                // Debug: tampilkan semua data yang diterima
-                console.log('=== DATA UNTUK EDIT ===');
-                console.log('Data realisasi_tw1_target:', data.realisasi_tw1_target);
-                console.log('Data realisasi_tw1_rp:', data.realisasi_tw1_rp);
-                console.log('Data realisasi_tw2_target:', data.realisasi_tw2_target);
-                console.log('Data realisasi_tw2_rp:', data.realisasi_tw2_rp);
-
                 // Isi form dengan data
                 document.getElementById('editId').value = data.id;
                 document.getElementById('editNo').value = data.no || '';
@@ -483,12 +576,12 @@
                 document.getElementById('editIndikator').value = data.indikator_capaian || '';
                 document.getElementById('editTarget').value = data.target || '';
                 document.getElementById('editSatuan').value = data.satuan || '';
-                document.getElementById('editTargetTahun').value = data.target_tahun || ''; // NAMA BARU
+                document.getElementById('editTargetTahun').value = data.target_tahun || '';
                 document.getElementById('editRencanaAksi').value = data.rencana_aksi || '';
                 document.getElementById('editSatuanOutput').value = data.satuan_output || '';
                 document.getElementById('editIndikatorOutput').value = data.indikator_output || '';
 
-                // Renaksi per TW - NAMA BARU
+                // Renaksi per TW
                 document.getElementById('editRenaksiTw1Target').value = data.renaksi_tw1_target || '';
                 document.getElementById('editTw1Rp').value = data.tw1_rp || '';
                 document.getElementById('editRenaksiTw2Target').value = data.renaksi_tw2_target || '';
@@ -498,8 +591,8 @@
                 document.getElementById('editRenaksiTw4Target').value = data.renaksi_tw4_target || '';
                 document.getElementById('editTw4Rp').value = data.tw4_rp || '';
 
-                // Anggaran total - NAMA BARU
-                document.getElementById('editAnggaranTotal').value = data.anggaran_total || '';
+                // Anggaran
+                document.getElementById('editAnggaranTahun').value = data.anggaran_tahun || '';
 
                 // REALISASI
                 document.getElementById('editRealisasiTw1Target').value = data.realisasi_tw1_target || '';
@@ -517,6 +610,11 @@
                 document.getElementById('editCatatanPerbaikan').value = data.catatan_perbaikan || '';
                 document.getElementById('editUnitKerja').value = data.unit_kerja || '';
                 document.getElementById('editPelaksana').value = data.pelaksana || '';
+
+                // Set akses edit berdasarkan role
+                const isInspektorat = data.isInspektorat || false;
+                const isAdmin = document.getElementById('editIsAdmin')?.value === '1';
+                setEditAccess(isInspektorat, isAdmin);
 
                 console.log('Form edit berhasil diisi');
 
@@ -540,21 +638,30 @@
             editForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
-                // Cegah double submit
                 if (isSubmitting) return;
                 isSubmitting = true;
 
-                // Show loading
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
                 submitBtn.disabled = true;
 
                 try {
                     const id = document.getElementById('editId').value;
                     const formData = new FormData(this);
 
-                    // Debug: tampilkan data yang dikirim
+                    // Cek apakah ini mode Inspektorat (hanya catatan yang dikirim)
+                    const isInspektorat = document.getElementById('editIsInspektorat')?.value === '1';
+                    
+                    if (isInspektorat) {
+                        // Hanya kirim catatan
+                        const fieldsToKeep = ['_token', '_method', 'catatan_evaluasi', 'catatan_perbaikan'];
+                        for (let [key] of formData.entries()) {
+                            if (!fieldsToKeep.includes(key)) {
+                                formData.delete(key);
+                            }
+                        }
+                    }
+
                     console.log('=== DATA YANG DIKIRIM ===');
                     for (let [key, value] of formData.entries()) {
                         console.log(`${key}: ${value}`);

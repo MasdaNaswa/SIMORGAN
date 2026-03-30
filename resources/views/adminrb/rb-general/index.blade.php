@@ -1,7 +1,7 @@
 {{-- resources/views/adminrb/rb-general/index.blade.php --}}
 @extends('layouts.adminrb')
 
-@section('title', 'Monitoring Bagor - Admin RB')
+@section('title', 'SIMORGAN')
 
 @section('content')
     <div class="flex flex-col min-h-screen">
@@ -46,10 +46,9 @@
                     <button
                         class="flex items-center gap-2 bg-[#2F75B5] text-white py-2 px-4 rounded hover:bg-[#1e4f7a] transition focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
                         onclick="openModal('addModal')">
-                        <i class="fas fa-plus"></i>
-                        <span>Tambah Data</span>
+                        <span>Tambah</span>
                     </button>
-                    
+
                     <button
                         class="flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300 text-sm md:text-base"
                         onclick="openModal('unduhModal')">
@@ -71,13 +70,27 @@
                     <table class="w-full" id="dataTable">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">No</th>
-                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">OPD/Unit Kerja</th>
-                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">Sasaran Strategis</th>
-                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">Indikator</th>
-                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">Target</th>
-                                <th class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">Capaian</th>
-                                <th class="py-3 px-4 text-center font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">Aksi</th>
+                                <th
+                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    No</th>
+                                <th
+                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    OPD/Unit Kerja</th>
+                                <th
+                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    Sasaran Strategis</th>
+                                <th
+                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    Indikator</th>
+                                <th
+                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    Target</th>
+                                <th
+                                    class="py-3 px-4 text-left font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    Capaian</th>
+                                <th
+                                    class="py-3 px-4 text-center font-semibold text-gray-700 text-xs md:text-sm uppercase tracking-wider whitespace-nowrap border-b border-gray-200">
+                                    Aksi</th>
                             </tr>
                         </thead>
 
@@ -107,13 +120,19 @@
                                     </td>
                                     <td class="py-3 px-4">
                                         <div class="flex justify-center gap-1">
-                                            <button class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-200" title="Lihat Detail" onclick="openDetailModal({{ $item->id }})">
+                                            <button
+                                                class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-200"
+                                                title="Lihat Detail" onclick="openDetailModal({{ $item->id }})">
                                                 <i class="fas fa-eye text-sm"></i>
                                             </button>
-                                            <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-200" title="Edit Data" onclick="openEditModal({{ $item->id }})">
+                                            <button
+                                                class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-200"
+                                                title="Edit Data" onclick="openEditModal({{ $item->id }})">
                                                 <i class="fas fa-edit text-sm"></i>
                                             </button>
-                                            <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-200" title="Hapus Data" onclick="openHapusModal({{ $item->id }})">
+                                            <button
+                                                class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-200"
+                                                title="Hapus Data" onclick="openHapusModal({{ $item->id }})">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </button>
                                         </div>
@@ -136,7 +155,8 @@
 
                 <!-- Info Footer dan Pagination -->
                 @if($rbData->count() > 0)
-                    <div class="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600">
+                    <div
+                        class="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600">
                         <div>
                             Menampilkan
                             <span class="font-semibold">{{ $rbData->firstItem() }}</span>
@@ -352,7 +372,7 @@
 
                     const submitBtn = this.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+                    // HAPUS loading spinner - cukup disable tombol
                     submitBtn.disabled = true;
 
                     try {
@@ -369,9 +389,9 @@
                         const result = await response.json();
 
                         if (result.success) {
-                            alert('Data berhasil diupdate!');
                             closeModal('editModal');
-                            setTimeout(() => window.location.reload(), 1000);
+                            // HAPUS setTimeout reload, langsung reload
+                            window.location.reload();
                         } else {
                             if (result.errors) {
                                 let errorMessage = 'Validasi gagal:\n';
@@ -392,53 +412,53 @@
                     }
                 });
             }
-
-            // Handle form hapus
-            const hapusForm = document.getElementById('hapusForm');
-            if (hapusForm) {
-                hapusForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-
-                    const form = this;
-                    const url = form.action;
-                    const formData = new FormData(form);
-                    formData.append('_method', 'DELETE');
-
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
-                    submitBtn.disabled = true;
-
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        });
-
-                        const result = await response.json();
-
-                        if (result.success) {
-                            alert('Data berhasil dihapus!');
-                            closeModal('hapusModal');
-                            setTimeout(() => window.location.reload(), 1000);
-                        } else {
-                            alert('Gagal menghapus data: ' + result.message);
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus data');
-                    } finally {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                });
-            }
         });
+
+        // Handle form hapus
+        const hapusForm = document.getElementById('hapusForm');
+        if (hapusForm) {
+            hapusForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const form = this;
+                const url = form.action;
+                const formData = new FormData(form);
+                formData.append('_method', 'DELETE');
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                // HAPUS loading spinner - cukup disable tombol
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        closeModal('hapusModal');
+                        // HAPUS setTimeout reload, langsung reload
+                        window.location.reload();
+                    } else {
+                        alert('Gagal menghapus data: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus data');
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
 
         // Export functions global
         window.openModal = openModal;

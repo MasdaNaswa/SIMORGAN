@@ -1,6 +1,5 @@
 <div
     x-data="{
-    
         open: false,
         evaluasi: null,
         jawabanStruktur: [],
@@ -8,7 +7,6 @@
         detailPerhitungan: {},
         interpretasi: {},
         activeTab: 'struktur',
-        
         
         // Array pertanyaan lengkap (tanpa grouping)
         pertanyaanStruktur: [
@@ -82,38 +80,21 @@
         load(id) {
             this.open = true;
             
-            // Tampilkan loading
-            this.evaluasi = null;
-            this.jawabanStruktur = [];
-            this.jawabanProses = [];
-            this.detailPerhitungan = {};
-            this.interpretasi = {};
-            
+            // Data diambil langsung tanpa loading
             fetch(`/adminkelembagaan/kematangan-kelembagaan/kemenpan/${id}`)
                 .then(r => {
                     if (!r.ok) throw new Error('Network response was not ok');
                     return r.json();
                 })
                 .then(d => {
-                    console.log('Data dari server:', d);
-                    
                     if (d.error) {
                         alert('Error: ' + d.error);
                         return;
                     }
                     
-                    // Set data evaluasi
                     this.evaluasi = d.evaluasi || {};
-                    
-                    // Set detail perhitungan
                     this.detailPerhitungan = d.detailPerhitungan || {};
-                    
-                    // Set interpretasi
                     this.interpretasi = d.interpretasi || {};
-                    
-                    // DEBUG: Lihat struktur data jawaban
-                    console.log('Data jawaban:', d.jawaban);
-                    console.log('Tipe d.jawaban:', typeof d.jawaban);
                     
                     // Ambil jawaban struktur (1-32)
                     this.jawabanStruktur = [];
@@ -132,9 +113,7 @@
                         }
                     }
                     
-                    // Jika masih kosong, buat array default
                     if (this.jawabanStruktur.length === 0 || this.jawabanStruktur.length < 32) {
-                        console.log('Membuat jawabanStruktur default');
                         this.jawabanStruktur = Array(32).fill('Tidak Diisi');
                     }
                     
@@ -155,14 +134,9 @@
                         }
                     }
                     
-                    // Jika masih kosong, buat array default
                     if (this.jawabanProses.length === 0 || this.jawabanProses.length < 30) {
-                        console.log('Membuat jawabanProses default');
                         this.jawabanProses = Array(30).fill('Tidak Diisi');
                     }
-                    
-                    console.log('Jawaban struktur akhir:', this.jawabanStruktur);
-                    console.log('Jawaban proses akhir:', this.jawabanProses);
                 })
                 .catch(e => {
                     console.error('Error loading data:', e);
@@ -170,8 +144,7 @@
                 });
         }
     }"
-     x-init="() => {
-        // Pastikan modal tersembunyi saat pertama kali di-load
+    x-init="() => {
         $el.style.display = 'none';
     }"
     x-on:open-modal-kemenpan.window="load($event.detail)"
@@ -186,25 +159,19 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold">
-                        <span x-show="evaluasi">Detail Survei Kemenpan - </span>
-                        <span x-text="evaluasi?.nama_opd || 'Memuat...'"></span>
+                        <span>Detail Survei Kemenpan - </span>
+                        <span x-text="evaluasi?.nama_opd || '-'"></span>
                     </h2>
-                    <div class="flex items-center gap-4 mt-1 text-sm text-blue-100" x-show="evaluasi">
-                        <span><i class="fas fa-calendar mr-1"></i> <span x-text="evaluasi?.created_at"></span></span>
-                        <span><i class="fas fa-envelope mr-1"></i> <span x-text="evaluasi?.email"></span></span>
+                    <div class="flex items-center gap-4 mt-1 text-sm text-blue-100">
+                        <span><i class="fas fa-calendar mr-1"></i> <span x-text="evaluasi?.created_at || '-'"></span></span>
+                        <span><i class="fas fa-envelope mr-1"></i> <span x-text="evaluasi?.email || '-'"></span></span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- LOADING -->
-        <div x-show="!evaluasi" class="p-8 text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p class="text-gray-600">Memuat data survei...</p>
-        </div>
-
-        <!-- BODY -->
-        <div x-show="evaluasi" class="p-6 space-y-6">
+        <!-- BODY - LANGSUNG TAMPIL TANPA LOADING -->
+        <div class="p-6 space-y-6">
             <!-- SKOR UTAMA -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 p-4 rounded-xl text-center shadow-sm">
@@ -273,7 +240,7 @@
                 </div>
             </div>
 
-            <!-- JAWABAN OPD DENGAN TAB YANG BENAR -->
+            <!-- JAWABAN OPD DENGAN TAB -->
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <!-- Tab Header -->
                 <div class="bg-gradient-to-r from-gray-50 to-gray-100 border-b">
@@ -309,7 +276,7 @@
 
                 <!-- Tab Content -->
                 <div class="p-0">
-                    <!-- Tab Struktur - PAKAI x-if UNTUK FORCE RERENDER -->
+                    <!-- Tab Struktur -->
                     <template x-if="activeTab === 'struktur'">
                         <div class="p-0">
                             <div class="max-h-[400px] overflow-y-auto">
@@ -323,11 +290,9 @@
                                                     </span>
                                                 </div>
                                                 <div class="flex-grow min-w-0">
-                                                    <!-- Pertanyaan -->
                                                     <p class="text-gray-800 font-medium mb-3 leading-relaxed" 
                                                        x-text="pertanyaanStruktur[index] || ('Struktur ' + (index + 1))"></p>
                                                     
-                                                    <!-- Jawaban -->
                                                     <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
                                                         <div>
                                                             <span class="text-sm font-medium text-gray-700">Jawaban OPD:</span>
@@ -359,7 +324,7 @@
                         </div>
                     </template>
                     
-                    <!-- Tab Proses - PAKAI x-if UNTUK FORCE RERENDER -->
+                    <!-- Tab Proses -->
                     <template x-if="activeTab === 'proses'">
                         <div class="p-0">
                             <div class="max-h-[400px] overflow-y-auto">
@@ -373,11 +338,9 @@
                                                     </span>
                                                 </div>
                                                 <div class="flex-grow min-w-0">
-                                                    <!-- Pertanyaan -->
                                                     <p class="text-gray-800 font-medium mb-3 leading-relaxed" 
                                                        x-text="pertanyaanProses[index] || ('Proses ' + (index + 1))"></p>
                                                     
-                                                    <!-- Jawaban -->
                                                     <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
                                                         <div>
                                                             <span class="text-sm font-medium text-gray-700">Jawaban OPD:</span>

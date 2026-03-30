@@ -1,7 +1,7 @@
 {{-- resources/views/opd/rb-tematik/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Monitoring Bagor - RB Tematik')
+@section('title', 'SIMORGAN')
 
 @section('content')
     <div class="flex flex-col min-h-screen">
@@ -418,7 +418,6 @@ async function handleTambahSubmit(e) {
     
     const originalText = submitBtn.innerHTML;
     
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     submitBtn.disabled = true;
     
     try {
@@ -516,7 +515,6 @@ async function handleEditSubmit(e) {
     
     const originalText = submitBtn.innerHTML;
     
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     submitBtn.disabled = true;
     
     try {
@@ -529,7 +527,7 @@ async function handleEditSubmit(e) {
             console.log(`${key}: ${value}`);
         }
         
-        // Clean rupiah fields
+        // Clean rupiah fields - PERUBAHAN: tambahkan renaksi_tw*_target ke list jika perlu
         const rupiahFields = [
             'tw1_rp', 'tw2_rp', 'tw3_rp', 'tw4_rp', 
             'anggaran_tahun',
@@ -605,7 +603,7 @@ async function showEdit(id) {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         
-        const response = await fetch(`/adminrb/rb-tematik/${id}/edit`, {
+        const response = await fetch(`/rb-tematik/${id}/edit`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
@@ -625,7 +623,7 @@ async function showEdit(id) {
             
             const formEdit = document.getElementById('editRenaksiRB');
             if (formEdit) {
-                formEdit.action = `/adminrb/rb-tematik/${id}`;
+                formEdit.action = `/rb-tematik/${id}`;
                 console.log('Form action diatur ke:', formEdit.action);
             }
             
@@ -652,7 +650,8 @@ async function showEdit(id) {
             // Format Rupiah untuk anggaran tahun
             document.getElementById('edit_anggaran_tahun').value = data.anggaran_tahun ? formatRupiah(data.anggaran_tahun) : '';
             
-            // Set TW values (Rencana Aksi)
+            // ========== PERBAIKAN UTAMA ==========
+            // Set TW values (Rencana Aksi) - Gunakan data.renaksi_tw*_target
             document.getElementById('edit_tw1_target').value = data.renaksi_tw1_target || '';
             document.getElementById('edit_tw1_rp').value = data.renaksi_tw1_rp ? formatRupiah(data.renaksi_tw1_rp) : '';
             document.getElementById('edit_tw2_target').value = data.renaksi_tw2_target || '';
@@ -661,6 +660,7 @@ async function showEdit(id) {
             document.getElementById('edit_tw3_rp').value = data.renaksi_tw3_rp ? formatRupiah(data.renaksi_tw3_rp) : '';
             document.getElementById('edit_tw4_target').value = data.renaksi_tw4_target || '';
             document.getElementById('edit_tw4_rp').value = data.renaksi_tw4_rp ? formatRupiah(data.renaksi_tw4_rp) : '';
+            // ========== END PERBAIKAN ==========
             
             // Set REALISASI values
             document.getElementById('edit_realisasi_tw1_target').value = data.realisasi_renaksi_tw1_target || '';
@@ -792,7 +792,6 @@ async function handleHapusSubmit(e) {
     
     const originalText = submitBtn.innerHTML;
     
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
     submitBtn.disabled = true;
     
     try {

@@ -25,16 +25,11 @@
         Batal
       </button>
 
-      <form id="deleteForm" method="POST">
-        @csrf
-        @method('DELETE')
-        <input type="hidden" id="deleteId" name="id">
-
-        <button type="submit"
-                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
-          Hapus
-        </button>
-      </form>
+      <button type="button"
+              onclick="confirmDelete()"
+              class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+        Hapus
+      </button>
     </div>
 
   </div>

@@ -1,61 +1,74 @@
 <?php
-// app/Http/Controllers/OPD/RBGeneralController.php
 
 namespace App\Http\Controllers\OPD;
 
 use App\Http\Controllers\Controller;
-use App\Models\AksesRb; 
+use App\Models\AksesRb;
 use App\Models\RB_General;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class RBGeneralController extends Controller
 {
     /**
-     * Tampilkan daftar RB General
+     * Tampilkan daftar RB General untuk OPD yang login
      */
     public function index()
     {
         $selectedYear = request()->get('year', date('Y'));
+        $user = Auth::user();
 
         // Ambil data akses
         $akses = AksesRb::where('jenis_rb', 'RB General')->first();
         
-        // Cek apakah akses bisa dibuka (untuk semua operasi)
+        // Cek apakah akses bisa dibuka
         $canAccess = $akses && $akses->isAccessible();
         
-        // Ambil pesan jika akses ditutup
-        $accessMessage = null;
-        if (!$canAccess && $akses) {
-            if ($akses->status !== 'Dibuka') {
-                $accessMessage = 'Akses RB General sedang ditutup oleh admin.';
-            } elseif ($akses->start_date && now()->startOfDay()->lt($akses->start_date)) {
-                $accessMessage = 'Akses RB General akan dibuka pada ' . $akses->start_date->format('d/m/Y');
-            } elseif ($akses->end_date && now()->startOfDay()->gt($akses->end_date)) {
-                $accessMessage = 'Akses RB General telah ditutup pada ' . $akses->end_date->format('d/m/Y');
-            }
+        // Tentukan permission berdasarkan unit_kerja
+        $isInspektorat = $user->isInspektorat();
+        
+        // Ambil data sesuai role
+        if ($isInspektorat) {
+            // INSPEKTORAT: Lihat SEMUA data dari semua OPD
+            $rbData = RB_General::where('tahun', $selectedYear)
+                ->orderBy('unit_kerja')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            // OPD LAIN: Hanya lihat data yang mereka input sendiri (berdasarkan opd_penginput)
+            $rbData = RB_General::where('tahun', $selectedYear)
+                ->where('opd_penginput', $user->unit_kerja)
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
-
-        // Ambil data
-        $rbData = RB_General::where('tahun', $selectedYear)
-            ->orWhere('tahun', null)
-            ->orderBy('created_at', 'desc')
-            ->get();
 
         return view('opd.rb-general.index', compact(
             'rbData', 
             'selectedYear',
             'canAccess',
-            'accessMessage',
-            'akses'
+            'isInspektorat',
+            'user'
         ));
     }
 
     /**
      * Simpan data baru RB General
+     * Hanya untuk OPD non-Inspektorat
      */
     public function store(Request $request)
     {
-        // CEK AKSES - TAMBAH DATA
+        $user = Auth::user();
+        
+        // CEK AKSES - Inspektorat tidak boleh menambah data
+        if ($user->isInspektorat()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Inspektorat tidak memiliki izin untuk menambah data.'
+            ], 403);
+        }
+
+        // CEK AKSES - Cek apakah akses dibuka
         $akses = AksesRb::where('jenis_rb', 'RB General')->first();
         if (!$akses || !$akses->isAccessible()) {
             return response()->json([
@@ -65,77 +78,55 @@ class RBGeneralController extends Controller
         }
 
         try {
-            $validated = $request->validate([
-                'tahun' => 'required|integer|min:2000|max:' . (date('Y') + 5),
-                'sasaran_strategi' => 'required|string|max:500',
-                'indikator_capaian' => 'required|string|max:500',
-                'target' => 'required|string|max:100',
-                'satuan' => 'required|string|max:50',
+            $validator = Validator::make($request->all(), [
+                'tahun' => 'required|integer',
+                'no' => 'nullable|string',
+                'sasaran_strategi' => 'required|string',
+                'indikator_capaian' => 'required|string',
+                'target' => 'required|string',
+                'satuan' => 'required|string',
                 'rencana_aksi' => 'required|string',
-                'target_tahun' => 'nullable|string|max:100',
-                'anggaran_tahun' => 'nullable|string|max:100',
-                'renaksi_tw1_target' => 'nullable|string|max:100',
-                'renaksi_tw2_target' => 'nullable|string|max:100',
-                'renaksi_tw3_target' => 'nullable|string|max:100',
-                'renaksi_tw4_target' => 'nullable|string|max:100',
-                'realisasi_tw1_target' => 'nullable|string|max:100',
-                'realisasi_tw1_rp' => 'nullable|string|max:100',
-                'realisasi_tw2_target' => 'nullable|string|max:100',
-                'realisasi_tw2_rp' => 'nullable|string|max:100',
-                'realisasi_tw3_target' => 'nullable|string|max:100',
-                'realisasi_tw3_rp' => 'nullable|string|max:100',
-                'realisasi_tw4_target' => 'nullable|string|max:100',
-                'realisasi_tw4_rp' => 'nullable|string|max:100',
-                'rumus' => 'nullable|string|max:500',
+                'target_tahun' => 'nullable|string',
+                'anggaran_tahun' => 'nullable|string',
+                'renaksi_tw1_target' => 'nullable|string',
+                'renaksi_tw2_target' => 'nullable|string',
+                'renaksi_tw3_target' => 'nullable|string',
+                'renaksi_tw4_target' => 'nullable|string',
+                'tw1_rp' => 'nullable|string',
+                'tw2_rp' => 'nullable|string',
+                'tw3_rp' => 'nullable|string',
+                'tw4_rp' => 'nullable|string',
+                'realisasi_tw1_target' => 'nullable|string',
+                'realisasi_tw1_rp' => 'nullable|string',
+                'realisasi_tw2_target' => 'nullable|string',
+                'realisasi_tw2_rp' => 'nullable|string',
+                'realisasi_tw3_target' => 'nullable|string',
+                'realisasi_tw3_rp' => 'nullable|string',
+                'realisasi_tw4_target' => 'nullable|string',
+                'realisasi_tw4_rp' => 'nullable|string',
+                'rumus' => 'nullable|string',
                 'catatan_evaluasi' => 'nullable|string',
                 'catatan_perbaikan' => 'nullable|string',
-                'unit_kerja' => 'required|string|max:200',
-                'tw1_rp' => 'nullable|string|max:100',
-                'tw2_rp' => 'nullable|string|max:100',
-                'tw3_rp' => 'nullable|string|max:100',
-                'tw4_rp' => 'nullable|string|max:100',
-                'no' => 'nullable|string|max:20',
-                'satuan_output' => 'nullable|string|max:50',
-                'indikator_output' => 'nullable|string|max:500',
-                'pelaksana' => 'nullable|string|max:200',
+                'unit_kerja' => 'required|string',
+                'satuan_output' => 'nullable|string',
+                'indikator_output' => 'nullable|string',
+                'pelaksana' => 'nullable|string',
             ]);
 
-            $tahun = $request->tahun ?: date('Y');
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
-            $rbGeneral = RB_General::create([
-                'tahun' => $tahun,
-                'sasaran_strategi' => $validated['sasaran_strategi'],
-                'indikator_capaian' => $validated['indikator_capaian'],
-                'target' => $validated['target'],
-                'satuan' => $validated['satuan'],
-                'rencana_aksi' => $validated['rencana_aksi'],
-                'target_tahun' => $validated['target_tahun'] ?? null,
-                'anggaran_tahun' => $validated['anggaran_tahun'] ?? null,
-                'renaksi_tw1_target' => $validated['renaksi_tw1_target'] ?? null,
-                'renaksi_tw2_target' => $validated['renaksi_tw2_target'] ?? null,
-                'renaksi_tw3_target' => $validated['renaksi_tw3_target'] ?? null,
-                'renaksi_tw4_target' => $validated['renaksi_tw4_target'] ?? null,
-                'realisasi_tw1_target' => $validated['realisasi_tw1_target'] ?? null,
-                'realisasi_tw1_rp' => $validated['realisasi_tw1_rp'] ?? null,
-                'realisasi_tw2_target' => $validated['realisasi_tw2_target'] ?? null,
-                'realisasi_tw2_rp' => $validated['realisasi_tw2_rp'] ?? null,
-                'realisasi_tw3_target' => $validated['realisasi_tw3_target'] ?? null,
-                'realisasi_tw3_rp' => $validated['realisasi_tw3_rp'] ?? null,
-                'realisasi_tw4_target' => $validated['realisasi_tw4_target'] ?? null,
-                'realisasi_tw4_rp' => $validated['realisasi_tw4_rp'] ?? null,
-                'rumus' => $validated['rumus'] ?? null,
-                'catatan_evaluasi' => $validated['catatan_evaluasi'] ?? null,
-                'catatan_perbaikan' => $validated['catatan_perbaikan'] ?? null,
-                'unit_kerja' => $validated['unit_kerja'],
-                'tw1_rp' => $validated['tw1_rp'] ?? null,
-                'tw2_rp' => $validated['tw2_rp'] ?? null,
-                'tw3_rp' => $validated['tw3_rp'] ?? null,
-                'tw4_rp' => $validated['tw4_rp'] ?? null,
-                'no' => $validated['no'] ?? null,
-                'satuan_output' => $validated['satuan_output'] ?? null,
-                'indikator_output' => $validated['indikator_output'] ?? null,
-                'pelaksana' => $validated['pelaksana'] ?? null,
-            ]);
+            $validated = $validator->validated();
+            
+            // Tambahkan OPD yang menginput
+            $validated['opd_penginput'] = $user->unit_kerja;
+            
+            $rbGeneral = RB_General::create($validated);
 
             return response()->json([
                 'success' => true,
@@ -143,12 +134,6 @@ class RBGeneralController extends Controller
                 'data' => $rbGeneral
             ], 201);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -156,14 +141,24 @@ class RBGeneralController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Get data untuk detail modal (AJAX)
      */
     public function show($id)
     {
         try {
-            $rb = RB_General::findOrFail($id);
+            $user = Auth::user();
+            
+            if ($user->isInspektorat()) {
+                // INSPEKTORAT: Bisa lihat semua data
+                $rb = RB_General::findOrFail($id);
+            } else {
+                // OPD LAIN: Hanya bisa lihat data yang mereka input
+                $rb = RB_General::where('id', $id)
+                    ->where('opd_penginput', $user->unit_kerja)
+                    ->firstOrFail();
+            }
 
             return response()->json([
                 'success' => true,
@@ -201,46 +196,65 @@ class RBGeneralController extends Controller
                     'unitKerja' => $rb->unit_kerja,
                     'pelaksana' => $rb->pelaksana,
                     'tahun' => $rb->tahun,
+                    'opdPenginput' => $rb->opd_penginput,
                 ]
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data tidak ditemukan'
             ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
-    
+
     /**
      * Get data untuk edit modal (AJAX)
+     * Untuk Inspektorat: semua data dikirim tapi akan di-set readonly di frontend
+     * Untuk OPD lain: semua data bisa diedit
      */
     public function edit($id)
     {
         try {
-            $rb = RB_General::findOrFail($id);
+            $user = Auth::user();
+            
+            if ($user->isInspektorat()) {
+                // INSPEKTORAT: Bisa edit semua data (tapi nanti di frontend di-set readonly kecuali catatan)
+                $rb = RB_General::findOrFail($id);
+            } else {
+                // OPD LAIN: Hanya bisa edit data yang mereka input
+                $rb = RB_General::where('id', $id)
+                    ->where('opd_penginput', $user->unit_kerja)
+                    ->firstOrFail();
+            }
 
+            // Kirim semua data, plus flag isInspektorat
             return response()->json([
                 'success' => true,
                 'data' => [
                     'id' => $rb->id,
                     'no' => $rb->no,
+                    'tahun' => $rb->tahun,
                     'sasaran_strategi' => $rb->sasaran_strategi,
                     'indikator_capaian' => $rb->indikator_capaian,
                     'target' => $rb->target,
                     'satuan' => $rb->satuan,
-                    'rencana_aksi' => $rb->rencana_aksi,
                     'target_tahun' => $rb->target_tahun,
-                    'anggaran_tahun' => $rb->anggaran_tahun,
+                    'rencana_aksi' => $rb->rencana_aksi,
                     'satuan_output' => $rb->satuan_output,
                     'indikator_output' => $rb->indikator_output,
                     'renaksi_tw1_target' => $rb->renaksi_tw1_target,
-                    'renaksi_tw2_target' => $rb->renaksi_tw2_target,
-                    'renaksi_tw3_target' => $rb->renaksi_tw3_target,
-                    'renaksi_tw4_target' => $rb->renaksi_tw4_target,
                     'tw1_rp' => $rb->tw1_rp,
+                    'renaksi_tw2_target' => $rb->renaksi_tw2_target,
                     'tw2_rp' => $rb->tw2_rp,
+                    'renaksi_tw3_target' => $rb->renaksi_tw3_target,
                     'tw3_rp' => $rb->tw3_rp,
+                    'renaksi_tw4_target' => $rb->renaksi_tw4_target,
                     'tw4_rp' => $rb->tw4_rp,
                     'realisasi_tw1_target' => $rb->realisasi_tw1_target,
                     'realisasi_tw1_rp' => $rb->realisasi_tw1_rp,
@@ -250,112 +264,146 @@ class RBGeneralController extends Controller
                     'realisasi_tw3_rp' => $rb->realisasi_tw3_rp,
                     'realisasi_tw4_target' => $rb->realisasi_tw4_target,
                     'realisasi_tw4_rp' => $rb->realisasi_tw4_rp,
+                    'anggaran_tahun' => $rb->anggaran_tahun,
                     'rumus' => $rb->rumus,
                     'catatan_evaluasi' => $rb->catatan_evaluasi,
                     'catatan_perbaikan' => $rb->catatan_perbaikan,
                     'unit_kerja' => $rb->unit_kerja,
                     'pelaksana' => $rb->pelaksana,
+                    'isInspektorat' => $user->isInspektorat()
                 ]
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data tidak ditemukan'
             ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
 
     /**
      * Update data RB General
+     * Inspektorat hanya bisa update catatan, OPD lain bisa update semua
      */
     public function update(Request $request, $id)
     {
-        // CEK AKSES - UPDATE DATA
-        $akses = AksesRb::where('jenis_rb', 'RB General')->first();
-        if (!$akses || !$akses->isAccessible()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Akses ditutup. Tidak dapat mengubah data.'
-            ], 403);
-        }
+        $user = Auth::user();
         
         try {
-            $validated = $request->validate([
-                'sasaran_strategi' => 'required|string|max:500',
-                'indikator_capaian' => 'required|string|max:500',
-                'target' => 'required|string|max:100',
-                'satuan' => 'required|string|max:50',
-                'rencana_aksi' => 'required|string',
-                'target_tahun' => 'nullable|string|max:100',
-                'anggaran_tahun' => 'nullable|string|max:100',
-                'renaksi_tw1_target' => 'nullable|string|max:100',
-                'renaksi_tw2_target' => 'nullable|string|max:100',
-                'renaksi_tw3_target' => 'nullable|string|max:100',
-                'renaksi_tw4_target' => 'nullable|string|max:100',
-                'realisasi_tw1_target' => 'nullable|string|max:100',
-                'realisasi_tw1_rp' => 'nullable|string|max:100',
-                'realisasi_tw2_target' => 'nullable|string|max:100',
-                'realisasi_tw2_rp' => 'nullable|string|max:100',
-                'realisasi_tw3_target' => 'nullable|string|max:100',
-                'realisasi_tw3_rp' => 'nullable|string|max:100',
-                'realisasi_tw4_target' => 'nullable|string|max:100',
-                'realisasi_tw4_rp' => 'nullable|string|max:100',
-                'rumus' => 'nullable|string|max:500',
-                'catatan_evaluasi' => 'nullable|string',
-                'catatan_perbaikan' => 'nullable|string',
-                'unit_kerja' => 'required|string|max:200',
-                'tw1_rp' => 'nullable|string|max:100',
-                'tw2_rp' => 'nullable|string|max:100',
-                'tw3_rp' => 'nullable|string|max:100',
-                'tw4_rp' => 'nullable|string|max:100',
-                'no' => 'nullable|string|max:20',
-                'satuan_output' => 'nullable|string|max:50',
-                'indikator_output' => 'nullable|string|max:500',
-                'pelaksana' => 'nullable|string|max:200',
-            ]);
-
             $rb = RB_General::findOrFail($id);
 
-            $rb->update([
-                'sasaran_strategi' => $validated['sasaran_strategi'],
-                'indikator_capaian' => $validated['indikator_capaian'],
-                'target' => $validated['target'],
-                'satuan' => $validated['satuan'],
-                'rencana_aksi' => $validated['rencana_aksi'],
-                'target_tahun' => $validated['target_tahun'] ?? null,
-                'anggaran_tahun' => $validated['anggaran_tahun'] ?? null,
-                'renaksi_tw1_target' => $validated['renaksi_tw1_target'] ?? null,
-                'renaksi_tw2_target' => $validated['renaksi_tw2_target'] ?? null,
-                'renaksi_tw3_target' => $validated['renaksi_tw3_target'] ?? null,
-                'renaksi_tw4_target' => $validated['renaksi_tw4_target'] ?? null,
-                'realisasi_tw1_target' => $validated['realisasi_tw1_target'] ?? null,
-                'realisasi_tw1_rp' => $validated['realisasi_tw1_rp'] ?? null,
-                'realisasi_tw2_target' => $validated['realisasi_tw2_target'] ?? null,
-                'realisasi_tw2_rp' => $validated['realisasi_tw2_rp'] ?? null,
-                'realisasi_tw3_target' => $validated['realisasi_tw3_target'] ?? null,
-                'realisasi_tw3_rp' => $validated['realisasi_tw3_rp'] ?? null,
-                'realisasi_tw4_target' => $validated['realisasi_tw4_target'] ?? null,
-                'realisasi_tw4_rp' => $validated['realisasi_tw4_rp'] ?? null,
-                'rumus' => $validated['rumus'] ?? null,
-                'catatan_evaluasi' => $validated['catatan_evaluasi'] ?? null,
-                'catatan_perbaikan' => $validated['catatan_perbaikan'] ?? null,
-                'unit_kerja' => $validated['unit_kerja'],
-                'tw1_rp' => $validated['tw1_rp'] ?? null,
-                'tw2_rp' => $validated['tw2_rp'] ?? null,
-                'tw3_rp' => $validated['tw3_rp'] ?? null,
-                'tw4_rp' => $validated['tw4_rp'] ?? null,
-                'no' => $validated['no'] ?? null,
-                'satuan_output' => $validated['satuan_output'] ?? null,
-                'indikator_output' => $validated['indikator_output'] ?? null,
-                'pelaksana' => $validated['pelaksana'] ?? null,
-            ]);
+            // CEK AKSES UNTUK OPD NON-INSPEKTORAT
+            if (!$user->isInspektorat()) {
+                // Pastikan data milik OPD yang menginput
+                if ($rb->opd_penginput !== $user->unit_kerja) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda tidak memiliki akses ke data ini.'
+                    ], 403);
+                }
+            }
 
+            // CEK AKSES - Cek apakah akses dibuka
+            $akses = AksesRb::where('jenis_rb', 'RB General')->first();
+            if (!$akses || !$akses->isAccessible()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses ditutup. Tidak dapat mengubah data.'
+                ], 403);
+            }
+
+            if ($user->isInspektorat()) {
+                // Inspektorat: Hanya bisa update catatan
+                $validator = Validator::make($request->all(), [
+                    'catatan_evaluasi' => 'nullable|string',
+                    'catatan_perbaikan' => 'nullable|string',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validasi gagal',
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+
+                $rb->update([
+                    'catatan_evaluasi' => $request->catatan_evaluasi,
+                    'catatan_perbaikan' => $request->catatan_perbaikan,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Catatan berhasil diupdate'
+                ]);
+
+            } else {
+                // OPD lain: Bisa update semua field
+                $validator = Validator::make($request->all(), [
+                    'sasaran_strategi' => 'required|string',
+                    'indikator_capaian' => 'required|string',
+                    'target' => 'required|string',
+                    'satuan' => 'required|string',
+                    'rencana_aksi' => 'required|string',
+                    'target_tahun' => 'nullable|string',
+                    'anggaran_tahun' => 'nullable|string',
+                    'renaksi_tw1_target' => 'nullable|string',
+                    'renaksi_tw2_target' => 'nullable|string',
+                    'renaksi_tw3_target' => 'nullable|string',
+                    'renaksi_tw4_target' => 'nullable|string',
+                    'tw1_rp' => 'nullable|string',
+                    'tw2_rp' => 'nullable|string',
+                    'tw3_rp' => 'nullable|string',
+                    'tw4_rp' => 'nullable|string',
+                    'realisasi_tw1_target' => 'nullable|string',
+                    'realisasi_tw1_rp' => 'nullable|string',
+                    'realisasi_tw2_target' => 'nullable|string',
+                    'realisasi_tw2_rp' => 'nullable|string',
+                    'realisasi_tw3_target' => 'nullable|string',
+                    'realisasi_tw3_rp' => 'nullable|string',
+                    'realisasi_tw4_target' => 'nullable|string',
+                    'realisasi_tw4_rp' => 'nullable|string',
+                    'rumus' => 'nullable|string',
+                    'catatan_evaluasi' => 'nullable|string',
+                    'catatan_perbaikan' => 'nullable|string',
+                    'unit_kerja' => 'required|string',
+                    'satuan_output' => 'nullable|string',
+                    'indikator_output' => 'nullable|string',
+                    'pelaksana' => 'nullable|string',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validasi gagal',
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+
+                $validated = $validator->validated();
+                
+                // Jangan update opd_penginput
+                unset($validated['opd_penginput']);
+                
+                $rb->update($validated);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data RB General berhasil diupdate'
+                ]);
+            }
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
-                'success' => true,
-                'message' => 'Data RB General berhasil diupdate'
-            ]);
-
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -366,20 +414,34 @@ class RBGeneralController extends Controller
 
     /**
      * Hapus data RB General
+     * Inspektorat tidak boleh hapus data
      */
     public function destroy($id)
     {
-        // CEK AKSES - HAPUS DATA
-        $akses = AksesRb::where('jenis_rb', 'RB General')->first();
-        if (!$akses || !$akses->isAccessible()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Akses ditutup. Tidak dapat menghapus data.'
-            ], 403);
-        }
+        $user = Auth::user();
         
         try {
-            $rb = RB_General::findOrFail($id);
+            // CEK AKSES - Inspektorat tidak boleh hapus data
+            if ($user->isInspektorat()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Inspektorat tidak memiliki izin untuk menghapus data.'
+                ], 403);
+            }
+
+            // CEK AKSES - Cek apakah akses dibuka
+            $akses = AksesRb::where('jenis_rb', 'RB General')->first();
+            if (!$akses || !$akses->isAccessible()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses ditutup. Tidak dapat menghapus data.'
+                ], 403);
+            }
+
+            $rb = RB_General::where('id', $id)
+                ->where('opd_penginput', $user->unit_kerja)
+                ->firstOrFail();
+
             $rb->delete();
 
             return response()->json([
@@ -387,6 +449,11 @@ class RBGeneralController extends Controller
                 'message' => 'Data RB General berhasil dihapus'
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan atau bukan milik Anda'
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

@@ -33,7 +33,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div class="form-group">
                                 <label for="adminNo" class="block text-sm font-medium text-gray-700 mb-1">
-                                    NO 
+                                    NO
                                 </label>
                                 <input type="text" id="adminNo" name="no" readonly
                                     class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
@@ -380,48 +380,75 @@
                                     <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            < class="form-group">
                                 <label for="pelaksana" class="block text-sm font-medium text-gray-700 mb-1">
                                     PELAKSANA
                                 </label>
                                 <select id="pelaksana" name="pelaksana"
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                                     <option value="">Pilih Pelaksana</option>
-                                    <option value="Bagian Hukum Sekda">Bagian Hukum Sekretariat Daerah</option>
+
+                                    <!-- Inspektorat & Sekretariat -->
+                                    <option value="Inspektorat Daerah">Inspektorat Daerah</option>
+                                    <option value="Sekretariat Daerah">Sekretariat Daerah</option>
+                                    <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+                                    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah
+                                    </option>
                                     <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
                                     <option value="Bagian Perekonomian Setda">Bagian Perekonomian Setda</option>
-                                    <option value="Bakesbangpol">Bakesbangpol</option>
+                                    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
+                                    <option value="Bagian Tata Pembangunan">Bagian Tata Pembangunan</option>
+                                    <option value="Bagian Organisasi">Bagian Organisasi</option>
+
+                                    <!-- Badan -->
+                                    <option value="Badan Pendapatan Daerah">Badan Pendapatan Daerah</option>
+                                    <option value="Baperlitbang Kabupaten Karimun">Baperlitbang Kabupaten Karimun
+                                    </option>
                                     <option value="BPKAD">BPKAD</option>
-                                    <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan
-                                        Pencatatan Sipil</option>
-                                    <option value="Diskominfo">Diskominfo</option>
+                                    <option value="Bakesbangpol">Bakesbangpol</option>
+
+                                    <!-- Dinas -->
+                                    <option value="Dinas Penanaman Modal dan Pelayanan Satu Pintu">Dinas Penanaman Modal
+                                        dan Pelayanan Satu Pintu</option>
+                                    <option value="Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu">Dinas
+                                        Penanaman Modal dan Pelayanan Terpadu Satu Pintu</option>
+                                    <option value="Dinas Pangan dan Pertanian">Dinas Pangan dan Pertanian</option>
+                                    <option value="Dinas Pangan">Dinas Pangan</option>
+                                    <option value="Dinas Perikanan">Dinas Perikanan</option>
+                                    <option value="Dinas Pekerjaan Umum dan Penataan Ruang">Dinas Pekerjaan Umum dan
+                                        Penataan Ruang</option>
+                                    <option value="Dinas Perhubungan">Dinas Perhubungan</option>
+                                    <option value="Dinas Kesehatan">Dinas Kesehatan</option>
+                                    <option value="Dinas Pendidikan dan Kebudayaan">Dinas Pendidikan dan Kebudayaan
+                                    </option>
+                                    <option value="Dinas Pengendalian Penduduk, KB, PP, dan PA">Dinas Pengendalian
+                                        Penduduk, KB, PP, dan PA</option>
+                                    <option value="Dinas Pemberdayaan Perempuan dan Perlindungan Anak">Dinas
+                                        Pemberdayaan Perempuan dan Perlindungan Anak</option>
+                                    <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
+                                    <option value="Dinas Kepemudaan, dan Olahraga">Dinas Kepemudaan, dan Olahraga
+                                    </option>
+                                    <option value="Dinas Sosial">Dinas Sosial</option>
                                     <option value="Dinas Tenaga Kerja dan Perindustrian">Dinas Tenaga Kerja dan
                                         Perindustrian</option>
-                                    <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
-                                    <option value="Dinas Perpustakaan dan Arsip Daerah">Dinas Perpustakaan dan Arsip
-                                        Daerah</option>
-                                    <option value="Dinas Kesehatan">Dinas Kesehatan</option>
-                                    <option value="Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM">Dinas Koperasi,
-                                        Usaha Mikro, Perdagangan, dan ESDM
-                                    </option>
                                     <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
-                                    <option value="Dinas Pangan">Dinas Pangan</option>
-                                    <option value="Dinas Pangan dan Pertanian">Dinas Pangan dan Pertanian</option>
+                                    <option value="Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM">Dinas Koperasi,
+                                        Usaha Mikro, Perdagangan, dan ESDM</option>
+                                    <option value="Dinas Pariwisata">Dinas Pariwisata</option>
                                     <option value="Dinas Pemberdayaan Masyarakat Desa">Dinas Pemberdayaan Masyarakat
                                         Desa</option>
-                                    <option value="Dinas Pengendalian Penduduk">Dinas Pengendalian Penduduk, KB, PP, dan
-                                        PA</option>
-                                    <option value="Dinas Perhubungan">Dinas Perhubungan</option>
-                                    <option value="Dinas Perikanan">Dinas Perikanan</option>
                                     <option value="Dinas Perumahan Rakyat dan Kawasan Pemukiman">Dinas Perumahan Rakyat
                                         dan Kawasan Pemukiman</option>
                                     <option value="Dinas Pertanian">Dinas Pertanian</option>
-                                    <option value="Dinas Pendidikan dan Kebudayaan">Dinas Pendidikan dan Kebudayaan
-                                    </option>
-                                    <option value="Dinas Pekerjaan Umum dan Penataan Ruang">Dinas Pekerjaan Umum dan
-                                        Penataan Ruang</option>
-                                    <option value="Dinas Sosial">Dinas Sosial</option>
+                                    <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan
+                                        Pencatatan Sipil</option>
+                                    <option value="Dinas Perpustakaan dan Arsip Daerah">Dinas Perpustakaan dan Arsip
+                                        Daerah</option>
                                     <option value="DPMPTSP">DPMPTSP</option>
+                                    <option value="Diskominfo">Diskominfo</option>
+                                    <option value="Satpol PP">Satpol PP</option>
+
+                                    <!-- Kecamatan -->
                                     <option value="Kecamatan Belat">Kecamatan Belat</option>
                                     <option value="Kecamatan Buru">Kecamatan Buru</option>
                                     <option value="Kecamatan Durai">Kecamatan Durai</option>
@@ -435,36 +462,53 @@
                                     <option value="Kecamatan Selat Gelam">Kecamatan Selat Gelam</option>
                                     <option value="Kecamatan Sugie Besar">Kecamatan Sugie Besar</option>
                                     <option value="Kecamatan Tebing">Kecamatan Tebing</option>
+                                    <option value="Kecamatan Ungar">Kecamatan Ungar</option>
                                     <option value="Kecamatan Unggar">Kecamatan Unggar</option>
-                                    <option value="PTSP">PTSP</option>
+
+                                    <!-- Rumah Sakit -->
                                     <option value="RSUD M.SANI">RSUD M.SANI</option>
-                                    <option value="RSUD Tj Batu kundur">RSUD Tanjung Batu Kundur</option>
-                                    <option value="Satpol PP">Satpol PP</option>
-                                    <option value="Sekretariat Daerah">Sekretariat Daerah</option>
-                                    <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+                                    <option value="RSUD Tanjung Batu Kundur">RSUD Tanjung Batu Kundur</option>
+
+                                    <!-- Unit Lainnya -->
+                                    <option value="PTSP">PTSP</option>
                                     <option value="UKPBJ">UKPBJ</option>
                                     <option value="Unit Pelayan Publik">Unit Pelayan Publik</option>
+
+                                    <!-- UPT Puskesmas -->
+                                    <option value="UPT PUSKESMAS KARIMUN">UPT PUSKESMAS KARIMUN</option>
+                                    <option value="UPT PUSKESMAS TEBING">UPT PUSKESMAS TEBING</option>
+                                    <option value="UPT PUSKESMAS MERAL">UPT PUSKESMAS MERAL</option>
+                                    <option value="UPT PUSKESMAS MERAL BARAT">UPT PUSKESMAS MERAL BARAT</option>
+                                    <option value="UPT PUSKESMAS BURU">UPT PUSKESMAS BURU</option>
+                                    <option value="UPT PUSKESMAS TANJUNG BATU">UPT PUSKESMAS TANJUNG BATU</option>
+                                    <option value="UPT PUSKESMAS KUNDUR BARAT">UPT PUSKESMAS KUNDUR BARAT</option>
+                                    <option value="UPT PUSKESMAS TANJUNG BERLIAN">UPT PUSKESMAS TANJUNG BERLIAN</option>
+                                    <option value="UPT PUSKESMAS BELAT">UPT PUSKESMAS BELAT</option>
+                                    <option value="UPT PUSKESMAS UNGAR">UPT PUSKESMAS UNGAR</option>
+                                    <option value="UPT PUSKESMAS MORO">UPT PUSKESMAS MORO</option>
+                                    <option value="UPT PUSKESMAS DURAI">UPT PUSKESMAS DURAI</option>
+                                    <option value="UPT PUSKESMAS NIUR PERMAI">UPT PUSKESMAS NIUR PERMAI</option>
                                 </select>
-                            </div>
                         </div>
                     </div>
-
-                    <!-- Tombol Aksi -->
-                    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
-                        <button type="button"
-                            class="px-5 py-2.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors flex items-center justify-center gap-2 font-medium"
-                            onclick="closeModal('addModal')">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="px-5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 font-medium">
-                            Tambah
-                        </button>
-                    </div>
-                </form>
             </div>
+
+            <!-- Tombol Aksi -->
+            <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
+                <button type="button"
+                    class="px-5 py-2.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors flex items-center justify-center gap-2 font-medium"
+                    onclick="closeModal('addModal')">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="px-5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 font-medium">
+                    Tambah
+                </button>
+            </div>
+            </form>
         </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -474,7 +518,7 @@
             // Ambil semua nomor dari kolom NO di tabel yang tampil
             const noCells = document.querySelectorAll('#dataTable tbody td:first-child');
             let maxNumber = 0;
-            
+
             noCells.forEach(cell => {
                 const noText = cell.textContent.trim();
                 const noValue = parseInt(noText);
@@ -482,7 +526,7 @@
                     maxNumber = noValue;
                 }
             });
-            
+
             return maxNumber + 1;
         }
 
@@ -497,7 +541,7 @@
 
         // Override fungsi openModal yang sudah ada
         const originalOpenModal = window.openModal;
-        window.openModal = function(modalId) {
+        window.openModal = function (modalId) {
             if (originalOpenModal) {
                 originalOpenModal(modalId);
             } else {
@@ -516,7 +560,7 @@
         // Update nomor saat tahun berubah
         const yearFilter = document.getElementById('yearFilter');
         if (yearFilter) {
-            yearFilter.addEventListener('change', function() {
+            yearFilter.addEventListener('change', function () {
                 const selectedYear = this.value;
                 const tahunInput = document.getElementById('adminAddTahun');
                 const tahunSpans = document.querySelectorAll('.targetYearText, .renaksiYearText, .realisasiYearText');
@@ -556,64 +600,64 @@
 
         // Handle form submit
         // Handle form submit
-const adminForm = document.getElementById('adminTambahRenaksiRB');
-let isSubmitting = false;
+        const adminForm = document.getElementById('adminTambahRenaksiRB');
+        let isSubmitting = false;
 
-if (adminForm) {
-    adminForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
+        if (adminForm) {
+            adminForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-        if (isSubmitting) return;
-        isSubmitting = true;
+                if (isSubmitting) return;
+                isSubmitting = true;
 
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        // HAPUS loading spinner - cukup disable tombol
-        submitBtn.disabled = true;
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                // HAPUS loading spinner - cukup disable tombol
+                submitBtn.disabled = true;
 
-        try {
-            const formData = new FormData(this);
+                try {
+                    const formData = new FormData(this);
 
-            const response = await fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}'
+                    const response = await fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // HAPUS alert success
+                        closeModal('addModal');
+                        adminForm.reset();
+                        window.location.reload();
+                    } else {
+                        if (result.errors) {
+                            let errorMessage = 'Terjadi kesalahan validasi:\n';
+                            for (const field in result.errors) {
+                                errorMessage += `• ${result.errors[field][0]}\n`;
+                            }
+                            alert(errorMessage);
+                        } else {
+                            alert('Gagal menyimpan: ' + (result.message || 'Unknown error'));
+                        }
+                        isSubmitting = false;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan: ' + error.message);
+                    isSubmitting = false;
+                } finally {
+                    if (!isSubmitting) {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
                 }
             });
-
-            const result = await response.json();
-
-            if (result.success) {
-                // HAPUS alert success
-                closeModal('addModal');
-                adminForm.reset();
-                window.location.reload();
-            } else {
-                if (result.errors) {
-                    let errorMessage = 'Terjadi kesalahan validasi:\n';
-                    for (const field in result.errors) {
-                        errorMessage += `• ${result.errors[field][0]}\n`;
-                    }
-                    alert(errorMessage);
-                } else {
-                    alert('Gagal menyimpan: ' + (result.message || 'Unknown error'));
-                }
-                isSubmitting = false;
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan: ' + error.message);
-            isSubmitting = false;
-        } finally {
-            if (!isSubmitting) {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
         }
-    });
-}
     });
 </script>

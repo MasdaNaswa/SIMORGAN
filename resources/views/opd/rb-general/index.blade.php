@@ -14,7 +14,7 @@
                 <div class="relative group">
                     <button class="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 hover:bg-gray-200 transition-colors">
                         <i class="fas fa-user-circle text-xl md:text-2xl text-blue-600"></i>
-                        <span class="text-sm md:text-base">{{ $user->nama_opd }}</span>
+                        <span class="text-sm md:text-base">Admin OPD</span>
                     </button>
                     <div class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-opacity duration-200 z-50">
                         <ul class="py-2 text-gray-700 text-sm">

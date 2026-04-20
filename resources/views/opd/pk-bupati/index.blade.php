@@ -252,7 +252,7 @@
     <script>
         // Data akses dari server
         const canAccess = @json($canAccess ?? false);
-        const accessMessage = @json($accessMessage ?? 'Akses PK Bupati sedang ditutup.');
+        const accessMessage = @json($accessMessage ?? 'Akses PK Bupati sedang ditutup.  Anda hanya dapat melihat data, tidak dapat melakukan perubahan.');
         const aksesData = @json($akses ?? null);
 
         // Data indikator dari backend

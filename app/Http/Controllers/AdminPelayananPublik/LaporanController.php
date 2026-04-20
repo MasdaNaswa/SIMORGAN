@@ -12,7 +12,6 @@ class LaporanController extends Controller
 {
     // Daftar kategori yang akan ditampilkan sebagai tab
     private $kategoriTabs = [
-        'Semua' => 'Semua Laporan',
         'Laporan FKP' => 'Laporan FKP',
         'SOP' => 'SOP',
         'Probis' => 'Probis',
@@ -21,13 +20,14 @@ class LaporanController extends Controller
         'Inovasi OPD' => 'Inovasi OPD',
         'Tindak Lanjut FKP' => 'Tindak Lanjut FKP',
         'Laporan SKM' => 'Laporan SKM',
-        'Data Lain Lainnya' => 'Data Lain Lainnya'
+        'Data Lain Lainnya' => 'Data Lain Lainnya',
+        'Semua' => 'Semua Laporan'
     ];
 
     public function index(Request $request)
     {
         // Ambil kategori yang dipilih dari tab (default: semua)
-        $selectedKategori = $request->get('kategori', 'semua');
+        $selectedKategori = $request->get('kategori', 'Semua');
 
         // Query laporan
         $query = Laporan::with(['user', 'skmReport'])
@@ -35,8 +35,8 @@ class LaporanController extends Controller
             ->orderBy('tanggal_upload', 'desc');
 
         // Filter berdasarkan kategori jika dipilih dan bukan 'semua'
-        if ($selectedKategori !== 'semua') {
-            if ($selectedKategori === 'Lainnya') {
+        if ($selectedKategori !== 'Semua') {
+            if ($selectedKategori === 'Data Lain Lainnya') {
                 // Kategori "Lainnya" adalah semua kategori yang tidak termasuk dalam daftar utama
                 $mainCategories = array_keys(array_slice($this->kategoriTabs, 1, -1)); // exclude 'semua' dan 'Lainnya'
                 $query->whereNotIn('kategori', $mainCategories);

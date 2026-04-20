@@ -238,7 +238,7 @@
 <script>
 // ================ TAMBAHAN: Data akses dari server ================
 const canAccess = @json($canAccess ?? false);
-const accessMessage = @json($accessMessage ?? 'Akses RB Tematik sedang ditutup.');
+const accessMessage = @json($accessMessage ?? 'Akses RB Tematik sedang ditutup.  Anda hanya dapat melihat data, tidak dapat melakukan perubahan.');
 const aksesData = @json($akses ?? null);
 // ================ END TAMBAHAN ================
 

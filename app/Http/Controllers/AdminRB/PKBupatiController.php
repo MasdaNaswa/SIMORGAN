@@ -772,16 +772,6 @@ class PKBupatiController extends Controller
         $row = 6;
 
         foreach ($pkData as $item) {
-            // Bersihkan nilai rupiah
-            $paguTw1 = $this->cleanRupiah($item->pagu_anggaran_tw1);
-            $realisasiAnggaranTw1 = $this->cleanRupiah($item->realisasi_anggaran_tw1);
-            $paguTw2 = $this->cleanRupiah($item->pagu_anggaran_tw2);
-            $realisasiAnggaranTw2 = $this->cleanRupiah($item->realisasi_anggaran_tw2);
-            $paguTw3 = $this->cleanRupiah($item->pagu_anggaran_tw3);
-            $realisasiAnggaranTw3 = $this->cleanRupiah($item->realisasi_anggaran_tw3);
-            $paguTw4 = $this->cleanRupiah($item->pagu_anggaran_tw4);
-            $realisasiAnggaranTw4 = $this->cleanRupiah($item->realisasi_anggaran_tw4);
-
             // Set nilai ke sheet
             $sheet->setCellValue('A' . $row, $item->no);
             $sheet->setCellValue('B' . $row, $item->sasaran_strategis);
@@ -800,15 +790,15 @@ class PKBupatiController extends Controller
             $sheet->setCellValue('M' . $row, $item->target_tw4);
             $sheet->setCellValue('N' . $row, $item->realisasi_tw4);
 
-            // Pagu dan Realisasi Anggaran per Triwulan
-            $sheet->setCellValue('O' . $row, $paguTw1 ? number_format($paguTw1, 0, ',', '.') : '-');
-            $sheet->setCellValue('P' . $row, $realisasiAnggaranTw1 ? number_format($realisasiAnggaranTw1, 0, ',', '.') : '-');
-            $sheet->setCellValue('Q' . $row, $paguTw2 ? number_format($paguTw2, 0, ',', '.') : '-');
-            $sheet->setCellValue('R' . $row, $realisasiAnggaranTw2 ? number_format($realisasiAnggaranTw2, 0, ',', '.') : '-');
-            $sheet->setCellValue('S' . $row, $paguTw3 ? number_format($paguTw3, 0, ',', '.') : '-');
-            $sheet->setCellValue('T' . $row, $realisasiAnggaranTw3 ? number_format($realisasiAnggaranTw3, 0, ',', '.') : '-');
-            $sheet->setCellValue('U' . $row, $paguTw4 ? number_format($paguTw4, 0, ',', '.') : '-');
-            $sheet->setCellValue('V' . $row, $realisasiAnggaranTw4 ? number_format($realisasiAnggaranTw4, 0, ',', '.') : '-');
+            // Pagu dan Realisasi Anggaran per Triwulan (menggunakan formatRupiah)
+            $sheet->setCellValue('O' . $row, $this->formatRupiah($item->pagu_anggaran_tw1));
+            $sheet->setCellValue('P' . $row, $this->formatRupiah($item->realisasi_anggaran_tw1));
+            $sheet->setCellValue('Q' . $row, $this->formatRupiah($item->pagu_anggaran_tw2));
+            $sheet->setCellValue('R' . $row, $this->formatRupiah($item->realisasi_anggaran_tw2));
+            $sheet->setCellValue('S' . $row, $this->formatRupiah($item->pagu_anggaran_tw3));
+            $sheet->setCellValue('T' . $row, $this->formatRupiah($item->realisasi_anggaran_tw3));
+            $sheet->setCellValue('U' . $row, $this->formatRupiah($item->pagu_anggaran_tw4));
+            $sheet->setCellValue('V' . $row, $this->formatRupiah($item->realisasi_anggaran_tw4));
 
             $sheet->setCellValue('W' . $row, $item->penjelasan_analisis);
             $sheet->setCellValue('X' . $row, $item->penanggung_jawab);
@@ -877,7 +867,7 @@ class PKBupatiController extends Controller
     /**
      * Generate HTML untuk PDF
      */
-    private function generatePdfHtml($pkData, $year, $semester)
+     private function generatePdfHtml($pkData, $year, $semester)
     {
         $html = '
     <!DOCTYPE html>
@@ -983,16 +973,6 @@ class PKBupatiController extends Controller
             <tbody>';
 
         foreach ($pkData as $item) {
-            // Bersihkan nilai rupiah
-            $paguTw1 = $this->cleanRupiah($item->pagu_anggaran_tw1);
-            $realisasiAnggaranTw1 = $this->cleanRupiah($item->realisasi_anggaran_tw1);
-            $paguTw2 = $this->cleanRupiah($item->pagu_anggaran_tw2);
-            $realisasiAnggaranTw2 = $this->cleanRupiah($item->realisasi_anggaran_tw2);
-            $paguTw3 = $this->cleanRupiah($item->pagu_anggaran_tw3);
-            $realisasiAnggaranTw3 = $this->cleanRupiah($item->realisasi_anggaran_tw3);
-            $paguTw4 = $this->cleanRupiah($item->pagu_anggaran_tw4);
-            $realisasiAnggaranTw4 = $this->cleanRupiah($item->realisasi_anggaran_tw4);
-
             $html .= '
                 <tr>
                     <td class="text-center">' . $item->no . '</td>
@@ -1009,14 +989,14 @@ class PKBupatiController extends Controller
                     <td class="text-center">' . htmlspecialchars($item->realisasi_tw3) . '</td>
                     <td class="text-center">' . htmlspecialchars($item->target_tw4) . '</td>
                     <td class="text-center">' . htmlspecialchars($item->realisasi_tw4) . '</td>
-                    <td class="text-right">' . ($paguTw1 ? number_format($paguTw1, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($realisasiAnggaranTw1 ? number_format($realisasiAnggaranTw1, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($paguTw2 ? number_format($paguTw2, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($realisasiAnggaranTw2 ? number_format($realisasiAnggaranTw2, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($paguTw3 ? number_format($paguTw3, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($realisasiAnggaranTw3 ? number_format($realisasiAnggaranTw3, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($paguTw4 ? number_format($paguTw4, 0, ',', '.') : '-') . '</td>
-                    <td class="text-right">' . ($realisasiAnggaranTw4 ? number_format($realisasiAnggaranTw4, 0, ',', '.') : '-') . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->pagu_anggaran_tw1) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->realisasi_anggaran_tw1) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->pagu_anggaran_tw2) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->realisasi_anggaran_tw2) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->pagu_anggaran_tw3) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->realisasi_anggaran_tw3) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->pagu_anggaran_tw4) . '</td>
+                    <td class="text-right">' . $this->formatRupiah($item->realisasi_anggaran_tw4) . '</td>
                     <td>' . htmlspecialchars($item->penjelasan_analisis) . '</td>
                     <td>' . htmlspecialchars($item->penanggung_jawab) . '</td>
                 </tr>';
@@ -1031,23 +1011,65 @@ class PKBupatiController extends Controller
         return $html;
     }
 
-    /**
-     * Membersihkan format rupiah menjadi numeric
-     */
     private function cleanRupiah($value)
-    {
-        if (empty($value) || $value === '-') {
-            return null;
-        }
-
-        if (is_numeric($value)) {
-            return $value;
-        }
-
-        $cleaned = preg_replace('/[^0-9,-]/', '', $value);
-        $cleaned = str_replace(',', '.', $cleaned);
-        $cleaned = str_replace('.', '', $cleaned);
-
-        return is_numeric($cleaned) ? (float) $cleaned : null;
+{
+    if (empty($value) || $value === '-' || $value === null) {
+        return null;
     }
+
+    // Jika sudah numeric, return langsung
+    if (is_numeric($value)) {
+        return (float) $value;
+    }
+
+    // Convert ke string
+    $value = (string) $value;
+    
+    // Hapus spasi
+    $value = trim($value);
+    
+    // Hapus "Rp" atau "rp" (case insensitive)
+    $value = preg_replace('/^Rp\s*/i', '', $value);
+    
+    // Hapus semua titik (separator ribuan)
+    $value = str_replace('.', '', $value);
+    
+    // Ganti koma dengan titik (desimal)
+    $value = str_replace(',', '.', $value);
+    
+    // Hapus semua karakter non-numeric kecuali titik dan minus
+    $value = preg_replace('/[^0-9.-]/', '', $value);
+    
+    // Validasi hasil
+    if ($value === '' || $value === '-' || !is_numeric($value)) {
+        return null;
+    }
+    
+    return (float) $value;
+}
+
+/**
+ * Format angka ke format rupiah untuk tampilan Excel/PDF
+ */
+private function formatRupiah($value)
+{
+    if ($value === null || $value === '' || $value === '-') {
+        return '-';
+    }
+    
+    // Jika value sudah numeric
+    if (is_numeric($value)) {
+        return number_format($value, 0, ',', '.');
+    }
+    
+    // Jika value string, coba bersihkan dulu
+    $cleaned = $this->cleanRupiah($value);
+    if ($cleaned !== null) {
+        return number_format($cleaned, 0, ',', '.');
+    }
+    
+    // Jika tidak bisa dibersihkan, return original
+    return $value ?: '-';
+}
+
 }

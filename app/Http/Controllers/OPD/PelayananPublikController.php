@@ -12,12 +12,9 @@ use App\Models\Pengguna;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Mpdf\Mpdf;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
@@ -194,19 +191,14 @@ class PelayananPublikController extends Controller
                 'ikm_unit_layanan' => 'required|numeric|min:0|max:100',
                 'mutu_unit_layanan' => 'required|string|max:1',
                 'warna_grafik' => 'required|string',
-
-                // TAMBAH FIELD BARU UNTUK SIGNATURE
                 'nama_penandatangan' => 'required|string|max:90',
                 'nip_penandatangan' => 'required|string|max:19',
-
-                // Array data
                 'analisis_responden' => 'required|array',
                 'analisis_responden.*.no' => 'nullable|string',
                 'analisis_responden.*.karakteristik' => 'nullable|string',
                 'analisis_responden.*.indikator' => 'nullable|string',
                 'analisis_responden.*.jumlah' => 'nullable|integer',
                 'analisis_responden.*.persentase' => 'nullable|numeric',
-
                 'jenis_layanan' => 'required|array|min:1',
                 'jenis_layanan.*.no' => 'nullable|string',
                 'jenis_layanan.*.jenis_layanan' => 'required|string',
@@ -214,38 +206,103 @@ class PelayananPublikController extends Controller
                 'jenis_layanan.*.nilai' => 'required|array|size:9',
                 'jenis_layanan.*.nilai.*' => 'required|numeric|min:0|max:100',
                 'jenis_layanan.*.ikm_per_jenis' => 'required|numeric|min:0|max:100',
-
                 'rerata_ikm' => 'required|array|size:9',
                 'rerata_ikm.*' => 'required|numeric|min:0|max:100',
-
                 'rencana_tindak_lanjut' => 'nullable|array',
                 'rencana_tindak_lanjut.*.no' => 'nullable|string',
                 'rencana_tindak_lanjut.*.unsur' => 'nullable|string',
                 'rencana_tindak_lanjut.*.rencana' => 'nullable|string',
                 'rencana_tindak_lanjut.*.waktu' => 'nullable|string',
                 'rencana_tindak_lanjut.*.penanggung_jawab' => 'nullable|string',
-
                 'tren_skm' => 'nullable|array',
                 'tren_skm.*.tahun' => 'nullable|integer',
                 'tren_skm.*.ikm' => 'nullable|numeric',
                 'tren_skm.*.mutu' => 'nullable|string',
-
                 'hasil_skm_sebelumnya' => 'nullable|array',
                 'hasil_skm_sebelumnya.*.no' => 'nullable|string',
                 'hasil_skm_sebelumnya.*.unsur' => 'nullable|string',
                 'hasil_skm_sebelumnya.*.ikm' => 'nullable|numeric',
-
                 'tindak_lanjut_sebelumnya' => 'nullable|array',
                 'tindak_lanjut_sebelumnya.*.no' => 'nullable|string',
                 'tindak_lanjut_sebelumnya.*.rencana' => 'nullable|string',
                 'tindak_lanjut_sebelumnya.*.status' => 'nullable|string',
                 'tindak_lanjut_sebelumnya.*.deskripsi' => 'nullable|string',
                 'tindak_lanjut_sebelumnya.*.dokumentasi' => 'nullable|file|mimes:jpg,jpeg,png|max:6048',
-
-                // File uploads
                 'kuesioner_file' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
                 'dokumentasi_foto' => 'nullable|array',
                 'dokumentasi_foto.*' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            ], [
+                // ==================== PESAN ERROR YANG MANUSIAWI ====================
+                'triwulan.required' => '❌ Triwulan belum dipilih. Silakan pilih triwulan laporan.',
+                'triwulan.in' => '❌ Triwulan yang dipilih tidak valid. Pilih antara 1, 2, 3, atau 4.',
+                
+                'tahun.required' => '❌ Tahun belum diisi. Silakan isi tahun pelaksanaan SKM.',
+                'tahun.integer' => '❌ Tahun harus berupa angka.',
+                'tahun.min' => '❌ Tahun minimal 2020.',
+                
+                'jabatan_penandatangan.required' => '❌ Jabatan penandatangan belum diisi. Siapa yang akan menandatangani laporan?',
+                
+                'nama_penandatangan.required' => '❌ Nama penandatangan belum diisi. Silakan isi nama lengkap penandatangan.',
+                
+                'nip_penandatangan.required' => '❌ NIP penandatangan belum diisi. Silakan isi NIP yang valid.',
+                
+                'tanggal_pengesahan.required' => '❌ Tanggal pengesahan belum dipilih. Kapan laporan ini disahkan?',
+                'tanggal_pengesahan.date' => '❌ Format tanggal pengesahan tidak valid.',
+                
+                'latar_belakang.required' => '❌ Latar belakang belum diisi. Ceritakan alasan pelaksanaan SKM.',
+                'latar_belakang.min' => '❌ Latar belakang terlalu pendek. Minimal 10 karakter.',
+                
+                'tujuan_manfaat.required' => '❌ Tujuan dan manfaat belum diisi. Apa tujuan pelaksanaan SKM ini?',
+                'tujuan_manfaat.min' => '❌ Tujuan dan manfaat terlalu pendek. Minimal 10 karakter.',
+                
+                'metode_pengumpulan.required' => '❌ Metode pengumpulan data belum diisi. Bagaimana cara mengumpulkan data survei?',
+                'metode_pengumpulan.min' => '❌ Metode pengumpulan data terlalu pendek. Minimal 10 karakter.',
+                
+                'waktu_pelaksanaan_bulan.required' => '❌ Waktu pelaksanaan belum diisi. Berapa bulan pelaksanaan SKM?',
+                'waktu_pelaksanaan_bulan.integer' => '❌ Waktu pelaksanaan harus berupa angka.',
+                'waktu_pelaksanaan_bulan.min' => '❌ Waktu pelaksanaan minimal 1 bulan.',
+                'waktu_pelaksanaan_bulan.max' => '❌ Waktu pelaksanaan maksimal 12 bulan.',
+                
+                'jumlah_populasi.required' => '❌ Jumlah populasi belum diisi. Berapa jumlah populasi pengguna layanan?',
+                'jumlah_populasi.integer' => '❌ Jumlah populasi harus berupa angka.',
+                'jumlah_populasi.min' => '❌ Jumlah populasi minimal 1 orang.',
+                
+                'jumlah_sampel.required' => '❌ Jumlah sampel belum diisi. Berapa jumlah sampel yang diambil?',
+                'jumlah_sampel.integer' => '❌ Jumlah sampel harus berupa angka.',
+                'jumlah_sampel.min' => '❌ Jumlah sampel minimal 1 orang.',
+                
+                'kesimpulan.required' => '❌ Kesimpulan belum diisi. Simpulkan hasil survei yang telah dilakukan.',
+                'kesimpulan.min' => '❌ Kesimpulan terlalu pendek. Minimal 10 karakter.',
+                
+                'saran.required' => '❌ Saran belum diisi. Berikan saran untuk perbaikan layanan ke depan.',
+                'saran.min' => '❌ Saran terlalu pendek. Minimal 10 karakter.',
+                
+                'ikm_unit_layanan.required' => '❌ IKM Unit Layanan belum diisi. Hitung dan isi nilai IKM keseluruhan.',
+                'ikm_unit_layanan.numeric' => '❌ IKM Unit Layanan harus berupa angka.',
+                'ikm_unit_layanan.min' => '❌ IKM Unit Layanan minimal 0.',
+                'ikm_unit_layanan.max' => '❌ IKM Unit Layanan maksimal 100.',
+                
+                'mutu_unit_layanan.required' => '❌ Mutu Unit Layanan belum diisi. Tentukan mutu layanan (A/B/C/D).',
+                
+                'warna_grafik.required' => '❌ Warna grafik belum dipilih. Pilih warna untuk tampilan grafik.',
+                
+                // Analisis Responden
+                'analisis_responden.required' => '❌ Data analisis responden belum lengkap. Silakan isi karakteristik responden.',
+                
+                // Jenis Layanan
+                'jenis_layanan.required' => '❌ Minimal satu jenis layanan harus diisi.',
+                'jenis_layanan.min' => '❌ Minimal satu jenis layanan harus diisi.',
+                'jenis_layanan.*.jenis_layanan.required' => '❌ Nama layanan wajib diisi untuk setiap baris layanan.',
+                'jenis_layanan.*.jumlah_responden.required' => '❌ Jumlah responden wajib diisi untuk setiap jenis layanan.',
+                'jenis_layanan.*.nilai.required' => '❌ Nilai untuk setiap unsur layanan wajib diisi.',
+                'jenis_layanan.*.ikm_per_jenis.required' => '❌ IKM per jenis layanan wajib dihitung dan diisi.',
+                
+                // Rerata IKM
+                'rerata_ikm.required' => '❌ Rerata IKM per unsur wajib diisi.',
+                'rerata_ikm.*.required' => '❌ Rerata IKM untuk setiap unsur wajib diisi.',
+                'rerata_ikm.*.numeric' => '❌ Rerata IKM harus berupa angka.',
+                'rerata_ikm.*.min' => '❌ Rerata IKM minimal 0.',
+                'rerata_ikm.*.max' => '❌ Rerata IKM maksimal 100.',
             ]);
 
             if ($validator->fails()) {
@@ -253,7 +310,7 @@ class PelayananPublikController extends Controller
                 return back()
                     ->withErrors($validator)
                     ->withInput()
-                    ->with('error', 'Validasi gagal: ' . implode(', ', $validator->errors()->all()));
+                    ->with('error', 'Mohon periksa kembali isian formulir. Ada beberapa field yang perlu dilengkapi.');
             }
 
             $validated = $validator->validated();

@@ -44,9 +44,9 @@
                             @php
                                 $categories = [
                                     'semua' => ['label' => 'Semua Laporan', 'color' => 'gray'],
+                                     'Anjab & ABK' => ['label' => 'Anjab & ABK', 'color' => 'blue'],
+                                     'Evaluasi Jabatan' => ['label' => 'Evaluasi Jabatan', 'color' => 'green'],
                                     'Petajab' => ['label' => 'Peta Jabatan', 'color' => 'purple'],
-                                    'Anjab & ABK' => ['label' => 'Anjab & ABK', 'color' => 'blue'],
-                                    'Evaluasi Jabatan' => ['label' => 'Evaluasi Jabatan', 'color' => 'green'],
                                 ];
                             @endphp
                             

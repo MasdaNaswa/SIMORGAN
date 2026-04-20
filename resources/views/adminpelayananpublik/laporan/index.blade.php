@@ -43,7 +43,7 @@
                         <nav class="flex flex-nowrap min-w-full gap-1 py-2">
                             @php
                                 $categories = [
-                                    'Semua' => ['label' => 'Semua Laporan', 'color' => 'gray'],
+                                'Semua' => ['label' => 'Semua Laporan', 'color' => 'gray'],
                                     'Data Lain Lainnya' => ['label' => 'Data Lainnya', 'color' => 'gray'],
                                     'Inovasi OPD' => ['label' => 'Inovasi OPD', 'color' => 'orange'],
                                     'Kode Etik' => ['label' => 'Kode Etik', 'color' => 'red'],

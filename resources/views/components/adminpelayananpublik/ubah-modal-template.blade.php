@@ -1,7 +1,7 @@
 <div id="editTemplateModal{{ $template->id_template }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
         <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <i class="fas fa-edit text-yellow-600"></i> Edit Template
+            <i class="fas fa-edit text-yellow-600"></i> Ubah Template
         </h2>
 
         <form action="{{ route('adminpelayananpublik.template.update', $template->id_template) }}" method="POST" enctype="multipart/form-data" class="space-y-4">

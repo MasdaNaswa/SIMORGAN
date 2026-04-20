@@ -15,9 +15,9 @@
                 <select name="status" id="statusInput"
                     class="border border-gray-300 rounded p-2 text-sm w-full focus:ring-2 focus:ring-green-400 focus:outline-none">
                     <option value="">-- Pilih Status --</option>
-                    <option value="diproses">Diproses</option>
-                    <option value="disetujui">Disetujui</option>
-                    <option value="revisi">Revisi</option>
+                    <option value="Diproses">Diproses</option>
+                    <option value="Disetujui">Disetujui</option>
+                    <option value="Revisi">Revisi</option>
                 </select>
             </div>
 
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function toggleCatatan() {
         const val = statusSelect.value.toLowerCase();
 
-        if (val === "revisi") {
+        if (val === "Revisi") {
             catatanInput.disabled = false;
             catatanInput.style.background = "white";
         } else {

@@ -43,9 +43,9 @@
             <!-- Tabs Navigation -->
             <div class="tabs flex border-b border-gray-200 mb-6 overflow-x-auto">
                 <div class="tab py-3 px-5 cursor-pointer border-b-2 border-transparent transition-all font-medium text-gray-600 hover:text-primary whitespace-nowrap"
-                    data-tab="template">Download Template</div>
+                    data-tab="template">Unduh Template</div>
                 <div class="tab py-3 px-5 cursor-pointer border-b-2 border-transparent transition-all font-medium text-gray-600 hover:text-primary whitespace-nowrap"
-                    data-tab="upload">Unggah Dokumen</div>
+                    data-tab="upload">Unggah Laporan</div>
                 <div class="tab py-3 px-5 cursor-pointer border-b-2 border-transparent transition-all font-medium text-gray-600 hover:text-primary whitespace-nowrap"
                     data-tab="skm">Form SKM</div>
     <div class="tab py-3 px-5 cursor-pointer border-b-2 border-transparent transition-all font-medium text-gray-600 hover:text-primary whitespace-nowrap"

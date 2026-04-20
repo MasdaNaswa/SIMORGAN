@@ -23,7 +23,7 @@ class KelolaAkunController extends Controller
         $akun = Pengguna::where('role', 'OPD')
             ->where('created_by', 'ADMIN_PELAYANAN_PUBLIK')
             ->orderBy('created_at', 'desc')
-            ->paginate(10); // Pagination 10 data per halaman
+            ->paginate(10);
 
         return view('adminpelayananpublik.kelola-akun.index', compact('akun'));
     }
@@ -116,17 +116,23 @@ class KelolaAkunController extends Controller
                 'unit_kerja' => $validated['nama_opd'],
             ]);
 
-            // Kirim email password menggunakan view
-            try {
-                $this->sendPasswordEmail(Auth::user(), $akunBaru->email, $akunBaru->nama_opd, $passwordPlain);
-            } catch (\Exception $e) {
-                \Log::error('Gagal kirim email: ' . $e->getMessage());
+            // Kirim email password dengan refresh token otomatis
+            $emailSent = $this->sendPasswordEmailWithAutoRefresh(Auth::user(), $akunBaru->email, $akunBaru->nama_opd, $passwordPlain);
+            
+            if (!$emailSent) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Akun berhasil ditambahkan, tetapi email password gagal dikirim. Silahkan cek koneksi Gmail Anda.',
+                    'data' => $akunBaru,
+                    'email_sent' => false
+                ]);
             }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Akun OPD berhasil ditambahkan',
-                'data' => $akunBaru
+                'data' => $akunBaru,
+                'email_sent' => true
             ]);
 
         } catch (\Exception $e) {
@@ -166,70 +172,159 @@ class KelolaAkunController extends Controller
     }
 
     // =====================================================
-    // Fungsi kirim email password menggunakan view
+    // FUNGSI UTAMA: Kirim email dengan auto refresh token
     // =====================================================
-    private function sendPasswordEmail($admin, $userEmail, $userNama, $passwordPlain)
+    private function sendPasswordEmailWithAutoRefresh($admin, $userEmail, $userNama, $passwordPlain)
     {
-        // Pastikan admin sudah connect Gmail
-        if (!$admin || !isset($admin->gmail_token)) {
-            \Log::warning('Admin tidak memiliki token Gmail');
-            return;
+        try {
+            // Cek apakah admin memiliki token
+            if (!$admin || !isset($admin->gmail_token)) {
+                \Log::warning('Admin tidak memiliki token Gmail');
+                return false;
+            }
+
+            // Decode token
+            $tokenArray = json_decode($admin->gmail_token, true);
+            if (!$tokenArray || !isset($tokenArray['access_token'])) {
+                \Log::warning('Token Gmail tidak valid');
+                return false;
+            }
+
+            // Inisialisasi Google Client
+            $client = new Google_Client();
+            $client->setClientId(config('services.google.client_id'));
+            $client->setClientSecret(config('services.google.client_secret'));
+            $client->setAccessToken($tokenArray);
+            $client->setAccessType('offline');
+            $client->setIncludeGrantedScopes(true);
+
+            // CEK DAN REFRESH TOKEN JIKA EXPIRED
+            $tokenRefreshed = false;
+            if ($client->isAccessTokenExpired()) {
+                \Log::info('Token Gmail expired, mencoba refresh...');
+                
+                if (isset($tokenArray['refresh_token'])) {
+                    try {
+                        // Refresh dengan refresh_token
+                        $client->fetchAccessTokenWithRefreshToken($tokenArray['refresh_token']);
+                        $newToken = $client->getAccessToken();
+                        
+                        // Simpan token baru ke database
+                        $admin->gmail_token = json_encode($newToken);
+                        $admin->save();
+                        
+                        $tokenRefreshed = true;
+                        \Log::info('Token Gmail berhasil direfresh');
+                    } catch (\Exception $e) {
+                        \Log::error('Gagal refresh token: ' . $e->getMessage());
+                        // Hapus token yang bermasalah
+                        $admin->gmail_token = null;
+                        $admin->save();
+                        return false;
+                    }
+                } else {
+                    \Log::error('Tidak ada refresh_token, perlu connect ulang');
+                    // Hapus token yang tidak lengkap
+                    $admin->gmail_token = null;
+                    $admin->save();
+                    return false;
+                }
+            }
+
+            // Render view email
+            $bladeHtml = view('emails.akun-opd', [
+                'nama_opd' => $userNama,
+                'email' => $userEmail,
+                'password' => $passwordPlain
+            ])->render();
+
+            // Ubah CSS menjadi inline style
+            $cssToInline = new CssToInlineStyles();
+            $htmlInline = $cssToInline->convert($bladeHtml);
+
+            // Buat service Gmail
+            $service = new Google_Service_Gmail($client);
+
+            // Buat pesan email
+            $subject = 'Akun OPD Baru - Monitoring Bagor';
+            $rawMessage = "From: {$admin->email}\r\n";
+            $rawMessage .= "To: {$userEmail}\r\n";
+            $rawMessage .= "Subject: {$subject}\r\n";
+            $rawMessage .= "Content-Type: text/html; charset=UTF-8\r\n\r\n";
+            $rawMessage .= $htmlInline;
+
+            // Encode base64 URL-safe
+            $encodedMessage = base64_encode($rawMessage);
+            $encodedMessage = str_replace(['+', '/', '='], ['-', '_', ''], $encodedMessage);
+
+            $message = new Google_Service_Gmail_Message();
+            $message->setRaw($encodedMessage);
+
+            // Kirim pesan
+            $service->users_messages->send('me', $message);
+            \Log::info('Email berhasil dikirim ke: ' . $userEmail . ($tokenRefreshed ? ' (token auto-refresh)' : ''));
+            
+            return true;
+            
+        } catch (\Google\Service\Exception $e) {
+            // Error khusus Google API
+            \Log::error('Google API Error saat kirim email: ' . $e->getMessage());
+            
+            // Cek jika error karena auth (401)
+            if ($e->getCode() == 401) {
+                // Hapus token yang tidak valid
+                $admin->gmail_token = null;
+                $admin->save();
+                \Log::warning('Token Gmail tidak valid, sudah direset. User perlu connect ulang.');
+            }
+            
+            return false;
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim email OPD: ' . $e->getMessage());
+            return false;
         }
+    }
 
-        // Render view email
-        $bladeHtml = view('emails.akun-opd', [
-            'nama_opd' => $userNama,
-            'email' => $userEmail,
-            'password' => $passwordPlain
-        ])->render();
-
-        // Ubah CSS menjadi inline style untuk kompatibilitas email client
-        $cssToInline = new CssToInlineStyles();
-        $htmlInline = $cssToInline->convert($bladeHtml);
-
-        // Ambil token
-        $tokenArray = json_decode($admin->gmail_token, true);
+    // =====================================================
+    // FUNGSI TAMBAHAN: Cek status koneksi Gmail
+    // =====================================================
+    public function checkGmailStatus()
+    {
+        $user = Auth::user();
+        
+        if (!$user->gmail_token) {
+            return response()->json([
+                'connected' => false,
+                'message' => 'Gmail belum terhubung'
+            ]);
+        }
+        
+        // Cek apakah token masih valid
+        $tokenArray = json_decode($user->gmail_token, true);
+        
         if (!$tokenArray || !isset($tokenArray['access_token'])) {
-            \Log::warning('Token Gmail tidak valid');
-            return;
+            return response()->json([
+                'connected' => false,
+                'message' => 'Token tidak valid'
+            ]);
         }
-
+        
         $client = new Google_Client();
         $client->setClientId(config('services.google.client_id'));
         $client->setClientSecret(config('services.google.client_secret'));
         $client->setAccessToken($tokenArray);
-
-        // Refresh token jika expired
-        if ($client->isAccessTokenExpired() && isset($tokenArray['refresh_token'])) {
-            $client->fetchAccessTokenWithRefreshToken($tokenArray['refresh_token']);
-            $admin->gmail_token = json_encode($client->getAccessToken());
-            $admin->save();
+        
+        if ($client->isAccessTokenExpired()) {
+            return response()->json([
+                'connected' => false,
+                'message' => 'Token expired, silahkan connect ulang'
+            ]);
         }
-
-        $service = new Google_Service_Gmail($client);
-
-        // Buat pesan email
-        $subject = 'Akun OPD Baru - Monitoring Bagor';
-        $rawMessage = "From: {$admin->email}\r\n";
-        $rawMessage .= "To: {$userEmail}\r\n";
-        $rawMessage .= "Subject: {$subject}\r\n";
-        $rawMessage .= "Content-Type: text/html; charset=UTF-8\r\n\r\n";
-        $rawMessage .= $htmlInline;
-
-        // Encode base64 URL-safe
-        $encodedMessage = base64_encode($rawMessage);
-        $encodedMessage = str_replace(['+', '/', '='], ['-', '_', ''], $encodedMessage);
-
-        $message = new Google_Service_Gmail_Message();
-        $message->setRaw($encodedMessage);
-
-        // Kirim pesan
-        try {
-            $service->users_messages->send('me', $message);
-            \Log::info('Email berhasil dikirim ke: ' . $userEmail);
-        } catch (\Exception $e) {
-            \Log::error('Gagal mengirim email OPD: ' . $e->getMessage());
-            throw new \Exception('Email tidak terkirim. Silakan cek koneksi Gmail.');
-        }
+        
+        return response()->json([
+            'connected' => true,
+            'email' => $user->email,
+            'message' => 'Gmail terhubung dengan baik'
+        ]);
     }
 }

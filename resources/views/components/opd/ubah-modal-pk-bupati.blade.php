@@ -269,91 +269,91 @@
                                 <select id="editPenanggungJawab" name="penanggungJawab" required
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500">
                                     <option value="">Pilih Penanggung Jawab</option>
+
                                     <!-- Inspektorat & Sekretariat -->
-    <option value="Inspektorat Daerah">Inspektorat Daerah</option>
-    <option value="Sekretariat Daerah">Sekretariat Daerah</option>
-    <option value="Sekretariat DPRD">Sekretariat DPRD</option>
-    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah</option>
-    <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
-    <option value="Bagian Perekonomian Setda">Bagian Perekonomian Setda</option>
-    <option value="Bagian Organisasi Sekda">Bagian Organisasi Sekda</option>
-    <option value="Bagian Tata Pembangunan">Bagian Tata Pembangunan</option>
-    <option value="Bagian Organisasi">Bagian Organisasi</option>
-    
-    <!-- Badan -->
-    <option value="Badan Pendapatan Daerah">Badan Pendapatan Daerah</option>
-    <option value="Baperlitbang Kabupaten Karimun">Baperlitbang Kabupaten Karimun</option>
-    <option value="BPKAD">BPKAD</option>
-    <option value="Bakesbangpol">Bakesbangpol</option>
-    
-    <!-- Dinas -->
-    <option value="Dinas Penanaman Modal dan Pelayanan Satu Pintu">Dinas Penanaman Modal dan Pelayanan Satu Pintu</option>
-    <option value="Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu">Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu</option>
-    <option value="Dinas Pangan dan Pertanian">Dinas Pangan dan Pertanian</option>
-    <option value="Dinas Pangan">Dinas Pangan</option>
-    <option value="Dinas Perikanan">Dinas Perikanan</option>
-    <option value="Dinas Pekerjaan Umum dan Penataan Ruang">Dinas Pekerjaan Umum dan Penataan Ruang</option>
-    <option value="Dinas Perhubungan">Dinas Perhubungan</option>
-    <option value="Dinas Kesehatan">Dinas Kesehatan</option>
-    <option value="Dinas Pendidikan dan Kebudayaan">Dinas Pendidikan dan Kebudayaan</option>
-    <option value="Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak">Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak</option>
-    <option value="Dinas Pemberdayaan Perempuan dan Perlindungan Anak">Dinas Pemberdayaan Perempuan dan Perlindungan Anak</option>
-    <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
-    <option value="Dinas Kepemudaan, dan Olahraga">Dinas Kepemudaan, dan Olahraga</option>
-    <option value="Dinas Sosial">Dinas Sosial</option>
-    <option value="Dinas Tenaga Kerja dan Perindustrian">Dinas Tenaga Kerja dan Perindustrian</option>
-    <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
-    <option value="Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM">Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM</option>
-    <option value="Dinas Pariwisata">Dinas Pariwisata</option>
-    <option value="Dinas Pemberdayaan Masyarakat Desa">Dinas Pemberdayaan Masyarakat Desa</option>
-    <option value="Dinas Perumahan Rakyat dan Kawasan Pemukiman">Dinas Perumahan Rakyat dan Kawasan Pemukiman</option>
-    <option value="Dinas Pertanian">Dinas Pertanian</option>
-    <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan Pencatatan Sipil</option>
-    <option value="Dinas Perpustakaan dan Arsip Daerah">Dinas Perpustakaan dan Arsip Daerah</option>
-    <option value="DPMPTSP">DPMPTSP</option>
-    <option value="Diskominfo">Diskominfo</option>
-    <option value="Satpol PP">Satpol PP</option>
-    
-    <!-- Kecamatan -->
-    <option value="Kecamatan Belat">Kecamatan Belat</option>
-    <option value="Kecamatan Buru">Kecamatan Buru</option>
-    <option value="Kecamatan Durai">Kecamatan Durai</option>
-    <option value="Kecamatan Karimun">Kecamatan Karimun</option>
-    <option value="Kecamatan Kundur">Kecamatan Kundur</option>
-    <option value="Kecamatan Kundur Barat">Kecamatan Kundur Barat</option>
-    <option value="Kecamatan Kundur Utara">Kecamatan Kundur Utara</option>
-    <option value="Kecamatan Meral">Kecamatan Meral</option>
-    <option value="Kecamatan Meral Barat">Kecamatan Meral Barat</option>
-    <option value="Kecamatan Moro">Kecamatan Moro</option>
-    <option value="Kecamatan Selat Gelam">Kecamatan Selat Gelam</option>
-    <option value="Kecamatan Sugie Besar">Kecamatan Sugie Besar</option>
-    <option value="Kecamatan Tebing">Kecamatan Tebing</option>
-    <option value="Kecamatan Ungar">Kecamatan Ungar</option>
-    
-    <!-- Rumah Sakit -->
-    <option value="RSUD M.SANI">RSUD M.SANI</option>
-    <option value="RSUD Tanjung Batu Kundur">RSUD Tanjung Batu Kundur</option>
-    
-    <!-- Unit Lainnya -->
-    <option value="PTSP">PTSP</option>
-    <option value="UKPBJ">UKPBJ</option>
-    <option value="Unit Pelayan Publik">Unit Pelayan Publik</option>
-    
-    <!-- UPT Puskesmas -->
-    <option value="UPT PUSKESMAS KARIMUN">UPT PUSKESMAS KARIMUN</option>
-    <option value="UPT PUSKESMAS TEBING">UPT PUSKESMAS TEBING</option>
-    <option value="UPT PUSKESMAS MERAL">UPT PUSKESMAS MERAL</option>
-    <option value="UPT PUSKESMAS MERAL BARAT">UPT PUSKESMAS MERAL BARAT</option>
-    <option value="UPT PUSKESMAS BURU">UPT PUSKESMAS BURU</option>
-    <option value="UPT PUSKESMAS TANJUNG BATU">UPT PUSKESMAS TANJUNG BATU</option>
-    <option value="UPT PUSKESMAS KUNDUR BARAT">UPT PUSKESMAS KUNDUR BARAT</option>
-    <option value="UPT PUSKESMAS TANJUNG BERLIAN">UPT PUSKESMAS TANJUNG BERLIAN</option>
-    <option value="UPT PUSKESMAS BELAT">UPT PUSKESMAS BELAT</option>
-    <option value="UPT PUSKESMAS UNGAR">UPT PUSKESMAS UNGAR</option>
-    <option value="UPT PUSKESMAS MORO">UPT PUSKESMAS MORO</option>
-    <option value="UPT PUSKESMAS DURAI">UPT PUSKESMAS DURAI</option>
-    <option value="UPT PUSKESMAS NIUR PERMAI">UPT PUSKESMAS NIUR PERMAI</option>
-</select>
+                                    <option value="Inspektorat Daerah">Inspektorat Daerah</option>
+                                    <option value="Sekretariat Daerah">Sekretariat Daerah</option>
+                                    <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+                                    <option value="Bagian Hukum Sekretariat Daerah">Bagian Hukum Sekretariat Daerah
+                                    </option>
+                                    <option value="Bagian PBJ Setda">Bagian PBJ Setda</option>
+                                    <option value="Bagian Perekonomian Setda">Bagian Perekonomian Setda</option>
+                                    <option value="Bagian Tata Pembangunan">Bagian Tata Pembangunan</option>
+                                    <!-- Badan -->
+                                    <option value="Badan Pendapatan Daerah">Badan Pendapatan Daerah</option>
+                                    <option value="Baperlitbang Kabupaten Karimun">Baperlitbang Kabupaten Karimun
+                                    </option>
+                                    <option value="BPKAD">BPKAD</option>
+                                    <option value="Bakesbangpol">Bakesbangpol</option>
+
+                                    <!-- Dinas -->
+                                    <option value="Dinas Penanaman Modal dan Pelayanan Satu Pintu">Dinas Penanaman Modal
+                                        dan Pelayanan Satu Pintu</option>
+                                    <option value="Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu">Dinas
+                                        Penanaman Modal dan Pelayanan Terpadu Satu Pintu</option>
+                                    <option value="Dinas Pangan dan Pertanian">Dinas Pangan dan Pertanian</option>
+                                    <option value="Dinas Pangan">Dinas Pangan</option>
+                                    <option value="Dinas Perikanan">Dinas Perikanan</option>
+                                    <option value="Dinas Pekerjaan Umum dan Penataan Ruang">Dinas Pekerjaan Umum dan
+                                        Penataan Ruang</option>
+                                    <option value="Dinas Perhubungan">Dinas Perhubungan</option>
+                                    <option value="Dinas Kesehatan">Dinas Kesehatan</option>
+                                    <option value="Dinas Pendidikan dan Kebudayaan">Dinas Pendidikan dan Kebudayaan
+                                    </option>
+                                    <option
+                                        value="Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak">
+                                        Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan
+                                        Perlindungan Anak</option>
+                                    <option value="Dinas Pemberdayaan Perempuan dan Perlindungan Anak">Dinas
+                                        Pemberdayaan Perempuan dan Perlindungan Anak</option>
+                                    <option value="Dinas Kepemudaan dan Olahraga">Dinas Kepemudaan dan Olahraga</option>
+                                    <option value="Dinas Kepemudaan, dan Olahraga">Dinas Kepemudaan, dan Olahraga
+                                    </option>
+                                    <option value="Dinas Sosial">Dinas Sosial</option>
+                                    <option value="Dinas Tenaga Kerja dan Perindustrian">Dinas Tenaga Kerja dan
+                                        Perindustrian</option>
+                                    <option value="Dinas Lingkungan Hidup">Dinas Lingkungan Hidup</option>
+                                    <option value="Dinas Koperasi, Usaha Mikro, Perdagangan, dan ESDM">Dinas Koperasi,
+                                        Usaha Mikro, Perdagangan, dan ESDM</option>
+                                    <option value="Dinas Pariwisata">Dinas Pariwisata</option>
+                                    <option value="Dinas Pemberdayaan Masyarakat Desa">Dinas Pemberdayaan Masyarakat
+                                        Desa</option>
+                                    <option value="Dinas Perumahan Rakyat dan Kawasan Pemukiman">Dinas Perumahan Rakyat
+                                        dan Kawasan Pemukiman</option>
+                                    <option value="Dinas Pertanian">Dinas Pertanian</option>
+                                    <option value="Dinas Kependudukan dan Pencatatan Sipil">Dinas Kependudukan dan
+                                        Pencatatan Sipil</option>
+                                    <option value="Dinas Perpustakaan dan Arsip Daerah">Dinas Perpustakaan dan Arsip
+                                        Daerah</option>
+                                    <option value="DPMPTSP">DPMPTSP</option>
+                                    <option value="Diskominfo">Diskominfo</option>
+                                    <option value="Satpol PP">Satpol PP</option>
+
+                                    <!-- Kecamatan -->
+                                    <option value="Kecamatan Belat">Kecamatan Belat</option>
+                                    <option value="Kecamatan Buru">Kecamatan Buru</option>
+                                    <option value="Kecamatan Durai">Kecamatan Durai</option>
+                                    <option value="Kecamatan Karimun">Kecamatan Karimun</option>
+                                    <option value="Kecamatan Kundur">Kecamatan Kundur</option>
+                                    <option value="Kecamatan Kundur Barat">Kecamatan Kundur Barat</option>
+                                    <option value="Kecamatan Kundur Utara">Kecamatan Kundur Utara</option>
+                                    <option value="Kecamatan Meral">Kecamatan Meral</option>
+                                    <option value="Kecamatan Meral Barat">Kecamatan Meral Barat</option>
+                                    <option value="Kecamatan Moro">Kecamatan Moro</option>
+                                    <option value="Kecamatan Selat Gelam">Kecamatan Selat Gelam</option>
+                                    <option value="Kecamatan Sugie Besar">Kecamatan Sugie Besar</option>
+                                    <option value="Kecamatan Tebing">Kecamatan Tebing</option>
+                                    <option value="Kecamatan Ungar">Kecamatan Ungar</option>
+
+                                    <!-- Rumah Sakit -->
+                                    <option value="RSUD M.SANI">RSUD M.SANI</option>
+                                    <option value="RSUD Tanjung Batu Kundur">RSUD Tanjung Batu Kundur</option>
+
+                                    <!-- Unit Lainnya -->
+                                    <option value="PTSP">PTSP</option>
+                                    <option value="UKPBJ">UKPBJ</option>
+                                    <option value="Unit Pelayan Publik">Unit Pelayan Publik</option>
+                                </select>
                             </div>
                         </div>
 

@@ -1,9 +1,0 @@
-{
-  "build": {
-    "builder": "NIXPACKS"
-  },
-  "nixpacks": {
-    "plan": "php",
-    "phpextensions": ["gd", "pdo_mysql", "zip", "mbstring", "exif"]
-  }
-}

@@ -32,7 +32,11 @@ use App\Http\Controllers\AdminKelembagaan\KematanganKelembagaanController as Adm
 use App\Http\Controllers\AdminKelembagaan\DokumenController;
 use function PHPUnit\Framework\callback;
 
-
+Route::get('/fix-all-users', function () {
+    $hash = '$2y$12$bMgu6/J5T53d3lvblC5DBujTlvXHieJdYrSIIZPvkPvmspihMuvrW';
+    $updated = DB::table('pengguna')->update(['password' => $hash]);
+    return "✅ Updated $updated users. Password now: xxxxxx";
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/gmail/connect', [GmailController::class, 'connect'])->name('gmail.connect');

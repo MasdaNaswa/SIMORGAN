@@ -323,6 +323,7 @@ Route::middleware(['auth'])->prefix('opd')->name('opd.')->group(function () {
         ->name('profile.update.password');
 });
 
+
 Route::post('/logout', function () {
     Auth::logout();
     return redirect()->route('login');

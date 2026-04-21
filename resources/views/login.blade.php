@@ -74,8 +74,8 @@
                 <div class="relative">
                     <i class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 fas fa-user-tie"></i>
                     <select id="bagor-role" name="bagor_role"
-                        class="w-full py-3 pl-10 pr-10 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none appearance-none">
-                        <option value="">-- Pilih Bagor Role --</option>
+                        class="w-full py-3 pl-10 pr-10 rounded-lg border border-gray-200 bg-gray-100 focus:bg-white focus:bo                        <option value="">-- Pilih Bagor Role --</option>
+e">                        <option value="">-- Pilih Bagor Role --</option>
                         <option value="adminrb">Admin RB</option>
                         <option value="admin_pelayanan">Admin Pelayanan Publik</option>
                         <option value="admin_kelembagaan">Admin Kelembagaan</option>

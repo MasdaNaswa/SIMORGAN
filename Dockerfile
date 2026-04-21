@@ -27,9 +27,9 @@ RUN composer install --optimize-autoloader --no-interaction --ignore-platform-re
 
 # Setup Laravel
 RUN php artisan key:generate
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+// RUN php artisan config:cache
+//RUN php artisan route:cache
+//RUN php artisan view:cache
 
 # Permission
 RUN chmod -R 775 storage bootstrap/cache

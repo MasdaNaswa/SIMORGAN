@@ -37,4 +37,4 @@ RUN chmod -R 775 storage bootstrap/cache
 EXPOSE 8000
 
 # Buat .env dari environment variable Railway
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0"]
+CMD ["sh", "-c", "php -S 0.0.0.0:8000 -t public"]

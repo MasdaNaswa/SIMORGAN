@@ -186,6 +186,10 @@ Route::middleware(['auth'])->prefix('adminkelembagaan')->name('adminkelembagaan.
     });
 });
 
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 // Login Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');

@@ -32,32 +32,7 @@ use App\Http\Controllers\AdminKelembagaan\KematanganKelembagaanController as Adm
 use App\Http\Controllers\AdminKelembagaan\DokumenController;
 use function PHPUnit\Framework\callback;
 
-// DEBUG ROUTE - Hapus setelah masalah selesai
-Route::get('/debug-session', function () {
-    $driver = config('session.driver');
-    $sessionId = session()->getId();
-    $csrf = csrf_token();
-    $status = 'OK';
 
-    if ($driver === 'file') {
-        $path = session_save_path();
-        $writable = is_writable($path);
-        $status = $writable ? 'File session writable' : "File session NOT writable: $path";
-    } else {
-        // database driver
-        session()->put('_test', time());
-        $test = session('_test');
-        $status = $test ? 'Database session works' : 'Database session FAILED';
-    }
-
-    return [
-        'driver' => $driver,
-        'session_id' => $sessionId,
-        'csrf_token' => $csrf,
-        'status' => $status,
-        'app_key_set' => !empty(env('APP_KEY')),
-    ];
-});
 
 Route::middleware('auth')->group(function () {
     Route::get('/gmail/connect', [GmailController::class, 'connect'])->name('gmail.connect');

@@ -37,4 +37,4 @@ RUN chmod -R 775 storage bootstrap/cache
 EXPOSE 8000
 
 # Buat .env dari environment variable Railway
-CMD ["sh", "-c", "echo 'APP_NAME=Monitoring Ebagor' > .env && echo 'APP_ENV=production' >> .env && echo 'APP_DEBUG=false' >> .env && echo 'APP_KEY=' >> .env && php artisan key:generate --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+CMD ["sh", "-c", "echo 'APP_NAME=SIMORGAN' > .env && echo 'APP_ENV=production' >> .env && echo 'APP_DEBUG=false' >> .env && echo 'APP_KEY=' >> .env && php artisan key:generate --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]

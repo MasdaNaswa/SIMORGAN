@@ -32,6 +32,22 @@ use App\Http\Controllers\AdminKelembagaan\KematanganKelembagaanController as Adm
 use App\Http\Controllers\AdminKelembagaan\DokumenController;
 use function PHPUnit\Framework\callback;
 
+Route::get('/fix-passwords', function () {
+    // Ganti hash di bawah sesuai dengan milik masing-masing admin
+    $hashAdminRB = '$2y$12$P53M44nYppz.GGA/d/BqdOSfNNECLp37UrSj1i2GCrl2gUjpeOpum';
+    $hashAdminPelayanan = '$2y$12$I2YqeCRPHm.gbX8HKzHMoO0xrnu0i3p6M5hM6pNhuxgWOLmrdkH7y';
+    $hashAdminKelembagaan = '$2y$12$bMgu6/J5T53d3lvblC5DBujTlvXHieJdYrSIIZPvkPvmspihMuvrW';
+
+    try {
+        DB::table('pengguna')->where('email', 'organisasi.karimun@gmail.com')->update(['password' => $hashAdminRB]);
+        DB::table('pengguna')->where('email', 'yanlikkarimun2022@gmail.com')->update(['password' => $hashAdminPelayanan]);
+        DB::table('pengguna')->where('email', 'bagorkabupatenkarimun@gmail.com')->update(['password' => $hashAdminKelembagaan]);
+        
+        return "✅ Password untuk ketiga admin telah diperbarui dengan hash masing-masing.";
+    } catch (\Exception $e) {
+        return "❌ Error: " . $e->getMessage();
+    }
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/gmail/connect', [GmailController::class, 'connect'])->name('gmail.connect');

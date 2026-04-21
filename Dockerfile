@@ -26,7 +26,7 @@ COPY . .
 RUN composer install --optimize-autoloader --no-interaction --ignore-platform-req=ext-gd
 
 # Setup Laravel
-RUN php artisan key:generate
+# RUN php artisan key:generate
 #RUN php artisan config:cache
 #RUN php artisan route:cache
 #RUN php artisan view:cache

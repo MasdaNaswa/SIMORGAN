@@ -190,6 +190,16 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/lihat-akun', function () {
+    $users = DB::table('pengguna')->select('email', 'nama_opd', 'role')->get();
+    
+    if ($users->isEmpty()) {
+        return '❌ TIDAK ADA AKUN! Database kosong.';
+    }
+    
+    return response()->json($users);
+});
+
 // Login Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');

@@ -17,6 +17,13 @@
         </a>
       </li>
 
+      <!-- Kategori Laporan -->
+      <li class="nav-item">
+        <a href="{{ route('adminpelayananpublik.kategori.index') }}">
+          <i class="material-icons">library_books</i> <span>Kategori Laporan</span>
+        </a>
+      </li>
+
       <!-- Kelola Akun OPD -->
       <li class="nav-item">
         <a href="{{ route('adminpelayananpublik.kelola-akun.index') }}">
@@ -35,13 +42,6 @@
       <li class="nav-item">
         <a href="{{ route('adminpelayananpublik.template.index') }}">
           <i class="material-icons">description</i> <span>Template Laporan</span>
-        </a>
-      </li>
-
-      <!-- Kategori Laporan -->
-      <li class="nav-item">
-        <a href="{{ route('adminpelayananpublik.kategori.index') }}">
-          <i class="material-icons">library_books</i> <span>Kategori Laporan</span>
         </a>
       </li>
 

@@ -45,18 +45,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const catatanInput = document.getElementById('catatanInput');
 
     function toggleCatatan() {
-        const val = statusSelect.value.toLowerCase();
+    const val = statusSelect.value;
 
-        if (val === "Revisi") {
-            catatanInput.disabled = false;
-            catatanInput.style.background = "white";
-        } else {
-            catatanInput.disabled = true;
-            catatanInput.style.background = "#f1f1f1";
-            catatanInput.value = ""; // reset catatan
-        }
+    if (val === "Revisi") {
+        catatanInput.disabled = false;
+        catatanInput.style.background = "white";
+    } else {
+        catatanInput.disabled = true;
+        catatanInput.style.background = "#f1f1f1";
+        catatanInput.value = "";
     }
-
+}
     // Jalan saat status berubah
     statusSelect.addEventListener('change', toggleCatatan);
 

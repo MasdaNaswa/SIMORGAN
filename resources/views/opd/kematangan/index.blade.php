@@ -57,31 +57,30 @@
         <div class="flex flex-wrap gap-4">
 
             {{-- CARD 1 – KemenPAN RB --}}
-            <div class="bg-white border border-gray-300 rounded-2xl shadow-sm p-6 hover:shadow-md transition flex-shrink-0"
-                 style="max-width: 300px; flex: 1 0 auto;">
-                 
-                <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
-                    <i class="fas fa-external-link-alt text-blue-600 text-xl"></i>
-                </div>
+<div class="bg-white border border-gray-300 rounded-2xl shadow-sm p-6 hover:shadow-md transition flex-shrink-0"
+     style="max-width: 300px; flex: 1 0 auto;">
+     
+    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+        <i class="fas fa-external-link-alt text-blue-600 text-xl"></i>
+    </div>
 
-                <h2 class="text-lg font-bold text-gray-900 mb-2">Survei KemenPAN</h2>
-                <p class="text-sm text-gray-600 leading-relaxed mb-4">
-                    OPD dapat menilai kematangan kelembagaan oleh Kemenpan.
-                </p>
+    <h2 class="text-lg font-bold text-gray-900 mb-2">Survei KemenPAN</h2>
+    <p class="text-sm text-gray-600 leading-relaxed mb-4">
+        OPD dapat menilai kematangan kelembagaan oleh Kemenpan.
+    </p>
 
-                <button
-                    @click="
-                        @if($evaluasiKemenpan)
-                            modalInfoSurvei = true
-                        @else
-                            modalKemenpan = true
-                        @endif
-                    "
-                    class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-lg shadow hover:opacity-90 transition"
-                >
-                    Isi Survei
-                </button>
-            </div>
+    @if($evaluasiKemenpan)
+        <button @click="modalInfoSurvei = true"
+            class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-lg shadow hover:opacity-90 transition">
+            Isi Survei
+        </button>
+    @else
+        <a href="{{ route('kematangan.kemenpan.form') }}"
+            class="w-full block text-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-lg shadow hover:opacity-90 transition">
+            Isi Survei
+        </a>
+    @endif
+</div>
 
             {{-- CARD 2 – Kemendagri --}}
             <div class="bg-white border border-gray-300 rounded-2xl shadow-sm p-6 hover:shadow-md transition flex-shrink-0"
@@ -112,59 +111,6 @@
 
         </div>
     </main>
-
-    {{-- Modal KemenPAN-RB --}}
-    <div 
-        x-show="modalKemenpan"
-        x-cloak
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
-        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4"
-    >
-        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
-                <h3 class="text-xl font-bold">Survei KemenPAN</h3>
-                
-            </div>
-            
-            <!-- Konten komponen kemenpan -->
-            @include('components.opd.kemenpan', [
-                'action' => route('kematangan.kemenpan.submit'),
-                'cancelUrl' => 'javascript:voids(0)',
-                'user' => Auth::user()
-            ])
-        </div>
-    </div>
-
-    {{-- Modal Kemendagri --}}
-    <div 
-        x-show="modalKemendagri"
-        x-cloak
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
-        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4"
-    >
-        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
-                <h3 class="text-xl font-bold">Survei Kemendagri</h3>
-            </div>
-            
-            <!-- Konten komponen kemendagri -->
-            @include('components.opd.kemendagri', [
-                'action' => route('kematangan.kemendagri.submit'),
-                'cancelUrl' => 'javascript:void(0)',
-                'user' => Auth::user()
-            ])
-        </div>
-    </div>
 
     {{-- Modal Info Survei --}}
     <div 

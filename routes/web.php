@@ -282,6 +282,8 @@ Route::middleware(['auth'])->prefix('kematangan')->group(function () {
     // Halaman utama survei
     Route::get('/', [KematanganKelembagaanController::class, 'index'])->name('kematangan.index');
 
+      Route::get('/kemenpan/form', [KematanganKelembagaanController::class, 'kemenpanForm'])->name('kematangan.kemenpan.form');
+
     // Submit form KemenPAN
     Route::post('/kemenpan/submit', [KematanganKelembagaanController::class, 'submitKemenpan'])
         ->name('kematangan.kemenpan.submit');

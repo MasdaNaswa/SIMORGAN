@@ -195,8 +195,86 @@ class KematanganKelembagaanController extends Controller
     }
 
     /**
-     * Submit form Kemendagri
-     */
+ * Tampilkan halaman form survei KemenPAN 
+ */
+public function kemenpanForm()
+{
+    $user = Auth::user();
+    $isOPDTanpaUPTD = in_array($user->nama_opd, $this->opdTanpaUPTD);
+    
+    // Daftar pertanyaan Struktur (32 pertanyaan)
+    $questionsStruktur = [
+        "Desain organisasi yang ada saat ini perlu disesuaikan dengan ketentuan peraturan perundang-undangan.",
+        "Terdapat indikasi bahwa desain organisasi yang ada bersifat kompleks.",
+        "Terdapat indikasi bahwa desain organisasi yang ada bersifat sederhana.",
+        "Tingkatan unit organisasi yang ada saat ini perlu disesuaikan tugas dan fungsinya dari tingkatan unit organisasi paling atas sampai paling bawah.",
+        "Terdapat indikasi adanya tingkatan unit organisasi yang tugas dan fungsinya bersifat umum.",
+        "Terdapat indikasi adanya tingkatan unit organisasi yang tugas dan fungsinya bersifat spesifik.",
+        "Penataan perangkat daerah telah ditetapkan sesuai dengan substansi pewadahan dan/atau perumpunan urusan pemerintahan yang menjadi kewenangan daerah.",
+        "Jumlah Cabang Dinas/UPTD yang dibentuk menunjukkan indikasi melebihi kebutuhan. (Hanya untuk OPD yang memiliki UPTD)",
+        "Cabang Dinas/UPTD yang dibentuk dinilai secara sinergis mendukung tercapainya tujuan pembentukan organisasi. (Hanya untuk OPD yang memiliki UPTD)",
+        "Nomenklatur unit organisasi saat ini perlu disesuaikan dengan tugas dan fungsinya.",
+        "Jenjang jabatan yang ada sudah sesuai kebutuhan.",
+        "Jumlah jabatan pada setiap tingkatan sudah sesuai kebutuhan.",
+        "Jabatan-jabatan fungsional sudah memenuhi kebutuhan.",
+        "Penempatan jabatan fungsional mendukung efisiensi dan efektivitas unit operasional.",
+        "Tugas dan fungsi unit organisasi yang ada saat ini perlu dirumuskan secara jelas sesuai dengan strategi organisasi dalam peraturan tentang organisasi dan tata kerja.",
+        "Mekanisme pelaksanaan tugas dan fungsi serta kewenangan setiap unit kerja dari manajemen tertinggi sampai manajemen menengah ke bawah telah dituangkan secara jelas dalam prosedur formal yang berkekuatan hukum di dalam organisasi.",
+        "Mekanisme hubungan antar unit organisasi yang ada saat ini perlu dirumuskan secara jelas sesuai dengan strategi organisasi dalam peraturan tentang organisasi dan tata kerja.",
+        "Rencana strategis dituangkan secara jelas di dalam keputusan resmi organisasi.",
+        "Kebijakan-kebijakan organisasi selalu dituangkan secara jelas dan tegas di dalam keputusan resmi organisasi.",
+        "Seluruh proses kerja telah dituangkan secara sistematis di dalam peraturan tentang standar operasional prosedur.",
+        "Standarisasi pelayanan publik telah diformalkan.",
+        "Kewenangan pengambilan keputusan yang ada saat ini perlu dirumuskan secara jelas sesuai dengan strategi organisasi.",
+        "Setiap tingkatan manajemen dapat mengambil keputusan sesuai dengan kewenangan yang dimiliki.",
+        "Terdapat indikasi bahwa tingkatan manajemen yang lebih tinggi mengambil alih keputusan dari kewenangan manajemen yang lebih rendah (di bawahnya).",
+        "Terdapat indikasi bahwa tingkatan manajemen yang lebih rendah dapat mengambil keputusan melebihi kewenangannya.",
+        "Permasalahan yang bersifat lintas bidang atau sektoral telah dituangkan dalam Keputusan instansi pemerintah guna mencapai kinerja instansi induk.",
+        "Permasalahan yang bersifat lintas bidang atau sektoral harus diputuskan oleh manajemen tertinggi dari instansi induk.",
+        "Pimpinan utama instansi hanya membuat keputusan-keputusan yang bersifat strategis dan kebijakan.",
+        "Pimpinan madya pada tingkat manajemen menengah mempunyai wewenang untuk membuat keputusan-keputusan taktis dan manajerial.",
+        "Pimpinan pratama pada unit operasional mempunyai wewenang untuk membuat keputusan-keputusan teknis operasional.",
+        "Pendelegasian kewenangan membuat keputusan-keputusan telah diberikan oleh pimpinan instansi kepada pimpinan unit organisasi tingkat menengah.",
+        "Pendelegasian wewenang untuk melaksanakan tugas dan fungsi yang bersifat teknis dan operasional telah diberikan kepada pimpinan unit organisasi tingkat menengah ke pimpinan organisasi tingkat bawah."
+    ];
+
+    // Daftar pertanyaan Proses (30 pertanyaan)
+    $questionsProses = [
+        "Seluruh sasaran strategis dari atas sampai bawah terkait dengan visi dan misi organisasi.",
+        "Setiap proses kerja dalam Proses Bisnis/SOP memiliki keterkaitan dengan sasaran strategis.",
+        "Setiap proses kerja memiliki keterkaitan dengan jabatan dalam struktur organisasi.",
+        "Proses kerja unit bawah merupakan penjabaran dari proses kerja unit atas (vertikal).",
+        "Keterkaitan proses kerja antar unit telah dipetakan dengan baik.",
+        "Koordinasi antar unit kerja telah dilakukan dengan baik.",
+        "Keterkaitan proses kerja lintas sektor telah dipetakan.",
+        "Koordinasi lintas organisasi telah terlaksana dengan baik.",
+        "Struktur Organisasi dan Tata Kerja (SOTK) organisasi dari tingkatan manajemen tertinggi sampai tingkatan menengah ke bawah telah sesuai dengan peraturan perundangan.",
+        "Seluruh kepentingan strategis pemangku kepentingan organisasi, mulai dari tingkat manajemen tertinggi sampai tingkat manajemen menengah ke bawah telah dipetakan dengan baik.",
+        "Setiap proses kerja yang terkait dengan kebutuhan informasi publik dan tidak bersifat rahasia telah dijalankan secara transparan (transparansi).",
+        "Setiap tahapan pekerjaan yang terdapat di dalam proses kerja padaa tingkatan manajemen tertinggi sampai manajemen menengah ke bawah telah memiliki kesesuaian dan kejelasan fungsi, struktur, dan penanggung jawab pekerjaan (akuntabilitas).",
+        "Setiap proses kerja telah memiliki sistem dan mekanisme pertanggungjawaban (termasuk pelaporan) yang jelas (tanggung jawab).",
+        "Tidak terdapat indikasi intervensi yang signifikan di dalam setiap pelaksanaan proses kerja dalam organisasi, baik pada tingkatan manajemen tertinggi sampai dengan manajemen menengah ke bawah.",
+        "Aparat pelaksana proses kerja dapat melaksanakan tugas secara mandiri sesuai dengan kewenangan tugas pokok dan fungsinya masing-masing.",
+        "Standar operasional prosedur selalu diperbarui secara periodik.",
+        "Standar operasional prosedur sebagian besar (lebih dari 50%) dinilai perlu segera diperbaharui karena sudah tidak relevan dan telah dibuat lebih dari 5 (lima) tahun.",
+        "Organisasi selalu melakukan pengembangan terhadap sistem proses kerja.",
+        "Terdapat indikasi bahwa organisasi lebih berorientasi pada hal-hal yang bersifat rutinitas dibandingkan dengan hal-hal yang bersifat strategis.",
+        "Manajemen risiko organisasi telah diperkenalkan di dalam organisasi.",
+        "Organisasi telah memiliki kebijakan manajemen risiko yang memadai.",
+        "Risiko-risiko utama organisasi telah diidentifikasi dengan baik.",
+        "Risiko-risiko utama organisasi yang telah diidentifikasi belum diukur (peluang terjadinya maupun dampaknya) dengan metode yang memadai.",
+        "Organisasi belum melaksanakan kebijakan manajemen risiko.",
+        "Organisasi telah memiliki sistem monitoring risiko yang memadai.",
+        "Organisasi telah memiliki rancangan arsitektur penerapan Teknologi informasi.",
+        "Organisasi telah memiliki kebijakan IT (e-government) yang memadai.",
+        "Sebagian besar proses kerja telah memanfaatkan teknologi informasi secara memadai.",
+        "Sebagian besar proses kerja masih dilaksanakan secara manual.",
+        "Seluruh informasi publik terkait dengan keberadaan dan tupoksi organisasi telah dipublikasikan secara periodik di dalam website organisasi."
+    ];
+
+    return view('opd.kematangan.kemenpan', compact('user', 'questionsStruktur', 'questionsProses', 'isOPDTanpaUPTD'));
+}
+
     /**
  * Submit form Kemendagri
  */

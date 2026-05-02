@@ -448,7 +448,7 @@ Pelaksanaan SKM menggunakan kuesioner manual yang disebarkan kepada pengguna lay
         <div class="flex justify-end">
             <button type="submit"
                 class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark flex items-center gap-2">
-                <i class="fas fa-file-pdf mr-2"></i> Membuat Laporan 
+                <i class="fas fa-file-pdf mr-2"></i> Membuat Laporan
             </button>
         </div>
     </form>
@@ -887,7 +887,7 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="text" name="rencana_tindak_lanjut[${index}][no]" 
                    value="${index + 1}" 
                    class="w-12 text-center border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <select name="rencana_tindak_lanjut[${index}][unsur]" 
                     class="w-full border-none bg-transparent unsur-select"
@@ -904,22 +904,28 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
                 <option value="Aduan">Aduan</option>
                 <option value="Sarpras">Sarpras</option>
             </select>
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <textarea name="rencana_tindak_lanjut[${index}][rencana]" 
                       rows="3" class="w-full border-none bg-transparent" 
                       placeholder="Deskripsi rencana tindak lanjut..."></textarea>
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="rencana_tindak_lanjut[${index}][waktu]" 
                    class="w-32 border-none bg-transparent" 
                    placeholder="Contoh: Maret 2025">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="rencana_tindak_lanjut[${index}][penanggung_jawab]" 
                    class="w-full border-none bg-transparent" 
                    placeholder="Nama penanggung jawab">
-         </td>
+        </table>
+        <td class="border border-gray-300 px-3 py-2 text-center">
+            <button type="button" onclick="hapusBaris(this)" 
+                    class="inline-flex items-center gap-1 px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-md transition duration-200">
+                <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+        </td>
     `;
         tableBody.appendChild(row);
 
@@ -943,23 +949,29 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="analisis_responden[${index}][no]" 
                    class="w-12 text-center border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="analisis_responden[${index}][karakteristik]" 
                    class="w-full border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="analisis_responden[${index}][indikator]" 
                    class="w-full border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="number" name="analisis_responden[${index}][jumlah]" 
                    class="w-24 text-center border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="number" step="0.1" name="analisis_responden[${index}][persentase]" 
                    class="w-24 text-center border-none bg-transparent">
-         </td>
+        </td>
+        <td class="border border-gray-300 px-3 py-2 text-center">
+            <button type="button" onclick="hapusBaris(this)" 
+                    class="inline-flex items-center gap-1 px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-md transition duration-200">
+                <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+        </td>
     `;
         tableBody.appendChild(row);
     }
@@ -978,7 +990,7 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="number" step="0.1" 
                    name="jenis_layanan[${index}][nilai][${i}]" 
                    class="w-16 text-center border-none bg-transparent">
-         </td>
+        </td>
     `).join('');
 
         row.innerHTML = `
@@ -986,22 +998,28 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="text" name="jenis_layanan[${index}][no]" 
                    value="${index + 1}" 
                    class="w-8 text-center border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-2 py-1">
             <input type="text" name="jenis_layanan[${index}][jenis_layanan]" 
                    class="w-full border-none bg-transparent" 
                    placeholder="Nama Layanan">
-         </td>
+        </td>
         <td class="border border-gray-300 px-2 py-1">
             <input type="number" name="jenis_layanan[${index}][jumlah_responden]" 
                    class="w-24 text-center border-none bg-transparent">
-         </td>
+        </td>
         ${nilaiInputs}
         <td class="border border-gray-300 px-2 py-1">
             <input type="number" step="0.01" 
                    name="jenis_layanan[${index}][ikm_per_jenis]" 
                    class="w-24 text-center border-none bg-transparent">
-         </td>
+        </td>
+        <td class="border border-gray-300 px-2 py-1 text-center">
+            <button type="button" onclick="hapusBaris(this)" 
+                    class="inline-flex items-center gap-1 px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-md transition duration-200">
+                <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+        </td>
     `;
         tableBody.appendChild(row);
     }
@@ -1020,15 +1038,21 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="number" name="tren_skm[${index}][tahun]" 
                    value="${currentYear - 4 + index}" 
                    class="w-24 text-center border-none bg-transparent">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="number" step="0.01" name="tren_skm[${index}][ikm]" 
-               class="w-32 text-center border-none bg-transparent">
-         </td>
+                   class="w-32 text-center border-none bg-transparent">
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="tren_skm[${index}][mutu]" 
                    class="w-16 text-center border-none bg-transparent">
-         </td>
+        </td>
+        <td class="border border-gray-300 px-3 py-2 text-center">
+            <button type="button" onclick="hapusBaris(this)" 
+                    class="inline-flex items-center gap-1 px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-md transition duration-200">
+                <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+        </td>
     `;
         tableBody.appendChild(row);
     }
@@ -1048,31 +1072,70 @@ Atas dasar temuan tersebut, unit kerja kami menyusun rencana tindak lanjut yang 
             <input type="text" name="tindak_lanjut_sebelumnya[${index}][no]" 
                    value="${no}.${subNo}" 
                    class="w-12 text-center border-none bg-transparent" readonly>
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="text" name="tindak_lanjut_sebelumnya[${index}][rencana]" 
                    class="w-full border-none bg-transparent" 
                    placeholder="Nama kegiatan">
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <select name="tindak_lanjut_sebelumnya[${index}][status]" 
                     class="w-full border-none bg-transparent">
                 <option value="Sudah">Sudah</option>
                 <option value="Belum">Belum</option>
             </select>
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <textarea name="tindak_lanjut_sebelumnya[${index}][deskripsi]" 
                       rows="2" class="w-full border-none bg-transparent" 
                       placeholder="Deskripsi tindak lanjut"></textarea>
-         </td>
+        </td>
         <td class="border border-gray-300 px-3 py-2">
             <input type="file" name="tindak_lanjut_sebelumnya[${index}][dokumentasi]" 
                    accept=".jpg,.jpeg,.png" 
                    class="w-full border-none bg-transparent">
-         </td>
+        </td>
+        <td class="border border-gray-300 px-3 py-2 text-center">
+            <button type="button" onclick="hapusBaris(this)" 
+                    class="inline-flex items-center gap-1 px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-md transition duration-200">
+                <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+        </td>
     `;
         tableBody.appendChild(row);
+    }
+
+    // Fungsi untuk menghapus baris
+    // Fungsi untuk menghapus baris (LANGSUNG HAPUS, TANPA KONFIRMASI)
+    function hapusBaris(button) {
+        const row = button.closest('tr');
+        if (row) {
+            row.remove();
+
+            // Update nomor urut untuk Rencana Tindak Lanjut
+            const rtlTable = document.getElementById('rencanaTindakLanjutTable');
+            if (rtlTable) {
+                const rows = rtlTable.querySelectorAll('tr');
+                rows.forEach((row, idx) => {
+                    const noInput = row.querySelector('input[name*="[no]"]');
+                    if (noInput && noInput.value && !isNaN(noInput.value)) {
+                        noInput.value = idx + 1;
+                    }
+                });
+            }
+
+            // Update nomor urut untuk Jenis Layanan
+            const jenisLayananTable = document.getElementById('jenisLayananTable');
+            if (jenisLayananTable) {
+                const rows = jenisLayananTable.querySelectorAll('tr');
+                rows.forEach((row, idx) => {
+                    const noInput = row.querySelector('input[name*="[no]"]');
+                    if (noInput) {
+                        noInput.value = idx + 1;
+                    }
+                });
+            }
+        }
     }
 
     // Fungsi untuk menambah input dokumentasi

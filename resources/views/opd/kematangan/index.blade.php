@@ -83,31 +83,30 @@
 </div>
 
             {{-- CARD 2 – Kemendagri --}}
-            <div class="bg-white border border-gray-300 rounded-2xl shadow-sm p-6 hover:shadow-md transition flex-shrink-0"
-                 style="max-width: 300px; flex: 1 0 auto;">
-                 
-                <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center mb-4">
-                    <i class="fas fa-external-link-alt text-green-600 text-xl"></i>
-                </div>
+<div class="bg-white border border-gray-300 rounded-2xl shadow-sm p-6 hover:shadow-md transition flex-shrink-0"
+     style="max-width: 300px; flex: 1 0 auto;">
+     
+    <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center mb-4">
+        <i class="fas fa-external-link-alt text-green-600 text-xl"></i>
+    </div>
 
-                <h2 class="text-lg font-bold text-gray-900 mb-2">Survei Kemendagri</h2>
-                <p class="text-sm text-gray-600 leading-relaxed mb-4">
-                    Form ini digunakan untuk penilaian kematangan kelembagaan oleh Kemendagri.
-                </p>
+    <h2 class="text-lg font-bold text-gray-900 mb-2">Survei Kemendagri</h2>
+    <p class="text-sm text-gray-600 leading-relaxed mb-4">
+        Form ini digunakan untuk penilaian kematangan kelembagaan oleh Kemendagri.
+    </p>
 
-                <button
-                    @click="
-                        @if($evaluasiKemendagri)
-                            modalInfoSurvei = true
-                        @else
-                            modalKemendagri = true
-                        @endif
-                    "
-                    class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-2 rounded-lg shadow hover:opacity-90 transition"
-                >
-                    Isi Survei
-                </button>
-            </div>
+    @if($evaluasiKemendagri)
+        <button @click="modalInfoSurvei = true"
+            class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-2 rounded-lg shadow hover:opacity-90 transition">
+            Isi Survei
+        </button>
+    @else
+        <a href="{{ route('kematangan.kemendagri.form') }}"
+            class="w-full block text-center bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-2 rounded-lg shadow hover:opacity-90 transition">
+            Isi Survei
+        </a>
+    @endif
+</div>
 
         </div>
     </main>

@@ -282,7 +282,11 @@ Route::middleware(['auth'])->prefix('kematangan')->group(function () {
     // Halaman utama survei
     Route::get('/', [KematanganKelembagaanController::class, 'index'])->name('kematangan.index');
 
-      Route::get('/kemenpan/form', [KematanganKelembagaanController::class, 'kemenpanForm'])->name('kematangan.kemenpan.form');
+    // Halaman form KemenPAN
+    Route::get('/kemenpan/form', [KematanganKelembagaanController::class, 'kemenpanForm'])->name('kematangan.kemenpan.form');
+
+    // Halaman form Kemendagri
+    Route::get('/kemendagri/form', [KematanganKelembagaanController::class, 'kemendagriForm'])->name('kematangan.kemendagri.form');
 
     // Submit form KemenPAN
     Route::post('/kemenpan/submit', [KematanganKelembagaanController::class, 'submitKemenpan'])
